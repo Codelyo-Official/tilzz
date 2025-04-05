@@ -6,6 +6,7 @@ import "./homenavbar.css";
 
 function HomeNavbar() {
 
+    console.log('home navbar loaded')
     const navigate = useNavigate();
 
     return (

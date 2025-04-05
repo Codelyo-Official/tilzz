@@ -7,14 +7,6 @@ import { Provider } from 'react-redux';
 import { store } from './state/store';
 import "./App.css";
 
-// Lazy load pages
-// const Home = lazy(() => import("./pages/Landing/Home"));
-// const NotFound = lazy(() => import("./components/NotFound"));
-// const Login = lazy(() => import("./pages/registeration/Login"));
-// const Register = lazy(() => import("./pages/registeration/register"));
-// const Profile = lazy(() => import("./pages/profile/Profile"));
-// const PublicStories = lazy(() => import("./pages/PublicStories/PublicStories"));
-
 import Home from "./pages/Landing/Home";
 import PublicStories from "./pages/PublicStories/PublicStories";
 import Login from "./pages/registeration/Login";

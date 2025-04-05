@@ -5,7 +5,7 @@ import HomeNavbar from "../../components/HomeNavbar/homenavbar";
 import "./home.css";
 
 function Home() {
-
+    console.log('home loaded')
     return (
         <div className="home-banner">
             <HomeNavbar/>
