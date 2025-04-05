@@ -357,7 +357,7 @@
 .center1 {
     position: relative;
     grid-area: center1;
-    background-color: lightgreen;
+    background-color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -385,7 +385,7 @@
 .right1 {
     position: relative;
     grid-area: right1;
-    background-color: #DBB7EF;
+    background-color: #ebd3f8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -462,12 +462,14 @@
     position: absolute;
     bottom: 0px;
     left:0px;
-    width: 100%;
+    width: 95%;
     font-family: benzinextb;
+    letter-spacing: 1px;
     color:white;
-    font-size: 10px;
+    font-size: 11px;
     padding: 14px;
     text-align: left;
+    font-weight: light;
 }
 
 .box {
