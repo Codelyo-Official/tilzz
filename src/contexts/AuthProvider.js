@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
 
     console.log("auth invoked")
+    // initial settings we will check for access token in session storage of browser
     const [token, setToken] = useState(() => sessionStorage.getItem("token") || null);
 
     useEffect(() => {
