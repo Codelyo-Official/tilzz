@@ -6,7 +6,7 @@ import HomeNavbar from "../../components/HomeNavbar/homenavbar";
 import PublicStoriesFeed from "../../components/PublicStories/PublicStories";
 
 function PublicStories() {
-
+    console.log("pUBLIC dTORY PAGE LOADED")
     return (
         <>
         <HomeNavbar/>

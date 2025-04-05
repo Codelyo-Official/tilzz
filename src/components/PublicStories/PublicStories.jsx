@@ -104,7 +104,9 @@ function PublicStoriesFeed({children,slugStories}) {
 
     const [dataStories,setDataStories] = React.useState([]);
 
+    //this use effect will only run once and get data which is required
     useEffect(()=>{
+        console.log("sending request to recieve stories")
         setDataStories(AllStories);
     },[]);
 
