@@ -21,7 +21,10 @@ export const AuthProvider = ({children}) => {
     const login = async(newtoken) => {
 
         try {
-            if (true) {
+            // the login_flag will be set after sending a request to backend for credentials validation
+            let login_flag = true;
+            if (login_flag) {
+                //Once we are logged in we will have an access token, but right now we are using a dummy access token 
                 setToken(newtoken);
                 sessionStorage.setItem("token",newtoken)
                 return {success: true, message: "Login successful"};
