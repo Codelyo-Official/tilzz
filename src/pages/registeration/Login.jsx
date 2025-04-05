@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 
 const LoginSignup = () => {
 
+  console.log('login invoked')
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");

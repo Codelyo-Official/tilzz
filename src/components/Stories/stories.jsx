@@ -270,6 +270,7 @@ function Stories({children,slugStories}) {
     const [dataStories,setDataStories] = React.useState([]);
 
     useEffect(()=>{
+        console.log("sending req to recieve stories")
         if(slugStories==="stories-feed" || slugStories===null){
         // api call for all stories
         setDataStories(FeedStories);
