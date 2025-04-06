@@ -14,18 +14,13 @@ import MainContent from "../../components/MainDashboardContent/MainContent";
 
 
 
-function DashboardLayout({children}) {
+const DashboardLayout = React.memo(({children}) => {
 
     console.log("dashboard layout component rendered");
      const dispatch = useDispatch();
     const navigate = useNavigate();
     const {getUser} = useAuth();
-    // const [user, setUser] = useState(null);
     const user = useMemo(() => getUser(), []);
-
-    // useEffect(() => {
-    //     setUser(getUser());
-    //   }, []); // Empty dependency array = runs only once on mount
 
     return (
         <>
@@ -84,6 +79,6 @@ function DashboardLayout({children}) {
         )}
         </>
     );
-}
+});
 
 export default DashboardLayout;
