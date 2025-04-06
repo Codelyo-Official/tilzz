@@ -116,20 +116,30 @@ Section 1.10.33 from De Finibus Bonorum et Malorum
 
 const StoryPreview = ({ userId }) => {
 
+  console.log("story preview rendered")
+
+  const [dataStory, setDataStory] = React.useState(null);
+
   const [currentEditId, setCurrentEditId] = useState(null);
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [isAddNewVersion, setIsAddNewVersion] = useState(false);
   const [newVAt, setNewVAt] = useState(null)
-  console.log("story preview rendered")
   const { getUser } = useAuth();
   const user = useMemo(() => getUser(), []);
   const [activeEpisode, setActiveEpisode] = useState(1);
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
   const [newEpisode, setNewEpisode] = useState({ title: '', content: '' });
-  const [value, setValue] = useState('');
   const queryParams = new URLSearchParams(location.search);
   const paramvalue = queryParams.get('storyId');
+
+  React.useEffect(() => {
+    console.log(`sending req to recieve story data for story id:${paramvalue} for user:${user.username}`)
+    setTimeout(() => {
+      setDataStory(dummyData);
+    }, [1000])
+
+  }, [paramvalue]);
 
   const handleNewEpisode = () => {
     setShowNewEpisodeForm(true);
@@ -217,28 +227,32 @@ const StoryPreview = ({ userId }) => {
   }
 
   return (
-    <div className="story-preview">
-      <div className="story-header">
-        <img src={dummyData.storyImage} alt="Story Preview" className="story-image" />
-        <div className="story-info">
-          <h2 className="story-title">{dummyData.title}</h2>
-        </div>
-      </div>
+    <>
+      {dataStory === null ? (
+        <div>loading</div>
+      ) : (
+        <div className="story-preview">
+          <div className="story-header">
+            <img src={dataStory.storyImage} alt="Story Preview" className="story-image" />
+            <div className="story-info">
+              <h2 className="story-title">{dataStory.title}</h2>
+            </div>
+          </div>
 
-      <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
-        {dummyData.episodes.map((episode) => (
-          (episode.episode >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Spinner animation="grow" role="status" variant="light" style={{ color: "white", fontSize: "20px" }}>
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          </div>) : (
-            (episode.episode === 1 || (episode.episode > 1 && dummyData.episodes[episode.episode - 2].current_variation_number <= episode.current_variation_number && (newVAt === null || (newVAt !== null &&
-              episode.episode < newVAt.episode
-            )))) && (
-              <>
-                <div key={episode.id} className="episode">
-                  <div className="episode-content">
-                    {/* <ReactQuill theme="snow" readOnly={episode.creator === user.username ? false : true}
+          <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
+            {dataStory.episodes.map((episode) => (
+              (episode.episode >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Spinner animation="grow" role="status" variant="light" style={{ color: "white", fontSize: "20px" }}>
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>) : (
+                (episode.episode === 1 || (episode.episode > 1 && dataStory.episodes[episode.episode - 2].current_variation_number <= episode.current_variation_number && (newVAt === null || (newVAt !== null &&
+                  episode.episode < newVAt.episode
+                )))) && (
+                  <>
+                    <div key={episode.id} className="episode">
+                      <div className="episode-content">
+                        {/* <ReactQuill theme="snow" readOnly={episode.creator === user.username ? false : true}
                       modules={episode.creator === user.username ? ({
                         toolbar: false ? [] : [
                           [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
@@ -260,59 +274,59 @@ const StoryPreview = ({ userId }) => {
                       })}
                       className={episode.creator === user.username  ? "" : "read-only-editor"}
                       value={episode.content} onChange={() => { }} style={{ height: "100%" }} /> */}
-                    {episode.creator === user.username ? (
+                        {episode.creator === user.username ? (
 
-                      episode.id === currentEditId ? (
-                        <div className="new-episode-form">
-                          <textarea>{episode.content}</textarea>
-                          <div style={{ display: "flex", justifyContent: "center" }}>
-                            <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
-                            <button style={{ margin: "5px" }} className="new-version-cancel"onClick={()=>{
-                              setCurrentEditId(null)
-                            }} >Cancel</button>
-                          </div>
-                        </div>
-                      ) : (
-                        <p>{episode.content} <div className="episode-options">
-                          {episode.episode > 1 && (
-                            <button className="tooltip1" onClick={() => {
-                              addVersion(episode)
-                            }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
-                          )}
-                          {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
-                          <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
-                          <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
-                          {isPrevOption(episode) && (<button className="tooltip1" onClick={() => {
-                            prevVariation(episode);
-                          }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                          {isNextOption(episode) && (<button className="tooltip1" onClick={() => {
-                            nextVariation(episode);
-                          }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                          <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
-                          <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
-                        </div></p>)
+                          episode.id === currentEditId ? (
+                            <div className="new-episode-form">
+                              <textarea>{episode.content}</textarea>
+                              <div style={{ display: "flex", justifyContent: "center" }}>
+                                <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
+                                <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                  setCurrentEditId(null)
+                                }} >Cancel</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p>{episode.content} <span className="episode-options">
+                              {episode.episode > 1 && (
+                                <button className="tooltip1" onClick={() => {
+                                  addVersion(episode)
+                                }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                              )}
+                              {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
+                              <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
+                              <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
+                              {isPrevOption(episode) && (<button className="tooltip1" onClick={() => {
+                                prevVariation(episode);
+                              }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
+                              {isNextOption(episode) && (<button className="tooltip1" onClick={() => {
+                                nextVariation(episode);
+                              }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
+                              <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
+                              <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
+                            </span></p>)
 
-                    ) : (
-                      <p>{episode.content} <div className="episode-options">
-                        {episode.episode > 1 && (
-                          <button className="tooltip1" onClick={() => {
-                            addVersion(episode)
-                          }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                        ) : (
+                          <p>{episode.content} <span className="episode-options">
+                            {episode.episode > 1 && (
+                              <button className="tooltip1" onClick={() => {
+                                addVersion(episode)
+                              }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                            )}
+                            {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
+                            <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
+                            <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
+                            {isPrevOption(episode) && (<button className="tooltip1" onClick={() => {
+                              prevVariation(episode);
+                            }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
+                            {isNextOption(episode) && (<button className="tooltip1" onClick={() => {
+                              nextVariation(episode);
+                            }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
+                            <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
+                            <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
+                          </span></p>
                         )}
-                        {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
-                        <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
-                        <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
-                        {isPrevOption(episode) && (<button className="tooltip1" onClick={() => {
-                          prevVariation(episode);
-                        }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                        {isNextOption(episode) && (<button className="tooltip1" onClick={() => {
-                          nextVariation(episode);
-                        }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                        <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
-                        <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
-                      </div></p>
-                    )}
-                    {/* <div className="episode-options">
+                        {/* <div className="episode-options">
                       {episode.episode > 1 && (
                         <button className="tooltip1" onClick={() => {
                           addVersion(episode)
@@ -329,33 +343,34 @@ const StoryPreview = ({ userId }) => {
                       <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
                       <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
                     </div> */}
-                  </div>
-                </div>
-              </>))
-        ))}
-      </div>
-
-
-      <div className="add-episode">
-        {showNewEpisodeForm || isAddNewVersion ? (
-          <div className="new-episode-form">
-            {/* <ReactQuill theme="snow" value={value} onChange={setValue} style={{ height: "100%" }} /> */}
-            <textarea></textarea>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>{isAddNewVersion ? (<>Submit New Version</>) : (<>Submit New Episode</>)}</button>
-              {isAddNewVersion && (<button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                cancelVersion()
-              }}>Cancel</button>)}
-            </div>
+                      </div>
+                    </div>
+                  </>))
+            ))}
           </div>
-        ) : (
-          <button className="new-episode-btn" onClick={handleNewEpisode}>
-            {isAddNewVersion ? (<>Add Version</>) : (<>Add New Episode</>)}
-          </button>
-        )}
-      </div>
 
-    </div>
+
+          <div className="add-episode">
+            {showNewEpisodeForm || isAddNewVersion ? (
+              <div className="new-episode-form">
+                {/* <ReactQuill theme="snow" value={value} onChange={setValue} style={{ height: "100%" }} /> */}
+                <textarea></textarea>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>{isAddNewVersion ? (<>Submit New Version</>) : (<>Submit New Episode</>)}</button>
+                  {isAddNewVersion && (<button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                    cancelVersion()
+                  }}>Cancel</button>)}
+                </div>
+              </div>
+            ) : (
+              <button className="new-episode-btn" onClick={handleNewEpisode}>
+                {isAddNewVersion ? (<>Add Version</>) : (<>Add New Episode</>)}
+              </button>
+            )}
+          </div>
+
+        </div>)}
+    </>
   );
 };
 
