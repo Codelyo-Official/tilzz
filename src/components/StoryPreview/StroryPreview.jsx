@@ -119,6 +119,7 @@ const StoryPreview = ({ userId }) => {
   console.log("story preview rendered")
 
   const [dataStory, setDataStory] = React.useState(null);
+  const [episodes,setEpisodes] = React.useState([]);
 
   const [currentEditId, setCurrentEditId] = useState(null);
   const [loading, setLoading] = useState(false);
