@@ -68,7 +68,7 @@ const Reports = ({ userId }) => {
   const [value, setValue] = useState('');
   const queryParams = new URLSearchParams(location.search);
   const paramvalue = queryParams.get('storyId'); 
-  console.log(paramvalue)
+  //console.log(paramvalue)
 
   const modules = {
     toolbar: true ? [] : [
