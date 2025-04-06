@@ -28,7 +28,7 @@ const Sidebar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
- 
+
 
   const handleActiveMenu = (name) => {
     if (name === "user-logout") {
@@ -38,7 +38,8 @@ const Sidebar = () => {
         navigate("/login");
       }
     } else {
-      setIsOpen(false);
+      if (isMobile)
+        setIsOpen(false);
     }
   };
 
