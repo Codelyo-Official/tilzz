@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { links } from '../../data/dummy';
-import { useSelector, useDispatch } from 'react-redux';
-import { setActiveTab } from "../../features/tabSlice";
+import { useSelector } from 'react-redux';
 import { FiAlignLeft } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +16,6 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 780);
   const activeMenu = useSelector(((state) => state.activeTab.activeTab));
-  const dispatch = useDispatch();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -40,7 +38,6 @@ const Sidebar = () => {
         navigate("/login");
       }
     } else {
-      dispatch(setActiveTab(name));
       setIsOpen(false);
     }
   };

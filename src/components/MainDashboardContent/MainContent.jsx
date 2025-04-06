@@ -12,14 +12,17 @@ function MainContent({ children }) {
 
     console.log("maincontent component rendered");
     const dispatch = useDispatch();
-    const activeMenu = useSelector(((state) => state.activeTab.activeTab));
-    console.log(activeMenu)
+    // const activeMenu = useSelector(((state) => state.activeTab.activeTab));
+    // console.log(activeMenu)
     const location = useLocation();
     //console.log(location)
     const queryParams = new URLSearchParams(location.search);
     const value = queryParams.get('activeTab'); // Retrieve the value of a specific query parameter
-    if (activeMenu !== value)
+    // if (activeMenu !== value)
+
+    React.useEffect(()=>{
         dispatch(setActiveTab(value));
+    },[value])
 
 
 
