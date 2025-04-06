@@ -222,13 +222,12 @@ const StoryPreview = ({ userId }) => {
         <img src={dummyData.storyImage} alt="Story Preview" className="story-image" />
         <div className="story-info">
           <h2 className="story-title">{dummyData.title}</h2>
-          {/* <p className="story-description">{dummyData.description}</p> */}
         </div>
       </div>
 
       <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
         {dummyData.episodes.map((episode) => (
-          (episode.episode >= activeEpisode && loading) ? (<div style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          (episode.episode >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Spinner animation="grow" role="status" variant="light" style={{ color: "white", fontSize: "20px" }}>
               <span className="visually-hidden">Loading...</span>
             </Spinner>

@@ -3,8 +3,8 @@ import Stories from "../Stories/stories";
 import CreateStory from "../CreateStory/CreateStory";
 import StoryPreview from "../StoryPreview/StroryPreview";
 import {Navigate, useLocation} from "react-router-dom";
-import { useSelector, useDispatch } from 'react-redux';
-import {setActiveTab} from "../../features/tabSlice";
+// import { useSelector, useDispatch } from 'react-redux';
+// import {setActiveTab} from "../../features/tabSlice";
 import Account from "../Account/Account";
 import Reports from "../Reports/reports";
 
@@ -12,9 +12,10 @@ function MainContent({children}) {
 
     console.log("maincontent component rendered");
 
-    const activeMenu = useSelector(((state) => state.activeTab.activeTab));
-    const dispatch = useDispatch();
+    // const activeMenu = useSelector(((state) => state.activeTab.activeTab));
+    // const dispatch = useDispatch();
     const location = useLocation();
+    console.log(location)
     const queryParams = new URLSearchParams(location.search);
     const value = queryParams.get('activeTab'); // Retrieve the value of a specific query parameter
 

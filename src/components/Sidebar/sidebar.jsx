@@ -14,8 +14,10 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 780);
   console.log("sidebar component rendered");
-  const activeMenu = useSelector(((state) => state.activeTab.activeTab));
-  const dispatch = useDispatch();
+  // const activeMenu = useSelector(((state) => state.activeTab.activeTab));
+  // console.log(activeMenu)
+  // const dispatch = useDispatch();
+  const [activeMenu,setActiveMenu] = useState("");
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -36,7 +38,8 @@ const Sidebar = () => {
             navigate("/login");
         }
     }else{
-      dispatch(setActiveTab(name));
+      setActiveMenu(name)
+      //dispatch(setActiveTab(name));
       setIsOpen(false);
     }
   };

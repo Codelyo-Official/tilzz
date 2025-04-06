@@ -1,4 +1,4 @@
-import React, {useEffect,useMemo} from "react";
+import React, {useEffect,useMemo,useState} from "react";
 import "./styles.css";
 import { useAuth } from "../../contexts/AuthProvider";
 import Sidebar from "../Sidebar/sidebar";
@@ -10,6 +10,8 @@ import { RiHomeLine } from "react-icons/ri";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { Link } from 'react-router-dom';
+import MainContent from "../../components/MainDashboardContent/MainContent";
+
 
 
 function DashboardLayout({children}) {
@@ -18,10 +20,17 @@ function DashboardLayout({children}) {
      const dispatch = useDispatch();
     const navigate = useNavigate();
     const {getUser} = useAuth();
+    // const [user, setUser] = useState(null);
     const user = useMemo(() => getUser(), []);
+
+    // useEffect(() => {
+    //     setUser(getUser());
+    //   }, []); // Empty dependency array = runs only once on mount
 
     return (
         <>
+        {user!==null ? (
+            <>
         <div className="navbar-dashboard">
         <Link to={"/"} >
             <h2 className="logo">Narrato</h2>
@@ -48,7 +57,7 @@ function DashboardLayout({children}) {
             <div className="leftdiv">
                 <Sidebar/>
             </div>
-            <div className="rightdiv">{children}</div>
+            <div className="rightdiv"><MainContent/></div>
         </div>
         <div className="bottom-bar-dashboard">
         <a onClick={()=>{
@@ -69,6 +78,10 @@ function DashboardLayout({children}) {
             <CgProfile/>
             </a>
         </div>
+        </>
+        ):(
+            <div>loading</div>
+        )}
         </>
     );
 }
