@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { FiAlignLeft } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import type { RootState } from "../../state/store"; // adjust path
+
 
 
 const Sidebar = () => {
@@ -15,7 +17,7 @@ const Sidebar = () => {
   const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 780);
-  const activeMenu = useSelector(((state) => state.activeTab.activeTab));
+  const activeMenu = useSelector(((state:RootState) => state.activeTab.activeTab));
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -30,7 +32,7 @@ const Sidebar = () => {
 
 
 
-  const handleActiveMenu = (name) => {
+  const handleActiveMenu = (name:string) => {
     if (name === "user-logout") {
       const res = logout();
       if (res.success) {

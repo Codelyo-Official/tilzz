@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import BottomBarDashboard from "../BottomBarDashboard/BottomBarDashboard";
 import TopBarDashboard from "../TopBarDashboard/TopBarDashboard";
 
-function DashboardLayout({children}) {
+function DashboardLayout({children}:{children:React.ReactNode}) {
 
     console.log("dashboard layout component rendered");
     const {user} = useAuth();
@@ -31,3 +31,4 @@ function DashboardLayout({children}) {
 }
 
 export default DashboardLayout;
+
