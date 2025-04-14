@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
@@ -10,11 +10,11 @@ import { Link } from 'react-router-dom';
 
 const LoginSignup = () => {
 
-  console.log('login invoked')
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const inputEmailRef = useRef();
+  const inputPasswordRef = useRef();
+
 
   const { login } = useAuth();
   const [errors, setErrors] = useState(null);
@@ -22,8 +22,8 @@ const LoginSignup = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     const payload = {
-      email: email,
-      password: password,
+      email: inputEmailRef.current.value,
+      password: inputPasswordRef.current.value,
     };
 
     //send an api req to login and get access token from backend
@@ -51,7 +51,7 @@ const LoginSignup = () => {
 
     // using dummy token for now
     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqb2huZG9lIiwiZXhwIjoxNzE3MDE0MDAwfQ.12345";
-    const response = await login(token);
+    const response = login(token);
 
     if(response.success){
       navigate("/dashboard");
@@ -74,17 +74,20 @@ const LoginSignup = () => {
           <input
             type="email"
             placeholder="Email"
-            value={email}
+            ref={inputEmailRef}
             required
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              inputEmailRef.current.value = e.target.value;
+              }}
           />
           <input
             type="password"
             placeholder="Password"
-            value={password}
+            ref={inputPasswordRef}
             required
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            onChange={(e) => {
+              inputPasswordRef.current.value = e.target.value;
+              }}          />
           {errors && (
             <p style={{ color: "red" }}>
             {errors}
@@ -92,23 +95,6 @@ const LoginSignup = () => {
           )}
           <button type="submit" style={{fontSize:"14px"}}>{"Login"}</button>
         </form>
-        <div className="toggle-link" onClick={toggleLoginSignup} style={{fontSize:"12px", color:"black"}}>
-          {"Create New Account"}
-        </div>
-        {/* <div className="social-login">
-          <p>Or login with:</p>
-          <div className="social-icons">
-            <FaFacebook
-              style={{ color: "#15A0F9" }}
-              className="facebook-icon"
-              onClick={() => console.log("Facebook Login")}
-            />
-            <FcGoogle
-              className="google-icon"
-              onClick={() => console.log("Google Login")}
-            />
-          </div>
-        </div> */}
       </div>
     </div>
   );

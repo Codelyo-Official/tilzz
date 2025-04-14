@@ -266,8 +266,7 @@ function Stories({ children, slugStories }) {
     console.log("stories component rendered");
 
     const dispatch = useDispatch();
-    const { getUser } = useAuth();
-    const user = getUser();
+    const { user } = useAuth();
 
     const [dataStories, setDataStories] = React.useState([]);
 

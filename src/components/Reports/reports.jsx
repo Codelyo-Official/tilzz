@@ -63,8 +63,7 @@ const mastories = [
 const Reports = ({ userId }) => {
 
   console.log("story preview rendered")
-  const { getUser } = useAuth();
-  const user = useMemo(() => getUser(), []);
+  const { user } = useAuth();
   const [activeEpisode, setActiveEpisode] = useState(null);
   const [tabselected, setTabselected] = React.useState("review")
 

@@ -126,8 +126,7 @@ const StoryPreview = ({ userId }) => {
   const location = useLocation();
   const [isAddNewVersion, setIsAddNewVersion] = useState(false);
   const [newVAt, setNewVAt] = useState(null)
-  const { getUser } = useAuth();
-  const user = useMemo(() => getUser(), []);
+  const { user } = useAuth();
   const [activeEpisode, setActiveEpisode] = useState(1);
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
   const [newEpisode, setNewEpisode] = useState({ title: '', content: '' });
