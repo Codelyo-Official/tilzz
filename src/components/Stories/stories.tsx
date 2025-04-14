@@ -5,7 +5,19 @@ import { setActiveTab } from "../../features/tabSlice";
 import { useAuth } from "../../contexts/AuthProvider";
 
 
-const FeedStories = [
+type story = {
+    id: number;
+    title: string;
+    img: string;
+    description: string;
+    story_by_user: string;
+    follow: boolean;
+    liked: boolean;
+    like_count: number;
+    user_avatar: string;
+}
+
+const FeedStories:story[]  = [
     {
         id: 1,
         title: "Hamza First Story",
@@ -261,14 +273,14 @@ const FollowingStories = [
     }
 ]
 
-function Stories({ children, slugStories }) {
+function Stories({  slugStories }:{slugStories:string | null}) {
 
     console.log("stories component rendered");
 
     const dispatch = useDispatch();
     const { user } = useAuth();
 
-    const [dataStories, setDataStories] = React.useState([]);
+    const [dataStories, setDataStories] = React.useState<story[]>([]);
 
     useEffect(() => {
         console.log(`sending req to recieve stories for user:${user.username}`)
@@ -284,11 +296,11 @@ function Stories({ children, slugStories }) {
         }
     }, [slugStories]);
 
-    const handleActiveMenu = (name) => {
+    const handleActiveMenu = (name:string) => {
         dispatch(setActiveTab(name));
     };
 
-    const toggleFollow = (id) => {
+    const toggleFollow = (id:number) => {
 
         setDataStories(() =>
             dataStories.map((story) =>

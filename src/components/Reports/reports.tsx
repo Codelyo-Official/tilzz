@@ -9,8 +9,28 @@ import { FiArrowUpCircle } from "react-icons/fi";
 import { useLocation } from 'react-router-dom';
 import { FaRegFlag } from "react-icons/fa";
 
-const mastories = [
+type episode = {
+  id: number,
+  episode: number,
+  title: string,
+  content: string;
+  creator: string;
+  status:string;
+}
+
+type story = {
+  storyId: string;
+  storyImage: string;
+  title: string;
+  description: string;
+  creator: string;
+  episodes: episode[]
+}
+
+
+const mastories:story[] = [
   {
+    storyId: "5bhja9",
     storyImage: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
       "&cs=tinysrgb&w=1260&h=750&dpr=1",
     title: 'The Mysterious Journey',
@@ -29,6 +49,7 @@ const mastories = [
     ],
   },
   {
+    storyId: "5b09hja9",
     storyImage: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
       "&cs=tinysrgb&w=1260&h=750&dpr=1",
     title: 'New Era',
@@ -60,18 +81,18 @@ const mastories = [
   }
 ]
 
-const Reports = ({ userId }) => {
+const Reports = () => {
 
   console.log("story preview rendered")
   const { user } = useAuth();
-  const [activeEpisode, setActiveEpisode] = useState(null);
+  const [activeEpisode, setActiveEpisode] = useState<number | null>(null);
   const [tabselected, setTabselected] = React.useState("review")
 
-  const handleEpisodeToggle = (episodeId) => {
+  const handleEpisodeToggle = (episodeId:number) => {
     setActiveEpisode(activeEpisode === episodeId ? null : episodeId);
   };
 
-  const checkifanyepisodehasstatus = (st, tempstatus) => {
+  const checkifanyepisodehasstatus = (st:story, tempstatus:string) => {
     for (let i = 0; i < st.episodes.length; i++) {
       if (st.episodes[i].status === tempstatus)
         return true;

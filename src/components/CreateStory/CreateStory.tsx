@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import "./story.css"
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import './story.css';
 
-const CreateStory = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [visibility, setVisibility] = useState('private');
-  const [bannerImage, setBannerImage] = useState(null);
+const CreateStory: React.FC = () => {
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [visibility, setVisibility] = useState<'private' | 'public'>('private');
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       setBannerImage(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // Handle story creation logic here (send data to backend or update state)
     console.log({
       title,
       description,
@@ -54,7 +53,7 @@ const CreateStory = () => {
           <label>Visibility</label>
           <select
             value={visibility}
-            onChange={(e) => setVisibility(e.target.value)}
+            onChange={(e) => setVisibility(e.target.value as 'private' | 'public')}
             className="visibility-select"
           >
             <option value="private">Private</option>

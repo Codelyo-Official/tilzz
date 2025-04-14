@@ -15,9 +15,27 @@ import { useLocation } from 'react-router-dom';
 import { FaRegFlag } from "react-icons/fa";
 import Spinner from 'react-bootstrap/Spinner';
 
+type episode = {
+  current_variation_number: number;
+  variations: string[],
+  id: number,
+  episode: number,
+  title: string,
+  content: string;
+  creator: string;
+}
+
+type story = {
+  storyId: string;
+  storyImage: string;
+  title: string;
+  description: string;
+  creator: string;
+  episodes: episode[]
+}
 
 
-const dummyData = {
+const dummyData: story = {
   storyId: "5bhja9",
   storyImage: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
     "&cs=tinysrgb&w=1260&h=750&dpr=1",
@@ -61,14 +79,7 @@ Section 1.10.33 from De Finibus Bonorum et Malorum
       content: "1 content",
       creator: 'johndoe',
       variations: [
-        {
-          "episode_id": "462",
-          "variation_number": 1
-        },
-        {
-          "episode_id": "6C7",
-          "variation_number": 2
-        }
+      
       ]
     },
     {
@@ -79,18 +90,7 @@ Section 1.10.33 from De Finibus Bonorum et Malorum
       content: "1 content",
       creator: 'user123',
       variations: [
-        {
-          "episode_id": "5C7",
-          "variation_number": 1
-        },
-        {
-          "episode_id": "789A",
-          "variation_number": 2
-        },
-        {
-          "episode_id": "789A99",
-          "variation_number": 3
-        }
+       
       ]
     },
     {
@@ -101,31 +101,24 @@ Section 1.10.33 from De Finibus Bonorum et Malorum
       content: "1 content",
       creator: 'user123',
       variations: [
-        {
-          "episode_id": "00C7",
-          "variation_number": 1
-        },
-        {
-          "episode_id": "78989A",
-          "variation_number": 2
-        },
+       
       ]
     },
   ],
 };
 
-const StoryPreview = ({ userId }) => {
+const StoryPreview = () => {
 
   console.log("story preview rendered")
 
-  const [dataStory, setDataStory] = React.useState(null);
-  const [episodes,setEpisodes] = React.useState([]);
+  const [dataStory, setDataStory] = React.useState<story | null>(null);
+  const [episodes, setEpisodes] = React.useState([]);
 
-  const [currentEditId, setCurrentEditId] = useState(null);
+  const [currentEditId, setCurrentEditId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [isAddNewVersion, setIsAddNewVersion] = useState(false);
-  const [newVAt, setNewVAt] = useState(null)
+  const [newVAt, setNewVAt] = useState<episode | null>(null)
   const { user } = useAuth();
   const [activeEpisode, setActiveEpisode] = useState(1);
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
@@ -137,7 +130,7 @@ const StoryPreview = ({ userId }) => {
     console.log(`sending req to recieve story data for story id:${paramvalue} for user:${user.username}`)
     setTimeout(() => {
       setDataStory(dummyData);
-    }, [1000])
+    }, 1000)
 
   }, [paramvalue]);
 
@@ -152,7 +145,7 @@ const StoryPreview = ({ userId }) => {
     setNewEpisode({ title: '', content: '' });
   };
 
-  const nextVariation = (ep) => {
+  const nextVariation = (ep:episode) => {
     if (ep.current_variation_number < ep.variations.length && !loading) {
       setActiveEpisode(ep.episode)
       ep.current_variation_number = ep.current_variation_number + 1;
@@ -167,19 +160,19 @@ const StoryPreview = ({ userId }) => {
       setLoading(true)
       setTimeout(() => {
         setLoading(false)
-      }, [2000])
+      }, 2000)
     }
     console.log(dummyData)
   }
 
-  const isNextOption = (ep) => {
+  const isNextOption = (ep:episode) => {
     if (ep.current_variation_number < ep.variations.length) {
       return true;
     }
     return false;
   }
 
-  const isPrevOption = (ep) => {
+  const isPrevOption = (ep:episode) => {
     if (ep.current_variation_number > 1) {
       let c = ep.episode;
       if (c > 1 && dummyData.episodes[c - 2].current_variation_number < ep.current_variation_number) {
@@ -189,7 +182,7 @@ const StoryPreview = ({ userId }) => {
     return false;
   }
 
-  const prevVariation = (ep) => {
+  const prevVariation = (ep:episode) => {
     if (ep.current_variation_number > 1 && !loading) {
       let c = ep.episode;
       if (c === 1 || (c > 1 && dummyData.episodes[c - 2].current_variation_number < ep.current_variation_number)) {
@@ -206,19 +199,17 @@ const StoryPreview = ({ userId }) => {
         setLoading(true)
         setTimeout(() => {
           setLoading(false)
-        }, [2000])
+        }, 2000)
       }
     }
     console.log(dummyData)
   }
 
-  const addVersion = (ep) => {
+  const addVersion = (ep:episode) => {
     setIsAddNewVersion(true);
-    let newVarNum = ep.variations[ep.variations.length - 1].variation_number + 1;
-    setNewVAt(ep);
-
+    // let newVarNum = ep.variations[ep.variations.length - 1].variation_number + 1;
+    // setNewVAt(ep);
     console.log(dummyData)
-
   }
 
   const cancelVersion = () => {

@@ -3,7 +3,7 @@ import {Navigate, useLocation} from "react-router-dom";
 import {useAuth} from "../contexts/AuthProvider";
 
 
-const ProtectedRoute = ({children}:{children:React.ReactNode}) => {
+const ProtectedRoute = ({children}:{children:React.JSX.Element}) => {
     const {user} = useAuth();
     const location = useLocation();
 

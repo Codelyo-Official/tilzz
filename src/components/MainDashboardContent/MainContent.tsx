@@ -8,7 +8,7 @@ import { setActiveTab } from "../../features/tabSlice";
 import Account from "../Account/Account";
 import Reports from "../Reports/reports";
 
-function MainContent({ children }) {
+function MainContent() {
 
     console.log("maincontent component rendered");
     const dispatch = useDispatch();
