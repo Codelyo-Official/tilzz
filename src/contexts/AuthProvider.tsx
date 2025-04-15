@@ -15,9 +15,7 @@ type AuthContextType = {
     logout: () => { success: boolean; message: string };
 };
 
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 
 type AuthProviderProps = {
     children: React.ReactNode;
@@ -70,12 +68,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         sessionStorage.removeItem("token");
         return { success: true, message: "Logout successful" };
     };
-
-    // const getUser = () => {
-    //     console.log("get user avoked")
-    //     const decoded = token ? jwtDecode(token) : { username: "none" };
-    //     return decoded;
-    // }
 
     return (
         <AuthContext.Provider
