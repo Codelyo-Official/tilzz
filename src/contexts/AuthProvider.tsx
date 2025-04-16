@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
+
 // Define the shape of the JWT payload
 type DecodedToken = {
     username: string;
@@ -24,6 +25,7 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     console.log("auth invoked")
+
     const [token, setToken] = useState<string | null>(
         () => sessionStorage.getItem("token")
     );
@@ -47,7 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         try {
             if (true) {
                 setToken(newtoken);
-                // const decoded = newtoken ? jwtDecode(newtoken) : { username: "none" };
+                // const decoded: DecodedToken = newtoken ? jwtDecode(newtoken) : { username: "none" };
                 // setUser(decoded)
                 sessionStorage.setItem("token", newtoken)
                 return { success: true, message: "Login successful" };
@@ -83,9 +85,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 // Hook with type safety
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
 };

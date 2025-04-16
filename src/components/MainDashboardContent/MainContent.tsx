@@ -16,6 +16,7 @@ function MainContent() {
     const queryParams = new URLSearchParams(location.search);
     const value = queryParams.get('activeTab'); // Retrieve the value of a specific query parameter
     React.useEffect(()=>{
+        // console.log(value)
         dispatch(setActiveTab(value));
     },[value])
 
