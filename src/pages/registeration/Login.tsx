@@ -96,6 +96,13 @@ const LoginSignup = () => {
             {"Login"}
           </button>
         </form>
+        <div
+          className="toggle-link"
+          onClick={toggleLoginSignup}
+          style={{ fontSize: "12px", color: "black" }}
+        >
+          {"Create an Account"}
+        </div>
       </div>
     </div>
   );
