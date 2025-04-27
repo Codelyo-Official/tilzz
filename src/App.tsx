@@ -7,8 +7,8 @@ import { Provider } from 'react-redux';
 import { store } from './redux/state/store';
 import "./App.css";
 
-import Home from "./pages/home/Home";
-import PublicStories from "./pages/pstories/PublicStories";
+import Home from "./pages/landing/Home";
+import PublicStories from "./pages/publicStories/PublicStories";
 import Login from "./pages/registeration/Login";
 import Register from "./pages/registeration/register";
 import Profile from "./pages/profile/Profile";
