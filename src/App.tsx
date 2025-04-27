@@ -7,11 +7,11 @@ import { Provider } from 'react-redux';
 import { store } from './redux/state/store';
 import "./App.css";
 
-import Home from "./pages/landing/Home";
-import PublicStories from "./pages/publicStories/PublicStories";
+import Home from "./pages/landing";
+import PublicStories from "./pages/publicStories";
 import Login from "./pages/registeration/login";
 import Register from "./pages/registeration/register";
-import Profile from "./pages/profile/Profile";
+import Profile from "./pages/profile";
 import NotFound from "./common/components/NotFound";
 
 const App = () => {
