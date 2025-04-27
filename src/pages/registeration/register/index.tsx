@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { useAuth } from "../../contexts/AuthProvider";
+import { useAuth } from "../../../contexts/AuthProvider";
 import { Link } from 'react-router-dom';
-import "./login.css";
+import "../login.css";
 
 // Define types for the form input values
 const Register = () => {
