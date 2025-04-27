@@ -12,7 +12,7 @@ import PublicStories from "./pages/publicStories/PublicStories";
 import Login from "./pages/registeration/Login";
 import Register from "./pages/registeration/register";
 import Profile from "./pages/profile/Profile";
-import NotFound from "./components/NotFound";
+import NotFound from "./common/components/NotFound";
 
 const App = () => {
   return (
