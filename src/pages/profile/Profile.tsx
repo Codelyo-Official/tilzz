@@ -1,6 +1,6 @@
 import React from "react";
-import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
-import MainContent from "../../components/MainDashboardContent/MainContent";
+import DashboardLayout from "../../components/DashboardLayout";
+import MainContent from "../../components/MainDashboardContent";
 
 
 const Profile = () => {

@@ -1,12 +1,12 @@
 import React, { use, useEffect } from "react";
-import Stories from "../Stories/stories";
-import CreateStory from "../CreateStory/CreateStory";
-import StoryPreview from "../StoryPreview/StroryPreview";
+import Stories from "../Stories";
+import CreateStory from "../CreateStory";
+import StoryPreview from "../StoryPreview";
 import { Navigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { setActiveTab } from "../../features/tabSlice";
-import Account from "../Account/Account";
-import Reports from "../Reports/reports";
+import { setActiveTab } from "../../redux/features/tabSlice";
+import Account from "../Account";
+import Reports from "../Reports";
 
 function MainContent() {
 

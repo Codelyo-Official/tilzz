@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setActiveTab } from "../../features/tabSlice";
+import { setActiveTab } from "../../redux/features/tabSlice";
 import { useAuth } from "../../contexts/AuthProvider";
 
 

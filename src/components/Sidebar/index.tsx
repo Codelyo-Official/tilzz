@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { FiAlignLeft } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../../state/store"; // adjust path
+import type { RootState } from "../../redux/state/store"; // adjust path
 
 
 

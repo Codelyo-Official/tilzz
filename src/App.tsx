@@ -4,11 +4,11 @@ import { AuthProvider } from "./contexts/AuthProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 //redux
 import { Provider } from 'react-redux';
-import { store } from './state/store';
+import { store } from './redux/state/store';
 import "./App.css";
 
-import Home from "./pages/Landing/Home";
-import PublicStories from "./pages/PublicStories/PublicStories";
+import Home from "./pages/landing/Home";
+import PublicStories from "./pages/publicStories/PublicStories";
 import Login from "./pages/registeration/Login";
 import Register from "./pages/registeration/register";
 import Profile from "./pages/profile/Profile";

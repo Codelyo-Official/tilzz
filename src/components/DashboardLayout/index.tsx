@@ -1,10 +1,10 @@
 import React, {Children, useEffect,useMemo} from "react";
 import "./styles.css";
 import { useAuth } from "../../contexts/AuthProvider";
-import Sidebar from "../Sidebar/sidebar";
+import Sidebar from "../Sidebar";
 import { Link } from 'react-router-dom';
-import BottomBarDashboard from "../BottomBarDashboard/BottomBarDashboard";
-import TopBarDashboard from "../TopBarDashboard/TopBarDashboard";
+import BottomBarDashboard from "../BottomBarDashboard";
+import TopBarDashboard from "../TopBarDashboard";
 
 function DashboardLayout({children}:{children:React.ReactNode}) {
 

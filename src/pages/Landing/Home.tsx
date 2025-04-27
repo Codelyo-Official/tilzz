@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FiArrowRightCircle } from "react-icons/fi";
-import HomeNavbar from "../../components/HomeNavbar/homenavbar";
+import HomeNavbar from "../../components/HomeNavbar";
 import "./home.css";
 
 function Home() {

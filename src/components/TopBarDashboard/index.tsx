@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from "../../features/tabSlice";
+import { setActiveTab } from "../../redux/features/tabSlice";
 
 
 type User = {

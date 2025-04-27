@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { setActiveTab } from "../../features/tabSlice";
+import { setActiveTab } from "../../redux/features/tabSlice";
 import { RiHomeLine } from "react-icons/ri";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
