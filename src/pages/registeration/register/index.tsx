@@ -1,42 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { FaFacebook } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import {User} from "../../../types/user";
+import { User } from "../../../types/user";
+import { ApiError } from "../../../types/apiError";
 import "../login.css";
 
-// types/UserSignup.ts
-type SignupData = {
-  username: string;
-  email: string;
-  password: string;
-  password2: string;
-  first_name: string;
-  last_name: string;
-}
+const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
-type SignupResponse = {
-  id: number;        // assuming the server returns the new user's id
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  // add more fields if the API returns more
-}
-
-const API_BASE_URL = process.env.BASE_URL || 'http://localhost:8000'; // load from env
-
-// Define types for the form input values
 const Register = () => {
+
   const navigate = useNavigate();
 
   // Define state types
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
-
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -48,6 +27,16 @@ const Register = () => {
   const handleSignupSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
 
+    if (password !== confirmPassword) {
+      setErrors("Passwords do not match.");
+      return;
+    }
+    if (password.length < 8) {
+      setErrors("Password must be at least 8 characters long.");
+      return;
+    }
+    setErrors("");
+
     const payload = {
       first_name: firstName,
       last_name: lastName,
@@ -56,24 +45,34 @@ const Register = () => {
       password: password,
       password2: confirmPassword,
     };
-    console.log(payload);
 
-    // Dummy token (replace with actual API call later)
-    const response1 = await axios.post(`${API_BASE_URL}/api/users/signup/`, payload);
-    const token = response1.data.token;
-    let user_temp: User = {
-      "email": response1.data.user.email,
-      "first_name": response1.data.user.first_name,
-      "last_name": response1.data.user.last_name,
-      "profile_picture": response1.data.user.profile_picture,
-      "role": response1.data.user.role,
-      "username": response1.data.user.username
-    } = response1.data.user;
-    console.log(response1)
-    console.log(token)
-    const response = await login(token, user_temp);
-    if (response.success) {
-      navigate("/dashboard");
+    try {
+      const signup_api_response = await axios.post(`${API_BASE_URL}/api/users/signup/`, payload);
+      const token = signup_api_response.data.token;
+      let user_temp: User = {
+        "email": signup_api_response.data.user.email,
+        "first_name": signup_api_response.data.user.first_name,
+        "last_name": signup_api_response.data.user.last_name,
+        "profile_picture": signup_api_response.data.user.profile_picture,
+        "role": signup_api_response.data.user.role,
+        "username": signup_api_response.data.user.username
+      } = signup_api_response.data.user;
+
+      const response = login(token, user_temp);
+      if (response.success) {
+        navigate("/dashboard");
+      } else {
+        setErrors('signup failed, please try again!');
+      }
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      setErrors(apiError.message);
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.username[0] || 'Something went wrong on the server!';
+        setErrors(errorMessage);
+      }
     }
   };
 
@@ -164,20 +163,6 @@ const Register = () => {
         >
           {"Already have an account? Login"}
         </div>
-        {/* <div className="social-login">
-          <p>Or login with:</p>
-          <div className="social-icons">
-            <FaFacebook
-              style={{ color: "#15A0F9" }}
-              className="facebook-icon"
-              onClick={() => console.log("Facebook Login")}
-            />
-            <FcGoogle
-              className="google-icon"
-              onClick={() => console.log("Google Login")}
-            />
-          </div>
-        </div> */}
       </div>
     </div>
   );

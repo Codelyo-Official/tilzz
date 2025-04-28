@@ -15,6 +15,9 @@
     "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
     "@syncfusion/ej2-react-schedule": "^19.4.50",
     "axios": "^1.9.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
+    "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.475.0",
     "react": "^18.3.1",
@@ -25,7 +28,9 @@
     "react-quill": "^2.0.0-beta.4",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -52,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/react": "^19.1.1",
     "@types/react-dom": "^19.1.2",
     "autoprefixer": "^10.4.2",

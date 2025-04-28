@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import jwt from 'jsonwebtoken';
+import { User } from "../types/user";
 
 
 // Define the shape of the JWT payload
@@ -12,18 +14,9 @@ type DecodedToken = {
 // Define the context value shape
 type AuthContextType = {
     user: DecodedToken;
-    login: (token: string,user_temp:User) => { success: boolean; message: string };
+    login: (token: string, user_temp: User) => { success: boolean; message: string };
     logout: () => { success: boolean; message: string };
 };
-
-type User = {
-    email: string;
-    first_name: string;
-    last_name: String;
-    profile_picture: string;
-    role: string;
-    username: string;
-}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -40,37 +33,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     );
     const [user, setUser] = useState<User | DecodedToken>({ username: "none" });
 
-    // useEffect(() => {
-    //     let timeout: NodeJS.Timeout;
-    //     if (token) {
-    //         const decoded: DecodedToken = token ? jwtDecode(token) : { username: "none" };
-    //         setUser(decoded)
-    //         timeout = setTimeout(() => {
-    //             setUser({ username: "none" })
-    //             setToken(null); // Clear token after 15 minutes
-    //         }, 15 * 60 * 1000);
-    //     }
-    //     return () => clearTimeout(timeout);
-    // }, [token]);
-
-    const login = (newtoken: string, user_temp:User) => {
-
-        try {
-            if (true) {
-                setToken(newtoken);
-                setUser(user_temp)
-                // const decoded: DecodedToken = newtoken ? jwtDecode(newtoken) : { username: "none" };
-                // setUser(decoded)
-                sessionStorage.setItem("token", newtoken)
-                return { success: true, message: "Login successful" };
-            } else {
-                return {
-                    success: false,
-                    message: "Login failed"
-                };
+    useEffect(() => {
+        if (token) {
+            if (user.username === "none") {
+                const userData: string | null = localStorage.getItem('user');
+                if (userData !== null)
+                    setUser(JSON.parse(userData))
             }
+        }
+    }, [token]);
+
+    const login = (newtoken: string, user_temp: User) => {
+        try {
+            setToken(newtoken);
+            setUser(user_temp)
+            sessionStorage.setItem("token", newtoken)
+            localStorage.setItem('user', JSON.stringify(user_temp));
+            return { success: true, message: "successful" };
+
         } catch (error) {
-            return { success: false, message: "Network error" };
+            return { success: false, message: "failed" };
         }
     };
 
@@ -78,6 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setToken(null);
         setUser({ username: "none" })
         sessionStorage.removeItem("token");
+        localStorage.removeItem("user")
         return { success: true, message: "Logout successful" };
     };
 
