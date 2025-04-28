@@ -14,6 +14,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   // Define state types
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -26,6 +27,16 @@ const Register = () => {
 
   const handleSignupSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
+
+    // Create a new AbortController instance
+    const controller = new AbortController();
+    const { signal } = controller;
+    // Track the request state
+    if (isRequestInProgress) {
+      controller.abort(); // Abort the ongoing request if one is already in progress
+    }
+
+    setIsRequestInProgress(true); // Indicate the request is in progress
 
     if (password !== confirmPassword) {
       setErrors("Passwords do not match.");
@@ -73,6 +84,8 @@ const Register = () => {
         const errorMessage = apiError.response.data?.username[0] || 'Something went wrong on the server!';
         setErrors(errorMessage);
       }
+    } finally {
+      setIsRequestInProgress(false); // Reset request state after completion
     }
   };
 
