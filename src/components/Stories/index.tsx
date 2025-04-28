@@ -3,277 +3,270 @@ import { Link, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setActiveTab } from "../../redux/features/tabSlice";
 import { useAuth } from "../../contexts/AuthProvider";
+import axios from "axios";
+import { ApiError } from "../../types/apiError";
+import { story } from "../../types/story";
 
 
-type story = {
-    id: number;
-    title: string;
-    img: string;
-    description: string;
-    story_by_user: string;
-    follow: boolean;
-    liked: boolean;
-    like_count: number;
-    user_avatar: string;
-}
+// const FeedStories: story[] = [
+//     {
+//         id: 1,
+//         title: "Hamza First Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 2,
+//         title: "Hamza Second Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "hamza856",
 
-const FeedStories:story[]  = [
-    {
-        id: 1,
-        title: "Hamza First Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-    }, {
-        id: 2,
-        title: "Hamza Second Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "hamza856",
+//         follow: false,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: false,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 3,
+//         title: "R6 Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 3,
-        title: "R6 Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 4,
+//         title: "Japan Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 4,
-        title: "Japan Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }
+//     , {
+//         id: 5,
+//         title: "Pak Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }
-    , {
-        id: 5,
-        title: "Pak Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 6,
+//         title: "My Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 6,
-        title: "My Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 7,
+//         title: "Another Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 7,
-        title: "Another Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }
+// ]
 
-    }
-]
+// const MyStories = [
+//     {
+//         id: 1,
+//         title: "Hamza First Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 2,
+//         title: "R6 Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-const MyStories = [
-    {
-        id: 1,
-        title: "Hamza First Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-    }, {
-        id: 2,
-        title: "R6 Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 3,
+//         title: "Japan Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 3,
-        title: "Japan Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }
+//     , {
+//         id: 4,
+//         title: "Pak Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }
-    , {
-        id: 4,
-        title: "Pak Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 5,
+//         title: "My Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 5,
-        title: "My Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 6,
+//         title: "Another Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 6,
-        title: "Another Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }
+// ]
 
-    }
-]
+// const FollowingStories = [
+//     {
+//         id: 1,
+//         title: "Hamza First Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 2,
+//         title: "R6 Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-const FollowingStories = [
-    {
-        id: 1,
-        title: "Hamza First Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-    }, {
-        id: 2,
-        title: "R6 Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 3,
+//         title: "Japan Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 3,
-        title: "Japan Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }
+//     , {
+//         id: 4,
+//         title: "Pak Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }
-    , {
-        id: 4,
-        title: "Pak Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 5,
+//         title: "My Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 5,
-        title: "My Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }, {
+//         id: 6,
+//         title: "Another Story",
+//         img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
+//             "&cs=tinysrgb&w=1260&h=750&dpr=1",
+//         description: "this is a story. And this is my description",
+//         story_by_user: "john_doe",
 
-    }, {
-        id: 6,
-        title: "Another Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
+//         follow: true,
+//         liked: false,
+//         like_count: 10,
+//         user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
 
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
+//     }
+// ]
 
-    }
-]
+const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
-function Stories({  slugStories }:{slugStories:string | null}) {
+function Stories({ slugStories }: { slugStories: string | null }) {
 
     console.log("stories component rendered");
 
@@ -282,25 +275,66 @@ function Stories({  slugStories }:{slugStories:string | null}) {
 
     const [dataStories, setDataStories] = React.useState<story[]>([]);
 
+    const getMyStories = async () => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const myStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/my_stories/`, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log(myStoriesApi_response);
+            setDataStories(myStoriesApi_response.data);
+            // const token = login_api_response.data.token;
+            // let user_temp: User = {
+            //     "email": login_api_response.data.user.email,
+            //     "first_name": login_api_response.data.user.first_name,
+            //     "last_name": login_api_response.data.user.last_name,
+            //     "profile_picture": login_api_response.data.user.profile_picture,
+            //     "role": login_api_response.data.user.role,
+            //     "username": login_api_response.data.user.username
+            // } = login_api_response.data.user;
+
+            // const response = login(token, user_temp);
+            // if (response.success) {
+            //     navigate("/dashboard");
+            // } else {
+            //     setErrors('signup failed, please try again!');
+            // }
+
+        } catch (err: any) {
+            console.log(err)
+            const apiError = err as ApiError;
+            if (apiError.response) {
+                const status = apiError.response.status;
+                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+            }
+        }
+    }
+
     useEffect(() => {
         console.log(`sending req to recieve stories for user:${user.username}`)
         if (slugStories === "stories-feed" || slugStories === null) {
             // api call for all stories
-            setDataStories(FeedStories);
+            // setDataStories(FeedStories);
+            setDataStories([])
         } else if (slugStories === "my-stories") {
             // api call for user story only
-            setDataStories(MyStories);
+            // setDataStories(MyStories);
+            getMyStories();
         } else if (slugStories === "following-stories") {
             // api call for stories followed by the user
-            setDataStories(FollowingStories);
+            // setDataStories(FollowingStories);
+            setDataStories([])
         }
     }, [slugStories]);
 
-    const handleActiveMenu = (name:string) => {
+    const handleActiveMenu = (name: string) => {
         dispatch(setActiveTab(name));
     };
 
-    const toggleFollow = (id:number) => {
+    const toggleFollow = (id: number) => {
 
         setDataStories(() =>
             dataStories.map((story) =>
@@ -353,11 +387,11 @@ function Stories({  slugStories }:{slugStories:string | null}) {
                                                 </svg>
                                             </div>
                                         </button>
-                                        <h4 className="like-count">{st.like_count}</h4>
+                                        <h4 className="like-count">{st.likes_count}</h4>
                                     </div>
-                                    <div className="story-by-user"><img src={st.user_avatar} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.story_by_user}</div></div>
+                                    <div className="story-by-user"><img src={st.author.profile_picture} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.author.username}</div></div>
 
-                                    <img src={st.img} alt="" />
+                                    <img src={st.cover_image} alt="" />
                                     <div className="title">
                                         <p >{st.title}
                                             {slugStories !== "my-stories" && (
