@@ -4,15 +4,41 @@ import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import {User} from "../../../types/user";
 import "../login.css";
+
+// types/UserSignup.ts
+type SignupData = {
+  username: string;
+  email: string;
+  password: string;
+  password2: string;
+  first_name: string;
+  last_name: string;
+}
+
+type SignupResponse = {
+  id: number;        // assuming the server returns the new user's id
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  // add more fields if the API returns more
+}
+
+const API_BASE_URL = process.env.BASE_URL || 'http://localhost:8000'; // load from env
 
 // Define types for the form input values
 const Register = () => {
   const navigate = useNavigate();
 
   // Define state types
-  const [name, setName] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+
   const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
@@ -23,17 +49,29 @@ const Register = () => {
     e.preventDefault();
 
     const payload = {
-      name: name,
+      first_name: firstName,
+      last_name: lastName,
       email: email,
+      username: username,
       password: password,
-      password_confirmation: confirmPassword,
+      password2: confirmPassword,
     };
     console.log(payload);
 
     // Dummy token (replace with actual API call later)
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqb2huZG9lIiwiZXhwIjoxNzE3MDE0MDAwfQ.12345";
-    const response = await login(token);
-    
+    const response1 = await axios.post(`${API_BASE_URL}/api/users/signup/`, payload);
+    const token = response1.data.token;
+    let user_temp: User = {
+      "email": response1.data.user.email,
+      "first_name": response1.data.user.first_name,
+      "last_name": response1.data.user.last_name,
+      "profile_picture": response1.data.user.profile_picture,
+      "role": response1.data.user.role,
+      "username": response1.data.user.username
+    } = response1.data.user;
+    console.log(response1)
+    console.log(token)
+    const response = await login(token, user_temp);
     if (response.success) {
       navigate("/dashboard");
     }
@@ -74,10 +112,24 @@ const Register = () => {
         <form onSubmit={handleSignupSubmit}>
           <input
             type="text"
-            placeholder="Name"
-            value={name}
+            placeholder="First Name"
+            value={firstName}
             required
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            required
+            onChange={(e) => setLastName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            required
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input
             type="email"

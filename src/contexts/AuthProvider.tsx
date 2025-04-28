@@ -12,9 +12,18 @@ type DecodedToken = {
 // Define the context value shape
 type AuthContextType = {
     user: DecodedToken;
-    login: (token: string) => { success: boolean; message: string };
+    login: (token: string,user_temp:User) => { success: boolean; message: string };
     logout: () => { success: boolean; message: string };
 };
+
+type User = {
+    email: string;
+    first_name: string;
+    last_name: String;
+    profile_picture: string;
+    role: string;
+    username: string;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -29,26 +38,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [token, setToken] = useState<string | null>(
         () => sessionStorage.getItem("token")
     );
-    const [user, setUser] = useState<DecodedToken>({ username: "none" });
+    const [user, setUser] = useState<User | DecodedToken>({ username: "none" });
 
-    useEffect(() => {
-        let timeout: NodeJS.Timeout;
-        if (token) {
-            const decoded: DecodedToken = token ? jwtDecode(token) : { username: "none" };
-            setUser(decoded)
-            timeout = setTimeout(() => {
-                setUser({ username: "none" })
-                setToken(null); // Clear token after 15 minutes
-            }, 15 * 60 * 1000);
-        }
-        return () => clearTimeout(timeout);
-    }, [token]);
+    // useEffect(() => {
+    //     let timeout: NodeJS.Timeout;
+    //     if (token) {
+    //         const decoded: DecodedToken = token ? jwtDecode(token) : { username: "none" };
+    //         setUser(decoded)
+    //         timeout = setTimeout(() => {
+    //             setUser({ username: "none" })
+    //             setToken(null); // Clear token after 15 minutes
+    //         }, 15 * 60 * 1000);
+    //     }
+    //     return () => clearTimeout(timeout);
+    // }, [token]);
 
-    const login = (newtoken: string) => {
+    const login = (newtoken: string, user_temp:User) => {
 
         try {
             if (true) {
                 setToken(newtoken);
+                setUser(user_temp)
                 // const decoded: DecodedToken = newtoken ? jwtDecode(newtoken) : { username: "none" };
                 // setUser(decoded)
                 sessionStorage.setItem("token", newtoken)

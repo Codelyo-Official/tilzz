@@ -4,6 +4,8 @@ import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { Link } from 'react-router-dom';
+import {User} from "../../../types/user";
+
 import "../login.css";
 
 // Define types for form refs
@@ -27,9 +29,9 @@ const LoginSignup = () => {
 
     // Dummy token (replace with your actual API request later)
     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqb2huZG9lIiwiZXhwIjoxNzE3MDE0MDAwfQ.12345";
-    const response = login(token);
-
-    if(response.success){
+    //const response = login(token);
+    //response.success
+    if(true){
       navigate("/dashboard");
     } else {
       setErrors("Login failed, please try again.");
