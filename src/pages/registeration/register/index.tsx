@@ -58,7 +58,7 @@ const Register = () => {
     };
 
     try {
-      const signup_api_response = await axios.post(`${API_BASE_URL}/api/users/signup/`, payload);
+      const signup_api_response = await axios.post(`${API_BASE_URL}/api/users/signup/`, payload,{signal});
       const token = signup_api_response.data.token;
       let user_temp: User = {
         "email": signup_api_response.data.user.email,
