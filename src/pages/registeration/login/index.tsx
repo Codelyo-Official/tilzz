@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../../contexts/AuthProvider";
 import { Link } from 'react-router-dom';
-import {User} from "../../../types/user";
+import { User } from "../../../types/user";
 import { ApiError } from "../../../types/apiError";
 import axios from "axios";
 import "../login.css";
@@ -14,6 +14,7 @@ const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 const LoginSignup = () => {
   const navigate = useNavigate();
 
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
   const inputEmailRef = useRef<HTMLInputElement | null>(null);  // Typed ref
   const inputPasswordRef = useRef<HTMLInputElement | null>(null);  // Typed ref
 
@@ -22,7 +23,17 @@ const LoginSignup = () => {
 
   const handleLoginSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
-    
+
+    // Create a new AbortController instance
+    const controller = new AbortController();
+    const { signal } = controller;
+    // Track the request state
+    if (isRequestInProgress) {
+      controller.abort(); // Abort the ongoing request if one is already in progress
+    }
+
+    setIsRequestInProgress(true); // Indicate the request is in progress
+
     // Ensure refs are non-null before accessing
     const payload = {
       username: inputEmailRef.current?.value,
@@ -30,7 +41,7 @@ const LoginSignup = () => {
     };
 
     try {
-      const login_api_response = await axios.post(`${API_BASE_URL}/api/users/login/`, payload);
+      const login_api_response = await axios.post(`${API_BASE_URL}/api/users/login/`, payload, { signal });
       console.log(login_api_response);
       const token = login_api_response.data.token;
       let user_temp: User = {
@@ -57,7 +68,10 @@ const LoginSignup = () => {
         const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
         setErrors(errorMessage);
       }
+    } finally {
+      setIsRequestInProgress(false); // Reset request state after completion
     }
+
   };
 
   const toggleLoginSignup = () => {
