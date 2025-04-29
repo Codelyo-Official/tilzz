@@ -2,18 +2,11 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import jwt from 'jsonwebtoken';
 import { User } from "../types/user";
-
-
-// Define the shape of the JWT payload
-type DecodedToken = {
-    username: string;
-    exp?: number;
-    // [key: string]: any;
-};
+import { DecodedToken } from "../types/decodedToken";
 
 // Define the context value shape
 type AuthContextType = {
-    user: DecodedToken;
+    user: DecodedToken | User;
     login: (token: string, user_temp: User) => { success: boolean; message: string };
     logout: () => { success: boolean; message: string };
 };

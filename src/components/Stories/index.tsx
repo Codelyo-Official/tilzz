@@ -271,7 +271,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
     console.log("stories component rendered");
 
     const dispatch = useDispatch();
-    const { user } = useAuth();
+    const { user }: any = useAuth();
+    console.log(user)
 
     const [dataStories, setDataStories] = React.useState<story[]>([]);
 
@@ -296,7 +297,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         }
     }
 
-    const getAllStories = async  () => {
+    const getAllStories = async () => {
         try {
             const token = sessionStorage.getItem("token");
             const allStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/`, {
@@ -338,12 +339,35 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         dispatch(setActiveTab(name));
     };
 
-    const toggleFollow = (id: number) => {
+    const toggleFollow = async (st: story) => {
 
-        setDataStories(() =>
-            dataStories.map((story) =>
-                story.id === id ? { ...story, follow: !story.follow } : story
-            ));
+        try {
+            const token = sessionStorage.getItem("token");
+            const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/${st.id}/${!st.follow?'follow':'unfollow'}/`, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                }
+            });
+            console.log(followStoryApi_response);
+            setDataStories(followStoryApi_response.data);
+
+        } catch (err: any) {
+            console.log(err)
+            const apiError = err as ApiError;
+            if (apiError.response) {
+                const status = apiError.response.status;
+                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+            }
+        } finally {
+            setDataStories(() =>
+                dataStories.map((story) =>
+                    story.id === st.id ? { ...story, follow: !story.follow } : story
+                ));
+        }
+    }
+
+    const handle_like = (st: story) => {
+        console.log(st);
     }
 
     return (
@@ -367,7 +391,10 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                     </NavLink>
                                     <div className="like-dislike-div">
                                         <button
-                                            onClick={() => { console.log("like btn toggled") }}
+                                            onClick={() => {
+                                                console.log("like btn hit")
+                                                handle_like(st)
+                                            }}
                                             style={{ height: "20px", width: "20px", color: "white" }}
                                         >
                                             <div className="heart-icon">
@@ -398,9 +425,9 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                     <img src={st.cover_image} alt="" />
                                     <div className="title">
                                         <p >{st.title}
-                                            {slugStories !== "my-stories" && (
+                                            {st.author !== user.id && (
                                                 <button
-                                                    onClick={() => { toggleFollow(st.id) }}
+                                                    onClick={() => { toggleFollow(st) }}
                                                     className={st.follow
                                                         ? "following-btn"
                                                         : "follow-btn"}>{st.follow
@@ -416,9 +443,9 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                     </ul>
 
                 </div>
-                <div className="viewmore-div">
+                {/* <div className="viewmore-div">
                     <button>View More</button>
-                </div>
+                </div> */}
             </div>
         </div>
     );
