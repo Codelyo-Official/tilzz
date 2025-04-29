@@ -1,141 +1,39 @@
 import React, { useEffect } from "react";
 import { Link, NavLink } from 'react-router-dom';
 import "./publicfeed.css"
+import { story } from "../../types/story";
+import { ApiError } from "../../types/apiError";
+import axios from "axios";
 
-
-type story = {
-    id: number;
-    title: string;
-    img: string;
-    description: string;
-    story_by_user: string;
-    follow: boolean;
-    liked: boolean;
-    like_count: number;
-    user_avatar: string;
-}
-
-const AllStories:story[] = [
-    {
-        id: 1,
-        title: "Hamza First Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-    }, {
-        id: 2,
-        title: "Hamza Second Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "hamza856",
-
-        follow: false,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-
-    }, {
-        id: 3,
-        title: "R6 Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-
-    }, {
-        id: 4,
-        title: "Japan Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-
-    }
-    , {
-        id: 5,
-        title: "Pak Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-
-    }, {
-        id: 6,
-        title: "My Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-
-    }, {
-        id: 7,
-        title: "Another Story",
-        img: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-            "&cs=tinysrgb&w=1260&h=750&dpr=1",
-        description: "this is a story. And this is my description",
-        story_by_user: "john_doe",
-
-        follow: true,
-        liked: false,
-        like_count: 10,
-        user_avatar: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"
-
-    }
-]
-
-
-// { children, slugStories }: {
-//     children: React.ReactNode;
-//     slugStories: string;
-// }
+const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
 function PublicStoriesFeed() {
 
-
     console.log("public stories component rendered");
 
-
     const [dataStories, setDataStories] = React.useState<story[]>([]);
+
+    const getPublicStories = async () => {
+        try {
+            const publicStoriesApi_response = await axios.get(`${API_BASE_URL}/api/public/stories/`);
+            console.log(publicStoriesApi_response);
+            setDataStories(publicStoriesApi_response.data);
+
+        } catch (err: any) {
+            console.log(err)
+            const apiError = err as ApiError;
+            if (apiError.response) {
+                const status = apiError.response.status;
+                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+            }
+        }
+    }
 
     //this use effect will only run once and get data which is required
     useEffect(() => {
         console.log("sending request to recieve stories")
-        setDataStories(AllStories);
+        getPublicStories();
     }, []);
-
-    const toggleFollow = (id:number) => {
-
-        setDataStories(() =>
-            dataStories.map((story) =>
-                story.id === id ? { ...story, follow: !story.follow } : story
-            ));
-    }
 
     return (
         <div>
@@ -143,17 +41,12 @@ function PublicStoriesFeed() {
                 backgroundColor: "transparent",
                 boxShadow: "none",
             }}>
-                <div className="story-container">
+                <div className="story-container" >
                     <ul className="story-box101" style={{ rowGap: "40px" }}>
                         {dataStories.map((st, index) => {
                             return (
                                 <li key={index} className="storybox-public-feed">
-                                    <NavLink
-                                        className="view-btn-public-feed"
-                                        to={`/dashboard?activeTab=story-preview&storyId=${st.id}`}
-                                    >
-
-                                    </NavLink>
+                                    
                                     <div className="like-dislike-div">
                                         {/* <button 
                                         onClick={()=>{console.log("like btn toggled")}}
@@ -182,9 +75,12 @@ function PublicStoriesFeed() {
                                         </button> */}
                                         {/* <h4 className="like-count">{st.like_count}</h4> */}
                                     </div>
-                                    <div className="story-by-user"><img src={st.user_avatar} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.story_by_user}</div></div>
+                                    {/* <div className="story-by-user">
+                                        <img src={st.user_avatar} /> 
+                                        <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.story_by_user}</div>
+                                    </div> */}
 
-                                    <img src={st.img} alt="" />
+                                    <img className="story-by-user-public" src={st.cover_image} alt="" />
                                     <div className="public-story-title">
                                         <p style={{ fontWeight: "bold" }}>{st.title}
                                             {/* {slugStories!=="my-stories" && (
@@ -199,15 +95,18 @@ function PublicStoriesFeed() {
                                         </p>
                                         <p className="descp-public-stories">{st.description}</p>
                                     </div>
+                                    <NavLink
+                                        className="view-btn-public-feed"
+                                        to={`/dashboard?activeTab=story-preview&storyId=${st.id}`}
+                                    >
+
+                                    </NavLink>
                                 </li>
                             )
                         })}
                     </ul>
 
                 </div>
-                {/* <div className="viewmore-div">
-                    <button>View More</button>
-                </div> */}
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
 .storybox-public-feed{
     position: relative;
+    height: 350px;
 }
 
 .storybox-public-feed .view-btn{
@@ -53,4 +54,11 @@
     left:0;
     width: 100%;
     height: 100%;
+}
+
+.story-by-user-public{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
