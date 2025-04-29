@@ -281,27 +281,31 @@ function Stories({ slugStories }: { slugStories: string | null }) {
             const myStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/my_stories/`, {
                 headers: {
                     Authorization: `Token ${token}`,
-                    'Content-Type': 'multipart/form-data'
                 }
             });
             console.log(myStoriesApi_response);
             setDataStories(myStoriesApi_response.data);
-            // const token = login_api_response.data.token;
-            // let user_temp: User = {
-            //     "email": login_api_response.data.user.email,
-            //     "first_name": login_api_response.data.user.first_name,
-            //     "last_name": login_api_response.data.user.last_name,
-            //     "profile_picture": login_api_response.data.user.profile_picture,
-            //     "role": login_api_response.data.user.role,
-            //     "username": login_api_response.data.user.username
-            // } = login_api_response.data.user;
 
-            // const response = login(token, user_temp);
-            // if (response.success) {
-            //     navigate("/dashboard");
-            // } else {
-            //     setErrors('signup failed, please try again!');
-            // }
+        } catch (err: any) {
+            console.log(err)
+            const apiError = err as ApiError;
+            if (apiError.response) {
+                const status = apiError.response.status;
+                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+            }
+        }
+    }
+
+    const getAllStories = async  () => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const allStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/`, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                }
+            });
+            console.log(allStoriesApi_response);
+            setDataStories(allStoriesApi_response.data);
 
         } catch (err: any) {
             console.log(err)
@@ -318,7 +322,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         if (slugStories === "stories-feed" || slugStories === null) {
             // api call for all stories
             // setDataStories(FeedStories);
-            setDataStories([])
+            getAllStories();
         } else if (slugStories === "my-stories") {
             // api call for user story only
             // setDataStories(MyStories);

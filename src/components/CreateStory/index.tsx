@@ -9,7 +9,7 @@ const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 const CreateStory: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [visibility, setVisibility] = useState<'private' | 'public'>('private');
+  const [visibility, setVisibility] = useState<'private' | 'public'>('public');
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
 
@@ -32,13 +32,14 @@ const CreateStory: React.FC = () => {
     const payload = {
       title,
       description,
-      // visibility,
+      visibility,
       "cover_image": bannerFile,
     };
 
     // Append fields
     formData.append('title', payload.title);      // your other fields
     formData.append('description', payload.description);
+    formData.append('visibility', payload.visibility);
     // Append the actual file
     if (bannerFile !== null)
       formData.append('cover_image', bannerFile); // payload.file should be a File object
