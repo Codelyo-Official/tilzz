@@ -536,3 +536,7 @@
   .tab-selected{
     background-color: rgba(128, 128, 128, 0.222);
   }
+
+  .logged-in-user-avatar img{
+    object-fit: cover;
+  }

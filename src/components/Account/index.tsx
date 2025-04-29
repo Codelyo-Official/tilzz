@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, ChangeEvent } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Trash2, Upload } from "lucide-react";
@@ -10,6 +11,9 @@ type FormData = {
   last_name: String;
   email: string;
 };
+
+const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
+
 
 export default function Account() {
   console.log("account rendered");
@@ -34,9 +38,7 @@ export default function Account() {
   };
 
   const handleDeleteAccount = () => {
-    // if (confirm("Are you sure you want to delete your account? This action is irreversible.")) {
-    //   alert("Account deleted!");
-    // }
+    
   };
 
   return (
@@ -44,7 +46,7 @@ export default function Account() {
       <div className="profile-card">
         <h2>Profile Settings</h2>
         <div className="profile-avatar">
-          <img src={user.profile_picture} alt="Profile" className="avatar-img" />
+          <img src={`${API_BASE_URL}${user.profile_picture}`} alt="Profile" className="avatar-img" />
         </div>
         <button className="edit-btn" onClick={() => setOpen(true)}>
           Edit Profile

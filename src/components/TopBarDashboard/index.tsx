@@ -2,14 +2,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { setActiveTab } from "../../redux/features/tabSlice";
+import { User } from "../../types/user";
 
+const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
-type User = {
-    username: string;
-}
 
 const TopBarDashboard = ({ user }: {
-    user: User
+    user: any
 }) => {
 
     const navigate = useNavigate();
@@ -24,7 +23,7 @@ const TopBarDashboard = ({ user }: {
             } else {
                 element.style.display = "none";
             }
-        }}><img src={"https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740"} /></button>
+        }}><img src={`${API_BASE_URL}${user.profile_picture}`} /></button>
             <div className="dropdown-content" id="dropdown-content-id">
                 <a onClick={() => {
                     let element = document.getElementById("dropdown-content-id") as HTMLDivElement;
