@@ -34,7 +34,6 @@ const StoryPreview = () => {
   console.log("story preview rendered")
 
   const [dataStory, setDataStory] = React.useState<story | null>(null);
-  const [episodes, setEpisodes] = React.useState([]);
   const [currentEditId, setCurrentEditId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const location = useLocation();
@@ -43,7 +42,6 @@ const StoryPreview = () => {
   const { user } = useAuth();
   const [activeEpisode, setActiveEpisode] = useState(1);
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
-  const [newEpisode, setNewEpisode] = useState({ title: '', content: '' });
   const queryParams = new URLSearchParams(location.search);
   const paramvalue = queryParams.get('storyId');
 
@@ -87,9 +85,13 @@ const StoryPreview = () => {
     // Add the new episode (this is just for demonstration purposes)
     console.log('New episode added:', addNewEpisodeObject);
 
+    if (dataStory && dataStory.episodes.length > 1) {
+      setAddNewEpisodeObject((prev: any) => ({ ...prev, number: dataStory.episodes.length + 1 }))
+    }
+
     try {
       const token = sessionStorage.getItem("token");
-      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/`, {
+      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/`, addNewEpisodeObject, {
         headers: {
           Authorization: `Token ${token}`,
         }
@@ -111,15 +113,6 @@ const StoryPreview = () => {
   const nextVariation = (ep: episode) => {
 
 
-  }
-
-  const isNextOption = (ep: episode) => {
-
-    return true;
-  }
-
-  const isPrevOption = (ep: episode) => {
-    return true;
   }
 
   const prevVariation = (ep: episode) => {
@@ -151,73 +144,47 @@ const StoryPreview = () => {
 
           <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
             {dataStory.episodes.map((episode: any) => (
-              (episode.episode >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+              (episode.number >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Spinner animation="grow" role="status" variant="light" style={{ color: "white", fontSize: "20px" }}>
                   <span className="visually-hidden">Loading...</span>
                 </Spinner>
               </div>) : (
-                (episode.episode === 1 || (episode.episode > 1 && dataStory.episodes[episode.episode - 2].current_variation_number <= episode.current_variation_number && (newVAt === null || (newVAt !== null &&
-                  episode.episode < newVAt.episode
-                )))) && (
-                  <>
-                    <div key={episode.id} className="episode">
-                      <div className="episode-content">
+                <>
+                  <div key={episode.id} className="episode">
+                    <div className="episode-content">
+                      {episode.id === currentEditId ? (
+                        <div className="new-episode-form">
+                          <textarea>{episode.title}</textarea>
+                          <div style={{ display: "flex", justifyContent: "center" }}>
+                            <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
+                            <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                              setCurrentEditId(null)
+                            }} >Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p>{episode.title} <span className="episode-options">
+                          {episode.number > 1 && (
+                            <button className="tooltip1" onClick={() => {
+                              addVersion(episode)
+                            }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                          )}
+                          {/* {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)} */}
+                          <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
+                          <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
+                          {episode.has_previous_version && (<button className="tooltip1" onClick={() => {
+                            prevVariation(episode);
+                          }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
+                          {episode.has_next_version && (<button className="tooltip1" onClick={() => {
+                            nextVariation(episode);
+                          }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
+                          <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
+                          <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
+                        </span></p>)}
 
-                        {episode.creator === user.username ? (
-
-                          episode.id === currentEditId ? (
-                            <div className="new-episode-form">
-                              <textarea>{episode.content}</textarea>
-                              <div style={{ display: "flex", justifyContent: "center" }}>
-                                <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
-                                <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                                  setCurrentEditId(null)
-                                }} >Cancel</button>
-                              </div>
-                            </div>
-                          ) : (
-                            <p>{episode.content} <span className="episode-options">
-                              {episode.episode > 1 && (
-                                <button className="tooltip1" onClick={() => {
-                                  addVersion(episode)
-                                }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
-                              )}
-                              {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
-                              <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
-                              <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
-                              {isPrevOption(episode) && (<button className="tooltip1" onClick={() => {
-                                prevVariation(episode);
-                              }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                              {isNextOption(episode) && (<button className="tooltip1" onClick={() => {
-                                nextVariation(episode);
-                              }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                              <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
-                              <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
-                            </span></p>)
-
-                        ) : (
-                          <p>{episode.content} <span className="episode-options">
-                            {episode.episode > 1 && (
-                              <button className="tooltip1" onClick={() => {
-                                addVersion(episode)
-                              }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
-                            )}
-                            {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
-                            <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
-                            <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
-                            {isPrevOption(episode) && (<button className="tooltip1" onClick={() => {
-                              prevVariation(episode);
-                            }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                            {isNextOption(episode) && (<button className="tooltip1" onClick={() => {
-                              nextVariation(episode);
-                            }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                            <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
-                            <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
-                          </span></p>
-                        )}
-                      </div>
                     </div>
-                  </>))
+                  </div>
+                </>)
             ))}
           </div>
 
@@ -225,19 +192,21 @@ const StoryPreview = () => {
           <div className="add-episode">
             {showNewEpisodeForm || isAddNewVersion ? (
               <div className="new-episode-form">
-                <input required type="text" placeholder='chapter title' value={addNewEpisodeObject.title} onChange={(e) => {
-                  setAddNewEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
-                }} />
-                <textarea required placeholder='content' value={addNewEpisodeObject.content} onChange={(e) => {
-                  setAddNewEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
-                }}></textarea>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>{isAddNewVersion ? (<>Submit New Version</>) : (<>Submit New Episode</>)}</button>
-                  {isAddNewVersion && (<button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                    cancelVersion()
-                  }}>Cancel</button>)}
+                <form >
+                  <input required type="text" placeholder='chapter title' value={addNewEpisodeObject.title} onChange={(e) => {
+                    setAddNewEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
+                  }} />
+                  <textarea required placeholder='content' value={addNewEpisodeObject.content} onChange={(e) => {
+                    setAddNewEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
+                  }}></textarea>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button type="submit" className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>{isAddNewVersion ? (<>Submit New Version</>) : (<>Submit New Episode</>)}</button>
+                    {isAddNewVersion && (<button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                      cancelVersion()
+                    }}>Cancel</button>)}
 
-                </div>
+                  </div>
+                </form>
               </div>
             ) : (
               <button className="new-episode-btn" onClick={handleNewEpisode}>
