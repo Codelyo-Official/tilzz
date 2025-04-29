@@ -14,4 +14,5 @@ export type story = {
     likes_count: number;
     created_at:string;
     updated_at:string;
+    episodes?:any;
 }
