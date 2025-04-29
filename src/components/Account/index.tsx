@@ -1,16 +1,13 @@
 import { useState, ChangeEvent } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Trash2, Upload } from "lucide-react";
+import { User } from "../../types/user";
+import { useAuth } from "../../contexts/AuthProvider";
 import "./AccountPage.css";
 
-type User = {
-  name: string;
-  email: string;
-  avatar: string;
-};
-
 type FormData = {
-  name: string;
+  first_name: string;
+  last_name: String;
   email: string;
 };
 
@@ -18,18 +15,13 @@ export default function Account() {
   console.log("account rendered");
 
   const { register, handleSubmit } = useForm<FormData>();
-  const [user, setUser] = useState<User>({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    avatar:
-      "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738868287~exp=1738871887~hmac=e24f4e7f6c2262238670c06cca214d2d0629465513fa6c63fdf54624c2855cf2&w=740",
-  });
+  const { user }: any = useAuth();
+
 
   const [open, setOpen] = useState<boolean>(false);
   const [image, setImage] = useState<string>(user.avatar);
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    setUser((prev) => ({ ...prev, ...data, avatar: image }));
     setOpen(false);
   };
 
@@ -52,7 +44,7 @@ export default function Account() {
       <div className="profile-card">
         <h2>Profile Settings</h2>
         <div className="profile-avatar">
-          <img src={user.avatar} alt="Profile" className="avatar-img" />
+          <img src={user.profile_picture} alt="Profile" className="avatar-img" />
         </div>
         <button className="edit-btn" onClick={() => setOpen(true)}>
           Edit Profile
@@ -66,10 +58,16 @@ export default function Account() {
                   <input type="file" className="hidden" onChange={handleImageUpload} />
                 </label>
                 {image && <img src={image} alt="New" className="preview-img" />}
-                <label>Name</label>
+                <label>First Name</label>
                 <input
-                  {...register("name")}
-                  defaultValue={user.name}
+                  {...register("first_name")}
+                  defaultValue={user.first_name}
+                  className="input-field"
+                />
+                <label>Last Name</label>
+                <input
+                  {...register("last_name")}
+                  defaultValue={user.last_name}
                   className="input-field"
                 />
                 <label>Email</label>
