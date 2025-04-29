@@ -83,15 +83,19 @@ const StoryPreview = () => {
 
   const handleSubmitNewEpisode = async () => {
     // Add the new episode (this is just for demonstration purposes)
-    console.log('New episode added:', addNewEpisodeObject);
 
-    if (dataStory && dataStory.episodes.length > 1) {
-      setAddNewEpisodeObject((prev: any) => ({ ...prev, number: dataStory.episodes.length + 1 }))
+    let temp_obj = { ...addNewEpisodeObject };
+    if (dataStory && dataStory.episodes.length > 0) {
+      console.log(dataStory.episodes.length + 1)
+      temp_obj = { ...addNewEpisodeObject, number: dataStory.episodes.length + 1 }
     }
+
+    console.log('New episode added:', temp_obj);
+
 
     try {
       const token = sessionStorage.getItem("token");
-      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/`, addNewEpisodeObject, {
+      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/`, temp_obj, {
         headers: {
           Authorization: `Token ${token}`,
         }
@@ -119,9 +123,10 @@ const StoryPreview = () => {
 
   }
 
-  const addVersion = (ep: episode) => {
+  const addVersion = (ep: any) => {
     setIsAddNewVersion(true);
-
+    console.log(ep)
+    setNewVAt(ep.number);
   }
 
   const cancelVersion = () => {
@@ -150,40 +155,41 @@ const StoryPreview = () => {
                 </Spinner>
               </div>) : (
                 <>
-                  <div key={episode.id} className="episode">
-                    <div className="episode-content">
-                      {episode.id === currentEditId ? (
-                        <div className="new-episode-form">
-                          <textarea>{episode.title}</textarea>
-                          <div style={{ display: "flex", justifyContent: "center" }}>
-                            <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
-                            <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                              setCurrentEditId(null)
-                            }} >Cancel</button>
+                  {(newVAt===null || (episode.number < newVAt)) && (
+                    <div key={episode.id} className="episode">
+                      <div className="episode-content">
+                        {episode.id === currentEditId ? (
+                          <div className="new-episode-form">
+                            <textarea>{episode.title}</textarea>
+                            <div style={{ display: "flex", justifyContent: "center" }}>
+                              <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
+                              <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                setCurrentEditId(null)
+                              }} >Cancel</button>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <p>{episode.title} <span className="episode-options">
-                          {episode.number > 1 && (
-                            <button className="tooltip1" onClick={() => {
-                              addVersion(episode)
-                            }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
-                          )}
-                          {/* {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)} */}
-                          <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
-                          <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
-                          {episode.has_previous_version && (<button className="tooltip1" onClick={() => {
-                            prevVariation(episode);
-                          }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                          {episode.has_next_version && (<button className="tooltip1" onClick={() => {
-                            nextVariation(episode);
-                          }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                          <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
-                          <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
-                        </span></p>)}
+                        ) : (
+                          <p>{episode.title} <span className="episode-options">
+                            {episode.number > 1 && (
+                              <button className="tooltip1" onClick={() => {
+                                addVersion(episode)
+                              }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                            )}
+                            {/* {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)} */}
+                            <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
+                            <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
+                            {episode.has_previous_version && (<button className="tooltip1" onClick={() => {
+                              prevVariation(episode);
+                            }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
+                            {episode.has_next_version && (<button className="tooltip1" onClick={() => {
+                              nextVariation(episode);
+                            }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
+                            <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
+                            <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
+                          </span></p>)}
 
-                    </div>
-                  </div>
+                      </div>
+                    </div>)}
                 </>)
             ))}
           </div>
