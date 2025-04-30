@@ -17,15 +17,15 @@ import { ApiError } from '../../types/apiError';
 import { story } from '../../types/story';
 import axios from 'axios';
 
-type episode = {
-  current_variation_number: number;
-  variations: string[],
-  id: number,
-  episode: number,
-  title: string,
-  content: string;
-  creator: string;
-}
+// type episode = {
+//   current_variation_number: number;
+//   variations: string[],
+//   id: number,
+//   episode: number,
+//   title: string,
+//   content: string;
+//   creator: string;
+// }
 
 const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
@@ -38,7 +38,7 @@ const StoryPreview = () => {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [isAddNewVersion, setIsAddNewVersion] = useState(false);
-  const [newVAt, setNewVAt] = useState<episode | null>(null)
+  const [newVAt, setNewVAt] = useState<number | null>(null)
   const { user } = useAuth();
   const [activeEpisode, setActiveEpisode] = useState(1);
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
@@ -114,12 +114,12 @@ const StoryPreview = () => {
     setShowNewEpisodeForm(false);
   };
 
-  const nextVariation = (ep: episode) => {
+  const nextVariation = () => {
 
 
   }
 
-  const prevVariation = (ep: episode) => {
+  const prevVariation = () => {
 
   }
 
@@ -179,10 +179,10 @@ const StoryPreview = () => {
                             <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
                             <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
                             {episode.has_previous_version && (<button className="tooltip1" onClick={() => {
-                              prevVariation(episode);
+                              prevVariation();
                             }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
                             {episode.has_next_version && (<button className="tooltip1" onClick={() => {
-                              nextVariation(episode);
+                              nextVariation();
                             }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
                             <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
                             <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
