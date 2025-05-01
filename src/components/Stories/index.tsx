@@ -8,7 +8,7 @@ import { ApiError } from "../../types/apiError";
 import { story } from "../../types/story";
 
 
-const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function Stories({ slugStories }: { slugStories: string | null }) {
 

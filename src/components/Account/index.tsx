@@ -12,8 +12,7 @@ type FormData = {
   email: string;
 };
 
-const API_BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
-
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export default function Account() {
   console.log("account rendered");
