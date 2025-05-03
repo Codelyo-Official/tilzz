@@ -93,7 +93,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 }
             });
             console.log(followStoryApi_response);
-            setDataStories(followStoryApi_response.data);
+            //setDataStories(followStoryApi_response.data);
 
         } catch (err: any) {
             console.log(err)
@@ -101,6 +101,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
             if (apiError.response) {
                 const status = apiError.response.status;
                 const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+                alert(errorMessage)
             }
         } finally {
             setDataStories(() =>
@@ -169,7 +170,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                     <img src={st.cover_image} alt="" />
                                     <div className="title">
                                         <p >{st.title}
-                                            {st.author !== user.id && (
+                                            {st.author.id !== user.id && (
                                                 <button
                                                     onClick={() => { toggleFollow(st) }}
                                                     className={st.follow

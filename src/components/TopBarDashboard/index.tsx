@@ -10,6 +10,7 @@ const TopBarDashboard = ({ user }: {
     user: any
 }) => {
 
+    console.log(user)
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
