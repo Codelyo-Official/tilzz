@@ -101,7 +101,7 @@ const StoryPreview = () => {
   }, [paramvalue]);
 
   React.useEffect(() => {
-    if (dataStory !== null && episodes.length===0) {
+    if (dataStory !== null && episodes.length === 0) {
       getEpisodes();
     }
   }, [dataStory])
@@ -127,7 +127,7 @@ const StoryPreview = () => {
         }
       });
       console.log(createNewEpisode_response);
-      setEpisodes([...episodes,createNewEpisode_response.data])
+      setEpisodes([...episodes, createNewEpisode_response.data])
 
     } catch (err: any) {
       console.log(err)
@@ -232,7 +232,7 @@ const StoryPreview = () => {
                                 addVersion(episode)
                               }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
                             )}
-                            {/* {episode.creator === user.username && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)} */}
+                            {episode.author_id === user.id && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
                             <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
                             <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
                             {episode.has_previous_version && (<button className="tooltip1" onClick={() => {
