@@ -154,6 +154,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                         onClick={() => { handleActiveMenu("story-preview") }}
                                     >
                                     </NavLink>
+                                    {st.author.id !== user.id && (
                                     <div className="like-dislike-div"
                                     >
                                         <button
@@ -185,7 +186,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                             </div>
                                         </button>
                                         <h4 className="like-count">{st.likes_count}</h4>
-                                    </div>
+                                    </div>)}
                                     <div className="story-by-user"><img src={st.author.profile_picture} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.author.username}</div></div>
 
                                     <img src={st.cover_image} alt="" />

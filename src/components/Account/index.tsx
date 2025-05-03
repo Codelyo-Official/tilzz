@@ -4,12 +4,14 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Trash2, Upload } from "lucide-react";
 import { User } from "../../types/user";
 import { useAuth } from "../../contexts/AuthProvider";
+import axios from "axios";
+import { ApiError } from "../../types/apiError";
 import "./AccountPage.css";
 
 type FormData = {
   first_name: string;
   last_name: String;
-  email: string;
+  username: string;
 };
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -18,13 +20,38 @@ export default function Account() {
   console.log("account rendered");
 
   const { register, handleSubmit } = useForm<FormData>();
-  const { user }: any = useAuth();
+  const { user,setUser }: any = useAuth();
 
 
   const [open, setOpen] = useState<boolean>(false);
   const [image, setImage] = useState<string>(user.avatar);
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    console.log(data);
+    try {
+      const token = sessionStorage.getItem("token");
+      const updateUserInfoApi_response = await axios.put(`${API_BASE_URL}/api/users/update_profile/`,data, {
+          headers: {
+              Authorization: `Token ${token}`,
+          }
+      });
+      console.log(updateUserInfoApi_response);
+      setUser(updateUserInfoApi_response.data);
+      localStorage.setItem('user', JSON.stringify(updateUserInfoApi_response.data));
+
+  } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+          const status = apiError.response.status;
+          const errorMessage = apiError.response.data?.username || 'could not update user info';
+          if(Array.isArray(errorMessage)){
+            alert(errorMessage[0])
+          }else{
+            alert(errorMessage)
+          }
+      }
+  }
     setOpen(false);
   };
 
@@ -45,7 +72,9 @@ export default function Account() {
       <div className="profile-card">
         <h2>Profile Settings</h2>
         <div className="profile-avatar">
-          <img src={`${API_BASE_URL}${user.profile_picture}`} alt="Profile" className="avatar-img" />
+          <img src={user.profile_picture.startsWith('http')
+            ? user.profile_picture
+            : `${API_BASE_URL}${user.profile_picture}`} alt="Profile" className="avatar-img" />
         </div>
         <button className="edit-btn" onClick={() => setOpen(true)}>
           Edit Profile
@@ -61,21 +90,24 @@ export default function Account() {
                 {image && <img src={image} alt="New" className="preview-img" />}
                 <label>First Name</label>
                 <input
+                required
                   {...register("first_name")}
                   defaultValue={user.first_name}
                   className="input-field"
                 />
                 <label>Last Name</label>
                 <input
+                  required
                   {...register("last_name")}
                   defaultValue={user.last_name}
                   className="input-field"
                 />
                 <label>Email</label>
                 <input
-                  {...register("email")}
-                  defaultValue={user.email}
-                  type="email"
+                required
+                  {...register("username")}
+                  defaultValue={user.username}
+                  type="text"
                   className="input-field"
                 />
                 <button type="submit" className="save-btn">
@@ -88,9 +120,9 @@ export default function Account() {
             </div>
           </div>
         )}
-        <button className="delete-btn" onClick={handleDeleteAccount}>
+        {/* <button className="delete-btn" onClick={handleDeleteAccount}>
           Delete Account
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ type AuthContextType = {
     user: DecodedToken | User;
     login: (token: string, user_temp: User) => { success: boolean; message: string };
     logout: () => { success: boolean; message: string };
+    setUser: React.Dispatch<React.SetStateAction<User | DecodedToken>>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -63,6 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 user,
                 login,
                 logout,
+                setUser
             }}>
             {children}
         </AuthContext.Provider>

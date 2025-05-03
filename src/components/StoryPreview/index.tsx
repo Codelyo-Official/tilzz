@@ -101,7 +101,7 @@ const StoryPreview = () => {
   }, [paramvalue]);
 
   React.useEffect(() => {
-    if (dataStory !== null) {
+    if (dataStory !== null && episodes.length===0) {
       getEpisodes();
     }
   }, [dataStory])
@@ -127,6 +127,7 @@ const StoryPreview = () => {
         }
       });
       console.log(createNewEpisode_response);
+      setEpisodes([...episodes,createNewEpisode_response.data])
 
     } catch (err: any) {
       console.log(err)
@@ -148,12 +149,12 @@ const StoryPreview = () => {
 
     try {
       const token = sessionStorage.getItem("token");
-      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/${newVAt.id}/versions/`, temp_obj, {
+      const createNewEpisodeVersion_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/${newVAt.id}/versions/`, temp_obj, {
         headers: {
           Authorization: `Token ${token}`,
         }
       });
-      console.log(createNewEpisode_response);
+      console.log(createNewEpisodeVersion_response);
 
     } catch (err: any) {
       console.log(err)
@@ -211,12 +212,12 @@ const StoryPreview = () => {
                 </Spinner>
               </div>) : (
                 <>
-                  {(newVAt === null || (episode.number < newVAt)) && (
+                  {(newVAt === null || (episode.number < newVAt.number)) && (
                     <div key={episode.id} className="episode">
                       <div className="episode-content">
                         {episode.id === currentEditId ? (
                           <div className="new-episode-form">
-                            <textarea>{episode.title}</textarea>
+                            <textarea>{episode.content}</textarea>
                             <div style={{ display: "flex", justifyContent: "center" }}>
                               <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
                               <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {

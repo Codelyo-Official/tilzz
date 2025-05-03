@@ -23,7 +23,10 @@ const TopBarDashboard = ({ user }: {
             } else {
                 element.style.display = "none";
             }
-        }}><img src={`${API_BASE_URL}${user.profile_picture}`} /></button>
+        }}><img src={user.profile_picture.startsWith('http')
+            ? user.profile_picture
+            : `${API_BASE_URL}${user.profile_picture}`}
+            /></button>
             <div className="dropdown-content" id="dropdown-content-id">
                 <a onClick={() => {
                     let element = document.getElementById("dropdown-content-id") as HTMLDivElement;
