@@ -88,7 +88,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         try {
             const token = sessionStorage.getItem("token");
             console.log(token);
-            const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/${st.id}/${!st.follow?'follow':'unfollow'}/`, {
+            const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/${st.id}/${!st.follow ? 'follow' : 'unfollow'}/`, {
                 headers: {
                     Authorization: `Token ${token}`,
                 }
@@ -105,15 +105,34 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 alert(errorMessage)
             }
         } finally {
-            setDataStories(() =>
-                dataStories.map((story) =>
-                    story.id === st.id ? { ...story, follow: !story.follow } : story
-                ));
+           
         }
     }
 
-    const handle_like = (st: story) => {
+    const handle_like = async (st: story) => {
         console.log(st);
+        try {
+            const token = sessionStorage.getItem("token");
+            console.log(token);
+            const likeStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/${st.id}/${!st.is_liked ? 'like' : 'unlike'}/`, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                }
+            });
+            console.log(likeStoryApi_response);
+            //setDataStories(likeStoryApi_response.data);
+
+        } catch (err: any) {
+            console.log(err)
+            const apiError = err as ApiError;
+            if (apiError.response) {
+                const status = apiError.response.status;
+                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+                alert(errorMessage)
+            }
+        } finally {
+            
+        }
     }
 
     return (
