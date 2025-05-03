@@ -115,6 +115,13 @@
     width: auto;
   }
 
+  .like-dislike-div button{
+    background-color: transparent;
+    height: 100%;
+    width: 100%;
+    background-color: yellow;
+  }
+
   .story-box101{
     padding: 0px;
     height: 100%;

@@ -10,6 +10,7 @@ export type story = {
     follow?: boolean;
     is_liked: boolean;
     is_favorited: boolean;
+    is_followed: boolean;
     status:string;
     likes_count: number;
     created_at:string;

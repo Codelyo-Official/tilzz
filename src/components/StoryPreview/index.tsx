@@ -34,11 +34,12 @@ const StoryPreview = () => {
   console.log("story preview rendered")
 
   const [dataStory, setDataStory] = React.useState<story | null>(null);
+  const [episodes, setEpisodes] = React.useState<any>([]);
   const [currentEditId, setCurrentEditId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [isAddNewVersion, setIsAddNewVersion] = useState(false);
-  const [newVAt, setNewVAt] = useState<number | null>(null)
+  const [newVAt, setNewVAt] = useState<any | null>(null)
   const { user } = useAuth();
   const [activeEpisode, setActiveEpisode] = useState(1);
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
@@ -72,10 +73,38 @@ const StoryPreview = () => {
     }
   }
 
+  const getEpisodes = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const EpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(EpisodesApi_response);
+      setEpisodes(EpisodesApi_response.data);
+      // setDataStory(EpisodesApi_response.data);
+
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+      }
+    }
+  }
+
   React.useEffect(() => {
     console.log(`sending req to recieve story data for story id:${paramvalue} for user:${user.username}`)
     getStoryDetails();
   }, [paramvalue]);
+
+  React.useEffect(() => {
+    if (dataStory !== null) {
+      getEpisodes();
+    }
+  }, [dataStory])
 
   const handleNewEpisode = () => {
     setShowNewEpisodeForm(true);
@@ -85,13 +114,10 @@ const StoryPreview = () => {
     // Add the new episode (this is just for demonstration purposes)
 
     let temp_obj = { ...addNewEpisodeObject };
-    if (dataStory && dataStory.episodes.length > 0) {
-      console.log(dataStory.episodes.length + 1)
-      temp_obj = { ...addNewEpisodeObject, number: dataStory.episodes.length + 1 }
+    if (episodes.length > 0) {
+      temp_obj = { ...addNewEpisodeObject, number: episodes.length + 1 }
     }
-
     console.log('New episode added:', temp_obj);
-
 
     try {
       const token = sessionStorage.getItem("token");
@@ -114,6 +140,31 @@ const StoryPreview = () => {
     setShowNewEpisodeForm(false);
   };
 
+  const handleSubmitNewVersion = async () => {
+    console.log(newVAt)
+    console.log(addNewEpisodeObject)
+    let temp_obj = { content: addNewEpisodeObject.content };
+    console.log('New episode added:', temp_obj);
+
+    try {
+      const token = sessionStorage.getItem("token");
+      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/${newVAt.id}/versions/`, temp_obj, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(createNewEpisode_response);
+
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+      }
+    }
+  }
+
   const nextVariation = () => {
 
 
@@ -126,7 +177,12 @@ const StoryPreview = () => {
   const addVersion = (ep: any) => {
     setIsAddNewVersion(true);
     console.log(ep)
-    setNewVAt(ep.number);
+    setNewVAt(ep);
+    setAddNewEpisodeObject({
+      title: "",
+      content: "",
+      number: 0
+    })
   }
 
   const cancelVersion = () => {
@@ -148,14 +204,14 @@ const StoryPreview = () => {
           </div>
 
           <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
-            {dataStory.episodes.map((episode: any) => (
+            {episodes.map((episode: any) => (
               (episode.number >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Spinner animation="grow" role="status" variant="light" style={{ color: "white", fontSize: "20px" }}>
                   <span className="visually-hidden">Loading...</span>
                 </Spinner>
               </div>) : (
                 <>
-                  {(newVAt===null || (episode.number < newVAt)) && (
+                  {(newVAt === null || (episode.number < newVAt)) && (
                     <div key={episode.id} className="episode">
                       <div className="episode-content">
                         {episode.id === currentEditId ? (
@@ -198,21 +254,26 @@ const StoryPreview = () => {
           <div className="add-episode">
             {showNewEpisodeForm || isAddNewVersion ? (
               <div className="new-episode-form">
-                <form >
-                  <input required type="text" placeholder='chapter title' value={addNewEpisodeObject.title} onChange={(e) => {
-                    setAddNewEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
-                  }} />
-                  <textarea required placeholder='content' value={addNewEpisodeObject.content} onChange={(e) => {
-                    setAddNewEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
-                  }}></textarea>
-                  <div style={{ display: "flex", justifyContent: "center" }}>
-                    <button type="submit" className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>{isAddNewVersion ? (<>Submit New Version</>) : (<>Submit New Episode</>)}</button>
-                    {isAddNewVersion && (<button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                <input required type="text" placeholder='chapter title' value={addNewEpisodeObject.title} onChange={(e) => {
+                  setAddNewEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
+                }} />
+                <textarea required placeholder='content' value={addNewEpisodeObject.content} onChange={(e) => {
+                  setAddNewEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
+                }}></textarea>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  {isAddNewVersion ? (<>
+                    <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
+                      console.log("submit new version")
+                      handleSubmitNewVersion();
+                    }}>Submit New Version</button>
+                    <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
                       cancelVersion()
-                    }}>Cancel</button>)}
+                    }}>Cancel</button>
+                  </>) : (
+                    <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>Submit New Episode</button>
+                  )}
 
-                  </div>
-                </form>
+                </div>
               </div>
             ) : (
               <button className="new-episode-btn" onClick={handleNewEpisode}>

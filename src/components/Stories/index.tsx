@@ -87,6 +87,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
         try {
             const token = sessionStorage.getItem("token");
+            console.log(token);
             const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/${st.id}/${!st.follow?'follow':'unfollow'}/`, {
                 headers: {
                     Authorization: `Token ${token}`,
@@ -134,7 +135,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                         onClick={() => { handleActiveMenu("story-preview") }}
                                     >
                                     </NavLink>
-                                    <div className="like-dislike-div">
+                                    <div className="like-dislike-div"
+                                    >
                                         <button
                                             onClick={() => {
                                                 console.log("like btn hit")
