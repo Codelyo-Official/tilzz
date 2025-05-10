@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const login = (newtoken: string, user_temp: User) => {
         try {
+            console.log(user_temp)
             setToken(newtoken);
             setUser(user_temp)
             sessionStorage.setItem("token", newtoken)

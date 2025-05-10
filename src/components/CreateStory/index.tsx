@@ -46,7 +46,7 @@ const CreateStory: React.FC = () => {
     const token = sessionStorage.getItem("token");
     try {
       console.log(payload)
-      const createStory_api_response = await axios.post(`${API_BASE_URL}/api/stories/`, formData,
+      const createStory_api_response = await axios.post(`${API_BASE_URL}/api/stories/stories/`, formData,
         {
           headers: {
             Authorization: `Token ${token}`,

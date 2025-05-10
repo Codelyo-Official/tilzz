@@ -1,7 +1,9 @@
 import { User } from "./user";
 
 export type story = {
-    author: User;
+    // author: User;
+    creator:number;
+    creator_username:string;
     id: number;
     episodes_count:number;
     title: string;
@@ -16,4 +18,6 @@ export type story = {
     created_at:string;
     updated_at:string;
     episodes?:any;
+    followed_by:number[];
+    liked_by:number[];
 }

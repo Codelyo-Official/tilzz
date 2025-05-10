@@ -40,17 +40,24 @@ const LoginSignup = () => {
     };
 
     try {
-      const login_api_response = await axios.post(`${API_BASE_URL}/api/users/login/`, payload, { signal });
+      const login_api_response = await axios.post(`${API_BASE_URL}/api/accounts/login/`, payload, { signal });
       console.log(login_api_response);
       const token = login_api_response.data.token;
+      let p_temp = undefined;
+      if (login_api_response.data.user.profile !== null) {
+        p_temp = login_api_response.data.user.profile.profile_picture;
+      }
       let user_temp: User = {
+        id: login_api_response.data.user.id,
         "email": login_api_response.data.user.email,
-        "first_name": login_api_response.data.user.first_name,
-        "last_name": login_api_response.data.user.last_name,
-        "profile_picture": login_api_response.data.user.profile_picture,
-        "role": login_api_response.data.user.role,
+        // "first_name": login_api_response.data.user.first_name,
+        // "last_name": login_api_response.data.user.last_name,
+        "profile_picture": p_temp,
+        // "role": login_api_response.data.user.role,
         "username": login_api_response.data.user.username
-      } = login_api_response.data.user;
+      };
+
+      console.log("from above:", user_temp)
 
       const response = login(token, user_temp);
       if (response.success) {
@@ -64,7 +71,7 @@ const LoginSignup = () => {
       setErrors(apiError.message);
       if (apiError.response) {
         const status = apiError.response.status;
-        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+        const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
         setErrors(errorMessage);
       }
     } finally {

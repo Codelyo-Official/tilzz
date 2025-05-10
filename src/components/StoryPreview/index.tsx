@@ -55,7 +55,7 @@ const StoryPreview = () => {
   const getStoryDetails = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const StoryApi_response = await axios.get(`${API_BASE_URL}/api/stories/${paramvalue}/`, {
+      const StoryApi_response = await axios.get(`${API_BASE_URL}/api/stories/stories/${paramvalue}/`, {
         headers: {
           Authorization: `Token ${token}`,
         }
@@ -76,14 +76,13 @@ const StoryPreview = () => {
   const getEpisodes = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const EpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/`, {
+      const EpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/episodes/by_story/?story_id=${paramvalue}`, {
         headers: {
           Authorization: `Token ${token}`,
         }
       });
       console.log(EpisodesApi_response);
-      setEpisodes(EpisodesApi_response.data);
-      // setDataStory(EpisodesApi_response.data);
+      // setEpisodes(EpisodesApi_response.data);
 
     } catch (err: any) {
       console.log(err)

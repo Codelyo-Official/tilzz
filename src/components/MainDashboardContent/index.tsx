@@ -24,7 +24,7 @@ function MainContent() {
         <>
 
             {(value === null || (value === "stories-feed" || value === "my-stories" ||
-                value === "following-stories"
+                value === "following-stories" || value === "fav-stories"
             )) && (
                     <Stories slugStories={value} />
                 )}

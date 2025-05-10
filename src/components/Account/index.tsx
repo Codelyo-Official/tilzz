@@ -72,7 +72,7 @@ export default function Account() {
       <div className="profile-card">
         <h2>Profile Settings</h2>
         <div className="profile-avatar">
-          <img src={user.profile_picture.startsWith('http')
+          <img src={user.profile_picture!==undefined && user.profile_picture.startsWith('http')
             ? user.profile_picture
             : `${API_BASE_URL}${user.profile_picture}`} alt="Profile" className="avatar-img" />
         </div>

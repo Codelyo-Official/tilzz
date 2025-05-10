@@ -6,6 +6,7 @@ import { useAuth } from "../../contexts/AuthProvider";
 import axios from "axios";
 import { ApiError } from "../../types/apiError";
 import { story } from "../../types/story";
+import { User } from "../../types/user";
 
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -16,14 +17,13 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
     const dispatch = useDispatch();
     const { user }: any = useAuth();
-    console.log(user)
 
     const [dataStories, setDataStories] = React.useState<story[]>([]);
 
     const getMyStories = async () => {
         try {
             const token = sessionStorage.getItem("token");
-            const myStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/my_stories/`, {
+            const myStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/stories/my_stories/`, {
                 headers: {
                     Authorization: `Token ${token}`,
                 }
@@ -44,13 +44,55 @@ function Stories({ slugStories }: { slugStories: string | null }) {
     const getAllStories = async () => {
         try {
             const token = sessionStorage.getItem("token");
-            const allStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/`, {
+            const allStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/stories/`, {
                 headers: {
                     Authorization: `Token ${token}`,
                 }
             });
             console.log(allStoriesApi_response);
             setDataStories(allStoriesApi_response.data);
+
+        } catch (err: any) {
+            console.log(err)
+            const apiError = err as ApiError;
+            if (apiError.response) {
+                const status = apiError.response.status;
+                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+            }
+        }
+    }
+
+    const getFavStories = async () => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const favStoriesApi_response = await axios.get(`${API_BASE_URL}/api/accounts/favorite-stories/`, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                }
+            });
+            console.log(favStoriesApi_response);
+            // setDataStories(favStoriesApi_response.data);
+
+        } catch (err: any) {
+            console.log(err)
+            const apiError = err as ApiError;
+            if (apiError.response) {
+                const status = apiError.response.status;
+                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+            }
+        }
+    }
+
+    const getFollowedStories = async () => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const followedStoriesApi_response = await axios.get(`${API_BASE_URL}/api/accounts/followed-stories/`, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                }
+            });
+            console.log(followedStoriesApi_response);
+            setDataStories(followedStoriesApi_response.data);
 
         } catch (err: any) {
             console.log(err)
@@ -75,7 +117,13 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         } else if (slugStories === "following-stories") {
             // api call for stories followed by the user
             // setDataStories(FollowingStories);
-            setDataStories([])
+            getFollowedStories();
+        }
+
+        else if (slugStories === "fav-stories") {
+            // api call for stories followed by the user
+            // setDataStories(FollowingStories);
+            getFavStories();
         }
     }, [slugStories]);
 
@@ -87,14 +135,29 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
         try {
             const token = sessionStorage.getItem("token");
+            let follow_flag = checkIfInFollowing(user, st);
             console.log(token);
-            const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/${st.id}/${!st.follow ? 'follow' : 'unfollow'}/`, {
+            const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/stories/${st.id}/${!follow_flag ? 'follow' : 'unfollow'}/`, {}, {
                 headers: {
                     Authorization: `Token ${token}`,
                 }
             });
             console.log(followStoryApi_response);
             //setDataStories(followStoryApi_response.data);
+
+            setDataStories(prevStories =>
+                prevStories.map(s =>
+                    s.id === st.id
+                        ? {
+                            ...s,
+                            followed_by: follow_flag
+                                ? s.followed_by.filter(id => id !== user.id)
+                                : [...s.followed_by, user.id],
+                        }
+                        : s
+                )
+            );
+
 
         } catch (err: any) {
             console.log(err)
@@ -104,8 +167,6 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
                 alert(errorMessage)
             }
-        } finally {
-           
         }
     }
 
@@ -114,13 +175,29 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         try {
             const token = sessionStorage.getItem("token");
             console.log(token);
-            const likeStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/${st.id}/${!st.is_liked ? 'like' : 'unlike'}/`, {
+            let like_flag = checkIfInLiking(user, st);
+
+            const likeStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/stories/${st.id}/${!like_flag ? 'like' : 'unlike'}/`, {}, {
                 headers: {
                     Authorization: `Token ${token}`,
                 }
             });
             console.log(likeStoryApi_response);
             //setDataStories(likeStoryApi_response.data);
+
+            setDataStories(prevStories =>
+                prevStories.map(s =>
+                    s.id === st.id
+                        ? {
+                            ...s,
+                            likes_count: like_flag ? st.likes_count - 1 : st.likes_count + 1,
+                            liked_by: like_flag
+                                ? s.liked_by.filter(id => id !== user.id)
+                                : [...s.liked_by, user.id],
+                        }
+                        : s
+                )
+            );
 
         } catch (err: any) {
             console.log(err)
@@ -130,9 +207,19 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
                 alert(errorMessage)
             }
-        } finally {
-            
         }
+    }
+
+    const checkIfInFollowing = (user: User, st: story) => {
+        if (st.followed_by.includes(user.id))
+            return true;
+        return false;
+    }
+
+    const checkIfInLiking = (user: User, st: story) => {
+        if (st.liked_by.includes(user.id))
+            return true;
+        return false;
     }
 
     return (
@@ -141,7 +228,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 backgroundColor: slugStories === "public-feed" ? "transparent" : "white",
                 boxShadow: slugStories === "public-feed" ? "none" : "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             }}>
-                <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : "Following Stories"}</h2>
+                <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : slugStories === "following-stories" ? "Following Stories" : "Favorite Stories"}</h2>
                 <div className="story-container">
                     <ul className="story-box101">
                         {dataStories.map((st, index) => {
@@ -154,50 +241,50 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                         onClick={() => { handleActiveMenu("story-preview") }}
                                     >
                                     </NavLink>
-                                    {st.author.id !== user.id && (
-                                    <div className="like-dislike-div"
-                                    >
-                                        <button
-                                            onClick={() => {
-                                                console.log("like btn hit")
-                                                handle_like(st)
-                                            }}
-                                            style={{ height: "20px", width: "20px", color: "white" }}
+                                    {st.creator !== user.id && (
+                                        <div className="like-dislike-div"
                                         >
-                                            <div className="heart-icon">
-                                                <svg
-                                                    fill="white"
-                                                    version="1.1"
-                                                    id="Layer_1"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 511.996 511.996">
-                                                    <g>
+                                            <button
+                                                onClick={() => {
+                                                    console.log("like btn hit")
+                                                    handle_like(st)
+                                                }}
+                                                style={{ height: "20px", width: "20px", color: "white" }}
+                                            >
+                                                <div className="heart-icon">
+                                                    <svg
+                                                        fill="white"
+                                                        version="1.1"
+                                                        id="Layer_1"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 511.996 511.996">
                                                         <g>
-                                                            <path
-                                                                d="M467.01,64.373c-29.995-29.995-69.299-44.988-108.612-44.988c-36.779,0-73.259,13.662-102.4,39.919
+                                                            <g>
+                                                                <path
+                                                                    d="M467.01,64.373c-29.995-29.995-69.299-44.988-108.612-44.988c-36.779,0-73.259,13.662-102.4,39.919
                                                         c-29.15-26.257-65.621-39.919-102.4-39.919c-39.313,0-78.618,14.993-108.612,44.988c-59.981,59.981-59.981,157.235,0,217.225
                                                         L255.998,492.61L467.01,281.598C526.991,221.609,526.991,124.363,467.01,64.373z M448.919,263.49L255.998,456.403L63.085,263.499
                                                         c-49.903-49.911-49.903-131.115,0-181.018c24.175-24.175,56.32-37.487,90.513-37.487c31.206,0,60.399,11.563,83.695,31.889
                                                         l18.705,17.485l18.714-17.493c23.296-20.318,52.489-31.889,83.695-31.889c34.193,0,66.33,13.312,90.513,37.487
                                                         C498.831,132.375,498.822,213.587,448.919,263.49z"/>
+                                                            </g>
                                                         </g>
-                                                    </g>
-                                                </svg>
-                                            </div>
-                                        </button>
-                                        <h4 className="like-count">{st.likes_count}</h4>
-                                    </div>)}
-                                    <div className="story-by-user"><img src={st.author.profile_picture} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.author.username}</div></div>
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                            <h4 className="like-count">{st.likes_count}</h4>
+                                        </div>)}
+                                    {/* <div className="story-by-user"><img src={st.author.profile_picture} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.author.username}</div></div> */}
 
                                     <img src={st.cover_image} alt="" />
                                     <div className="title">
                                         <p >{st.title}
-                                            {st.author.id !== user.id && (
+                                            {(st.creator !== user.id) && (
                                                 <button
                                                     onClick={() => { toggleFollow(st) }}
-                                                    className={st.follow
+                                                    className={checkIfInFollowing(user, st)
                                                         ? "following-btn"
-                                                        : "follow-btn"}>{st.follow
+                                                        : "follow-btn"}>{checkIfInFollowing(user, st)
                                                             ? "following"
                                                             : "follow"}</button>
                                             )}

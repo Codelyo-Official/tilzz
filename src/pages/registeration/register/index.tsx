@@ -49,25 +49,33 @@ const Register = () => {
     setErrors("");
 
     const payload = {
-      first_name: firstName,
-      last_name: lastName,
+      // first_name: firstName,
+      // last_name: lastName,
       email: email,
       username: username,
       password: password,
-      password2: confirmPassword,
+      password_confirmation
+        : confirmPassword,
     };
 
     try {
-      const signup_api_response = await axios.post(`${API_BASE_URL}/api/users/signup/`, payload,{signal});
+      const signup_api_response: any = await axios.post(`${API_BASE_URL}/api/accounts/register/`, payload, { signal });
+
+      console.log(signup_api_response)
       const token = signup_api_response.data.token;
+      let p_temp = undefined;
+      if (signup_api_response.data.user.profile !== null) {
+        p_temp = signup_api_response.data.user.profile.profile_picture;
+      }
       let user_temp: User = {
+        id: signup_api_response.data.user.id,
         "email": signup_api_response.data.user.email,
-        "first_name": signup_api_response.data.user.first_name,
-        "last_name": signup_api_response.data.user.last_name,
-        "profile_picture": signup_api_response.data.user.profile_picture,
-        "role": signup_api_response.data.user.role,
+        // "first_name": signup_api_response.data.user.first_name,
+        // "last_name": signup_api_response.data.user.last_name,
+        "profile_picture": p_temp,
+        // "role": signup_api_response.data.user.role,
         "username": signup_api_response.data.user.username
-      } = signup_api_response.data.user;
+      };
 
       const response = login(token, user_temp);
       if (response.success) {
@@ -75,6 +83,7 @@ const Register = () => {
       } else {
         setErrors('signup failed, please try again!');
       }
+
     } catch (err: any) {
       console.log(err)
       const apiError = err as ApiError;
@@ -122,7 +131,7 @@ const Register = () => {
       <div className={`form-container form-container-expanded`} style={{ marginTop: "120px" }}>
         <h2 style={{ fontSize: "16px", color: "black" }}>{"Create New Account"}</h2>
         <form onSubmit={handleSignupSubmit}>
-          <input
+          {/* <input
             type="text"
             placeholder="First Name"
             value={firstName}
@@ -135,7 +144,7 @@ const Register = () => {
             value={lastName}
             required
             onChange={(e) => setLastName(e.target.value)}
-          />
+          /> */}
           <input
             type="text"
             placeholder="Username"

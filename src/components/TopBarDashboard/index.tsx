@@ -10,7 +10,7 @@ const TopBarDashboard = ({ user }: {
     user: any
 }) => {
 
-    console.log(user)
+    console.log("user from top bar:",user)
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -23,7 +23,7 @@ const TopBarDashboard = ({ user }: {
             } else {
                 element.style.display = "none";
             }
-        }}><img src={user.profile_picture.startsWith('http')
+        }}><img src={user.profile_picture!==undefined && user.profile_picture.startsWith('http')
             ? user.profile_picture
             : `${API_BASE_URL}${user.profile_picture}`}
             /></button>
