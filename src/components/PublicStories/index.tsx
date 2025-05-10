@@ -15,7 +15,7 @@ function PublicStoriesFeed() {
 
     const getPublicStories = async () => {
         try {
-            const publicStoriesApi_response = await axios.get(`${API_BASE_URL}/api/public/stories/`);
+            const publicStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/public/stories/`);
             console.log(publicStoriesApi_response);
             setDataStories(publicStoriesApi_response.data);
 
