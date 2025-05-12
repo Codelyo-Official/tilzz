@@ -39,14 +39,16 @@ export const links: LinkCategory[]  = [
         icon: <RiContactsLine style={{height:"14px", width:"14px", display:"inline-block", margin:"0", color:"black", marginRight:"5px", marginTop:"-2px"}}/>,
       },
       {
-        name: 'Following Stories',
-        slug:'following-stories',
-        icon: <SlUserFollowing style={{height:"14px", width:"14px", display:"inline-block", margin:"0", color:"black", marginRight:"5px", marginTop:"-2px"}}/>,
-      },{
         name: 'Favourites',
-        slug:'fav-stories',
+        slug:'following-stories',
         icon: <FaRegHeart style={{height:"14px", width:"14px", display:"inline-block", margin:"0", color:"black", marginRight:"5px", marginTop:"-2px"}}/>,
-      },{
+      },
+      // {
+      //   name: 'Favourites',
+      //   slug:'fav-stories',
+      //   icon: <FaRegHeart style={{height:"14px", width:"14px", display:"inline-block", margin:"0", color:"black", marginRight:"5px", marginTop:"-2px"}}/>,
+      // },
+      {
         name: 'Quarantine',
         slug:'reports',
         icon: <FaRegFlag style={{height:"14px", width:"14px", display:"inline-block", margin:"0", color:"black", marginRight:"5px", marginTop:"-2px"}}/>,

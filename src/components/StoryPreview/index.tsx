@@ -49,7 +49,6 @@ const StoryPreview = () => {
   const [addNewEpisodeObject, setAddNewEpisodeObject] = React.useState<any>({
     title: "",
     content: "",
-    number: 1
   });
 
   const getStoryDetails = async () => {
@@ -82,7 +81,7 @@ const StoryPreview = () => {
         }
       });
       console.log(EpisodesApi_response);
-      // setEpisodes(EpisodesApi_response.data);
+      setEpisodes(EpisodesApi_response.data);
 
     } catch (err: any) {
       console.log(err)
@@ -112,15 +111,23 @@ const StoryPreview = () => {
   const handleSubmitNewEpisode = async () => {
     // Add the new episode (this is just for demonstration purposes)
 
+    let version;
+    if (episodes.length === 0)
+      version = null;
+    else if (episodes.length > 0) {
+      version = episodes[episodes.length - 1].version;
+    }
     let temp_obj = { ...addNewEpisodeObject };
-    if (episodes.length > 0) {
-      temp_obj = { ...addNewEpisodeObject, number: episodes.length + 1 }
+    console.log(temp_obj)
+    if (version !== null) {
+      // do some other stuff
+      temp_obj.version = version;
     }
     console.log('New episode added:', temp_obj);
 
     try {
       const token = sessionStorage.getItem("token");
-      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/`, temp_obj, {
+      const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/ `, temp_obj, {
         headers: {
           Authorization: `Token ${token}`,
         }
@@ -143,17 +150,27 @@ const StoryPreview = () => {
   const handleSubmitNewVersion = async () => {
     console.log(newVAt)
     console.log(addNewEpisodeObject)
-    let temp_obj = { content: addNewEpisodeObject.content };
-    console.log('New episode added:', temp_obj);
 
     try {
       const token = sessionStorage.getItem("token");
-      const createNewEpisodeVersion_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/${newVAt.id}/versions/`, temp_obj, {
+      const createNewEpisodeVersion_response = await axios.post(`${API_BASE_URL}/api/stories/episodes/${newVAt.id}/branch/`, addNewEpisodeObject, {
         headers: {
           Authorization: `Token ${token}`,
         }
       });
       console.log(createNewEpisodeVersion_response);
+
+      const targetId = newVAt.id;
+      const index = episodes.findIndex((ep:any) => ep.id === targetId);
+
+      if (index !== -1) {
+        const updatedEpisodes = [
+          ...episodes.slice(0, index),  
+          createNewEpisodeVersion_response.data                
+        ];
+
+        setEpisodes(updatedEpisodes);
+      }
 
     } catch (err: any) {
       console.log(err)
@@ -181,7 +198,6 @@ const StoryPreview = () => {
     setAddNewEpisodeObject({
       title: "",
       content: "",
-      number: 0
     })
   }
 
@@ -211,7 +227,7 @@ const StoryPreview = () => {
                 </Spinner>
               </div>) : (
                 <>
-                  {(newVAt === null || (episode.number < newVAt.number)) && (
+                  {(newVAt === null || (episode.id < newVAt.id)) && (
                     <div key={episode.id} className="episode">
                       <div className="episode-content">
                         {episode.id === currentEditId ? (
@@ -226,7 +242,7 @@ const StoryPreview = () => {
                           </div>
                         ) : (
                           <p>{episode.title} <span className="episode-options">
-                            {episode.number > 1 && (
+                            {true && (
                               <button className="tooltip1" onClick={() => {
                                 addVersion(episode)
                               }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>

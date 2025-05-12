@@ -88,8 +88,8 @@ export default function Account() {
                   <input type="file" className="hidden" onChange={handleImageUpload} />
                 </label>
                 {image && <img src={image} alt="New" className="preview-img" />}
-                <label>First Name</label>
-                <input
+                {/* <label>First Name</label> */}
+                {/* <input
                 required
                   {...register("first_name")}
                   defaultValue={user.first_name}
@@ -101,8 +101,8 @@ export default function Account() {
                   {...register("last_name")}
                   defaultValue={user.last_name}
                   className="input-field"
-                />
-                <label>Email</label>
+                /> */}
+                <label>UserName</label>
                 <input
                 required
                   {...register("username")}

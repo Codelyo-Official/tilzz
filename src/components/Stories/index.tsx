@@ -228,7 +228,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 backgroundColor: slugStories === "public-feed" ? "transparent" : "white",
                 boxShadow: slugStories === "public-feed" ? "none" : "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             }}>
-                <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : slugStories === "following-stories" ? "Following Stories" : "Favorite Stories"}</h2>
+                <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : slugStories === "following-stories" ? "Favorite Stories" : "Favorite Stories"}</h2>
                 <div className="story-container">
                     <ul className="story-box101">
                         {dataStories.map((st, index) => {
@@ -241,7 +241,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                         onClick={() => { handleActiveMenu("story-preview") }}
                                     >
                                     </NavLink>
-                                    {st.creator !== user.id && (
+                                    {(st.creator !== user.id || true) && (
                                         <div className="like-dislike-div"
                                         >
                                             <button
