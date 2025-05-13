@@ -61,6 +61,10 @@ const StoryPreview = () => {
       });
       console.log(StoryApi_response);
       setDataStory(StoryApi_response.data);
+      if(StoryApi_response.data.versions.length>0){
+        setEpisodes(StoryApi_response.data.versions[0].episodes)
+
+      }
 
     } catch (err: any) {
       console.log(err)
@@ -72,16 +76,17 @@ const StoryPreview = () => {
     }
   }
 
-  const getEpisodes = async () => {
+  const getEpisodes = async (ver:number) => {
     try {
       const token = sessionStorage.getItem("token");
-      const EpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/episodes/by_story/?story_id=${paramvalue}`, {
+      const EpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/stories/${paramvalue}/?versions=${ver}`, {
         headers: {
           Authorization: `Token ${token}`,
         }
       });
       console.log(EpisodesApi_response);
-      setEpisodes(EpisodesApi_response.data);
+      // setEpisodes(EpisodesApi_response.data);
+      return EpisodesApi_response.data;
 
     } catch (err: any) {
       console.log(err)
@@ -91,18 +96,14 @@ const StoryPreview = () => {
         const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
       }
     }
+
+    return null;
   }
 
   React.useEffect(() => {
     console.log(`sending req to recieve story data for story id:${paramvalue} for user:${user.username}`)
     getStoryDetails();
   }, [paramvalue]);
-
-  React.useEffect(() => {
-    if (dataStory !== null && episodes.length === 0) {
-      getEpisodes();
-    }
-  }, [dataStory])
 
   const handleNewEpisode = () => {
     setShowNewEpisodeForm(true);
@@ -121,7 +122,7 @@ const StoryPreview = () => {
     console.log(temp_obj)
     if (version !== null) {
       // do some other stuff
-      temp_obj.version = version;
+      temp_obj.version_id = version;
     }
     console.log('New episode added:', temp_obj);
 
@@ -180,14 +181,51 @@ const StoryPreview = () => {
         const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
       }
     }
-  }
 
-  const nextVariation = () => {
-
+    setShowNewEpisodeForm(false);
 
   }
 
-  const prevVariation = () => {
+  const nextVariation = async (ep:any) => {
+    console.log(ep)
+    const mres = await getEpisodes(ep.next_version.version)
+    //console.log(mres);
+    if(mres.versions.length>0 && mres.versions[0].episodes.length>0){
+      let toadd = [...mres.versions[0].episodes];
+      let result = [];
+      for(let i = 0; i< episodes.length;i++){
+        if(episodes[i].id!==ep.id){
+          result.push(episodes[i]);
+        }else{
+          break;
+        }
+      }
+      result=[...result,...toadd]
+      console.log("new episodes:",result)
+      setEpisodes(result)
+    }
+
+  }
+
+  const prevVariation = async (ep:any) => {
+    console.log(ep)
+    const mres = await getEpisodes(ep.previous_version.version)
+    console.log(mres)
+
+    if(mres.versions.length>0 && mres.versions[0].episodes.length>0){
+      let toadd = [...mres.versions[0].episodes];
+      let result = [];
+      for(let i = 0; i< episodes.length;i++){
+        if(episodes[i].version!==mres.versions[0].episodes[0].version && episodes[i].id!==ep.id){
+          result.push(episodes[i]);
+        }else{
+          break;
+        }
+      }
+      result=[...result,...toadd]
+      console.log("new episodes:",result)
+      setEpisodes(result)
+    }
 
   }
 
@@ -250,11 +288,11 @@ const StoryPreview = () => {
                             {episode.author_id === user.id && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
                             <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
                             <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
-                            {episode.has_previous_version && (<button className="tooltip1" onClick={() => {
-                              prevVariation();
+                            {episode.previous_version!==null && (<button className="tooltip1" onClick={() => {
+                              prevVariation(episode);
                             }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                            {episode.has_next_version && (<button className="tooltip1" onClick={() => {
-                              nextVariation();
+                            {episode.next_version!==null && (<button className="tooltip1" onClick={() => {
+                              nextVariation(episode);
                             }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
                             <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
                             <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>

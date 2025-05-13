@@ -20,4 +20,5 @@ export type story = {
     episodes?:any;
     followed_by:number[];
     liked_by:number[];
+    versions:any;
 }
