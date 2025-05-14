@@ -112,6 +112,13 @@ const StoryPreview = () => {
   const handleSubmitNewEpisode = async () => {
     // Add the new episode (this is just for demonstration purposes)
 
+    if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0)
+    {
+      alert("title and content cannot be empty");
+      return;
+    }
+
+
     let version;
     if (episodes.length === 0)
       version = null;
@@ -149,6 +156,14 @@ const StoryPreview = () => {
   };
 
   const handleSubmitNewVersion = async () => {
+
+    if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0)
+      {
+        alert("title and content cannot be empty");
+        return;
+      }
+  
+
     console.log(newVAt)
     console.log(addNewEpisodeObject)
 
@@ -279,7 +294,7 @@ const StoryPreview = () => {
                           </div>
                         ) : (
                           <p>{episode.title} <span className="episode-options">
-                            {true && (
+                            {episode.next_version===null && (
                               <button className="tooltip1" onClick={() => {
                                 addVersion(episode)
                               }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
