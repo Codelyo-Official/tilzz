@@ -72,7 +72,6 @@ const CreateStory: React.FC = () => {
   return (
     <div className="create-story-container">
       <h2>Create Your Story</h2>
-      {errors && <p style={{ color: "red" }}>{errors}</p>}
       <form onSubmit={handleSubmit} className="create-story-form">
         <div className="input-group">
           <label htmlFor="title">Title</label>
@@ -124,7 +123,7 @@ const CreateStory: React.FC = () => {
             </div>
           )}
         </div>
-
+        {errors && <p className='errors'>{errors}</p>}
         <button type="submit" className="submit-btn">Create Story</button>
       </form>
     </div>

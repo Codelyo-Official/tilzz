@@ -9,7 +9,6 @@ import "../login.css";
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
-// Define types for form refs
 const LoginSignup = () => {
   const navigate = useNavigate();
 
@@ -23,15 +22,12 @@ const LoginSignup = () => {
   const handleLoginSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
 
-    // Create a new AbortController instance
-    const controller = new AbortController();
-    const { signal } = controller;
-    // Track the request state
-    if (isRequestInProgress) {
-      controller.abort(); // Abort the ongoing request if one is already in progress
-    }
-
-    setIsRequestInProgress(true); // Indicate the request is in progress
+    // const controller = new AbortController();
+    // const { signal } = controller;
+    // if (isRequestInProgress) {
+    //   controller.abort(); 
+    // }
+    // setIsRequestInProgress(true); 
 
     // Ensure refs are non-null before accessing
     const payload = {
@@ -40,7 +36,7 @@ const LoginSignup = () => {
     };
 
     try {
-      const login_api_response = await axios.post(`${API_BASE_URL}/api/accounts/login/`, payload, { signal });
+      const login_api_response = await axios.post(`${API_BASE_URL}/api/accounts/login/`, payload);
       console.log(login_api_response);
       const token = login_api_response.data.token;
       let p_temp = undefined;
@@ -75,7 +71,7 @@ const LoginSignup = () => {
         setErrors(errorMessage);
       }
     } finally {
-      setIsRequestInProgress(false); // Reset request state after completion
+      //setIsRequestInProgress(false); 
     }
 
   };
@@ -135,7 +131,7 @@ const LoginSignup = () => {
               }
             }}
           />
-          {errors && <p style={{ color: "red" }}>{errors}</p>}
+          {errors && <p className="errors">{errors}</p>}
           <button type="submit" style={{ fontSize: "14px" }}>
             {"Login"}
           </button>

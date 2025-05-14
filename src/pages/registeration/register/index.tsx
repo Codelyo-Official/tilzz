@@ -13,7 +13,6 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  // Define state types
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -28,15 +27,12 @@ const Register = () => {
   const handleSignupSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
 
-    // Create a new AbortController instance
-    const controller = new AbortController();
-    const { signal } = controller;
-    // Track the request state
-    if (isRequestInProgress) {
-      controller.abort(); // Abort the ongoing request if one is already in progress
-    }
-
-    setIsRequestInProgress(true); // Indicate the request is in progress
+    // const controller = new AbortController();
+    // const { signal } = controller;
+    // if (isRequestInProgress) {
+    //   controller.abort(); 
+    // }
+    // setIsRequestInProgress(true); 
 
     if (password !== confirmPassword) {
       setErrors("Passwords do not match.");
@@ -59,7 +55,7 @@ const Register = () => {
     };
 
     try {
-      const signup_api_response: any = await axios.post(`${API_BASE_URL}/api/accounts/register/`, payload, { signal });
+      const signup_api_response: any = await axios.post(`${API_BASE_URL}/api/accounts/register/`, payload);
 
       console.log(signup_api_response)
       const token = signup_api_response.data.token;
@@ -94,7 +90,7 @@ const Register = () => {
         setErrors(errorMessage);
       }
     } finally {
-      setIsRequestInProgress(false); // Reset request state after completion
+      //setIsRequestInProgress(false); 
     }
   };
 
@@ -173,7 +169,7 @@ const Register = () => {
             required
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          {errors && <p style={{ color: "red" }}>{errors}</p>}
+          {errors && <p className="errors">{errors}</p>}
           <button type="submit" style={{ fontSize: "14px" }}>
             {"Create Account"}
           </button>

@@ -256,6 +256,20 @@ const StoryPreview = () => {
   const cancelVersion = () => {
     setIsAddNewVersion(false);
     setNewVAt(null);
+    setAddNewEpisodeObject({
+      title: "",
+      content: "",
+    })
+  }
+
+  const cancelNewEpisode = () =>{
+    setIsAddNewVersion(false);
+    setNewVAt(null);
+    setAddNewEpisodeObject({
+      title: "",
+      content: "",
+    })
+    setShowNewEpisodeForm(false);
   }
 
   return (
@@ -338,14 +352,19 @@ const StoryPreview = () => {
                       cancelVersion()
                     }}>Cancel</button>
                   </>) : (
+                    <>
                     <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>Submit New Episode</button>
+                    <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                      cancelNewEpisode();
+                    }}>Cancel</button>
+                    </>
                   )}
 
                 </div>
               </div>
             ) : (
               <button className="new-episode-btn" onClick={handleNewEpisode}>
-                {isAddNewVersion ? (<>Add Version</>) : (<>Add New Episode</>)}
+                Add New Episode
               </button>
             )}
           </div>

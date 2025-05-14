@@ -171,7 +171,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
     }
 
     const handle_like = async (st: story) => {
-        console.log(st);
+
         try {
             const token = sessionStorage.getItem("token");
             console.log(token);
@@ -236,7 +236,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                 <li className="story-box" key={index}>
                                     <NavLink
                                         className=""
-                                        style={{ position: "absolute", top: "0px", left: "0px", width: "100%", height: "100%" }}
+                                        style={{ position: "absolute", top: "0px", left: "0px", width: "100%", height: "100%",zIndex:2 }}
                                         to={`/dashboard?activeTab=story-preview&storyId=${st.id}`}
                                         onClick={() => { handleActiveMenu("story-preview") }}
                                     >
