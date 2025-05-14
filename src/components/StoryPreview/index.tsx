@@ -182,8 +182,7 @@ const StoryPreview = () => {
       }
     }
 
-    setShowNewEpisodeForm(false);
-
+    cancelVersion();
   }
 
   const nextVariation = async (ep:any) => {
