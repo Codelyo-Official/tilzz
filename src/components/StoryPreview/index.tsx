@@ -51,6 +51,11 @@ const StoryPreview = () => {
     content: "",
   });
 
+  const [updateEpisodeObject, setUpdateEpisodeObject] = React.useState<any>({
+    title: "",
+    content: "",
+  });
+
   const getStoryDetails = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -61,7 +66,7 @@ const StoryPreview = () => {
       });
       console.log(StoryApi_response);
       setDataStory(StoryApi_response.data);
-      if(StoryApi_response.data.versions.length>0){
+      if (StoryApi_response.data.versions.length > 0) {
         setEpisodes(StoryApi_response.data.versions[0].episodes)
 
       }
@@ -76,7 +81,7 @@ const StoryPreview = () => {
     }
   }
 
-  const getEpisodes = async (ver:number) => {
+  const getEpisodes = async (ver: number) => {
     try {
       const token = sessionStorage.getItem("token");
       const EpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/stories/${paramvalue}/?versions=${ver}`, {
@@ -112,8 +117,7 @@ const StoryPreview = () => {
   const handleSubmitNewEpisode = async () => {
     // Add the new episode (this is just for demonstration purposes)
 
-    if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0)
-    {
+    if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0) {
       alert("title and content cannot be empty");
       return;
     }
@@ -157,12 +161,11 @@ const StoryPreview = () => {
 
   const handleSubmitNewVersion = async () => {
 
-    if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0)
-      {
-        alert("title and content cannot be empty");
-        return;
-      }
-  
+    if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0) {
+      alert("title and content cannot be empty");
+      return;
+    }
+
 
     console.log(newVAt)
     console.log(addNewEpisodeObject)
@@ -177,12 +180,12 @@ const StoryPreview = () => {
       console.log(createNewEpisodeVersion_response);
 
       const targetId = newVAt.id;
-      const index = episodes.findIndex((ep:any) => ep.id === targetId);
+      const index = episodes.findIndex((ep: any) => ep.id === targetId);
 
       if (index !== -1) {
         const updatedEpisodes = [
-          ...episodes.slice(0, index),  
-          createNewEpisodeVersion_response.data                
+          ...episodes.slice(0, index),
+          createNewEpisodeVersion_response.data
         ];
 
         setEpisodes(updatedEpisodes);
@@ -200,44 +203,84 @@ const StoryPreview = () => {
     cancelVersion();
   }
 
-  const nextVariation = async (ep:any) => {
+  const handleUpdateEpisode = async () => {
+    // Add the new episode (this is just for demonstration purposes)
+
+    if (updateEpisodeObject.title.trim().length === 0 || updateEpisodeObject.content.trim().length === 0) {
+      alert("title and content cannot be empty");
+      return;
+    }
+
+    try {
+      const token = sessionStorage.getItem("token");
+      const updateEpisode_response = await axios.put(`${API_BASE_URL}/api/stories/episodes/${currentEditId}/`, updateEpisodeObject, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(updateEpisode_response);
+      let newresult = episodes.map((ep: any) => {
+        if (ep.id !== updateEpisode_response.data.id)
+          return ep;
+        else
+          return updateEpisode_response.data;
+      })
+      setEpisodes(newresult);
+      setUpdateEpisodeObject({
+        title: '',
+        content: ''
+      });
+      setCurrentEditId(null);
+
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+      }
+    }
+
+  }
+
+  const nextVariation = async (ep: any) => {
     console.log(ep)
     const mres = await getEpisodes(ep.next_version.version)
     //console.log(mres);
-    if(mres.versions.length>0 && mres.versions[0].episodes.length>0){
+    if (mres.versions.length > 0 && mres.versions[0].episodes.length > 0) {
       let toadd = [...mres.versions[0].episodes];
       let result = [];
-      for(let i = 0; i< episodes.length;i++){
-        if(episodes[i].id!==ep.id){
+      for (let i = 0; i < episodes.length; i++) {
+        if (episodes[i].id !== ep.id) {
           result.push(episodes[i]);
-        }else{
+        } else {
           break;
         }
       }
-      result=[...result,...toadd]
-      console.log("new episodes:",result)
+      result = [...result, ...toadd]
+      console.log("new episodes:", result)
       setEpisodes(result)
     }
 
   }
 
-  const prevVariation = async (ep:any) => {
+  const prevVariation = async (ep: any) => {
     console.log(ep)
     const mres = await getEpisodes(ep.previous_version.version)
     console.log(mres)
 
-    if(mres.versions.length>0 && mres.versions[0].episodes.length>0){
+    if (mres.versions.length > 0 && mres.versions[0].episodes.length > 0) {
       let toadd = [...mres.versions[0].episodes];
       let result = [];
-      for(let i = 0; i< episodes.length;i++){
-        if(episodes[i].version!==mres.versions[0].episodes[0].version && episodes[i].id!==ep.id){
+      for (let i = 0; i < episodes.length; i++) {
+        if (episodes[i].version !== mres.versions[0].episodes[0].version && episodes[i].id !== ep.id) {
           result.push(episodes[i]);
-        }else{
+        } else {
           break;
         }
       }
-      result=[...result,...toadd]
-      console.log("new episodes:",result)
+      result = [...result, ...toadd]
+      console.log("new episodes:", result)
       setEpisodes(result)
     }
 
@@ -262,7 +305,7 @@ const StoryPreview = () => {
     })
   }
 
-  const cancelNewEpisode = () =>{
+  const cancelNewEpisode = () => {
     setIsAddNewVersion(false);
     setNewVAt(null);
     setAddNewEpisodeObject({
@@ -298,9 +341,14 @@ const StoryPreview = () => {
                       <div className="episode-content">
                         {episode.id === currentEditId ? (
                           <div className="new-episode-form">
-                            <textarea>{episode.content}</textarea>
+                            <input type="text" placeholder='title' value={updateEpisodeObject.title} onChange={(e) => {
+                              setUpdateEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
+                            }} />
+                            <textarea placeholder='content' onChange={(e) => {
+                              setUpdateEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
+                            }}>{updateEpisodeObject.content}</textarea>
                             <div style={{ display: "flex", justifyContent: "center" }}>
-                              <button className="new-episode-submit" style={{ margin: "5px" }}>save</button>
+                              <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleUpdateEpisode}>save</button>
                               <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
                                 setCurrentEditId(null)
                               }} >Cancel</button>
@@ -308,18 +356,24 @@ const StoryPreview = () => {
                           </div>
                         ) : (
                           <p>{episode.title} <span className="episode-options">
-                            {episode.next_version===null && (
+                            {(episode.next_version === null || true) && (
                               <button className="tooltip1" onClick={() => {
                                 addVersion(episode)
                               }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
                             )}
-                            {episode.author_id === user.id && (<button onClick={() => { setCurrentEditId(episode.id) }}><FiEdit /></button>)}
+                            {episode.creator === user.id && (<button onClick={() => {
+                              setCurrentEditId(episode.id);
+                              setUpdateEpisodeObject({
+                                title: episode.title,
+                                content: episode.content
+                              });
+                            }}><FiEdit /></button>)}
                             <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
                             <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
-                            {episode.previous_version!==null && (<button className="tooltip1" onClick={() => {
+                            {episode.previous_version !== null && (<button className="tooltip1" onClick={() => {
                               prevVariation(episode);
                             }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                            {episode.next_version!==null && (<button className="tooltip1" onClick={() => {
+                            {episode.next_version !== null && (<button className="tooltip1" onClick={() => {
                               nextVariation(episode);
                             }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
                             <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
@@ -353,10 +407,10 @@ const StoryPreview = () => {
                     }}>Cancel</button>
                   </>) : (
                     <>
-                    <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>Submit New Episode</button>
-                    <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                      cancelNewEpisode();
-                    }}>Cancel</button>
+                      <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>Submit New Episode</button>
+                      <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                        cancelNewEpisode();
+                      }}>Cancel</button>
                     </>
                   )}
 
