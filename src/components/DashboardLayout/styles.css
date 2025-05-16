@@ -142,7 +142,7 @@
     overflow: hidden;
   }
 
-  .story-box::after{
+  /* .story-box::after{
     position: absolute;
     top:0;
     left:0;
@@ -151,8 +151,13 @@
     background-color: #31313150;
     content: '';
     z-index: 0;
+  } */
+
+  .following-btn,.follow-btn{
+    position: relative;
+    z-index: 5;
   }
-  
+
   .story-box img{
     width: 100%;
     margin-bottom: 20px;

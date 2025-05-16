@@ -279,8 +279,10 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                     <img src={st.cover_image} alt="" />
                                     <div className="title">
                                         <p >{st.title}
-                                            {(st.creator !== user.id) && (
+                                        </p>
+                                        {(st.creator !== user.id) && (
                                                 <button
+                                                    style={{zIndex:"9"}}
                                                     onClick={() => { toggleFollow(st) }}
                                                     className={checkIfInFollowing(user, st)
                                                         ? "following-btn"
@@ -288,7 +290,6 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                                             ? "following"
                                                             : "follow"}</button>
                                             )}
-                                        </p>
                                         <p className="descp">{st.description}</p>
                                     </div>
                                 </li>
