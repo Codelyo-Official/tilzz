@@ -28,31 +28,31 @@ export default function Account() {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     console.log(data);
-    try {
-      const token = sessionStorage.getItem("token");
-      const updateUserInfoApi_response = await axios.put(`${API_BASE_URL}/api/users/update_profile/`,data, {
-          headers: {
-              Authorization: `Token ${token}`,
-          }
-      });
-      console.log(updateUserInfoApi_response);
-      setUser(updateUserInfoApi_response.data);
-      localStorage.setItem('user', JSON.stringify(updateUserInfoApi_response.data));
+  //   try {
+  //     const token = sessionStorage.getItem("token");
+  //     const updateUserInfoApi_response = await axios.put(`${API_BASE_URL}/api/users/update_profile/`,data, {
+  //         headers: {
+  //             Authorization: `Token ${token}`,
+  //         }
+  //     });
+  //     console.log(updateUserInfoApi_response);
+  //     setUser(updateUserInfoApi_response.data);
+  //     localStorage.setItem('user', JSON.stringify(updateUserInfoApi_response.data));
 
-  } catch (err: any) {
-      console.log(err)
-      const apiError = err as ApiError;
-      if (apiError.response) {
-          const status = apiError.response.status;
-          const errorMessage = apiError.response.data?.username || 'could not update user info';
-          if(Array.isArray(errorMessage)){
-            alert(errorMessage[0])
-          }else{
-            alert(errorMessage)
-          }
-      }
-  }
-    setOpen(false);
+  // } catch (err: any) {
+  //     console.log(err)
+  //     const apiError = err as ApiError;
+  //     if (apiError.response) {
+  //         const status = apiError.response.status;
+  //         const errorMessage = apiError.response.data?.username || 'could not update user info';
+  //         if(Array.isArray(errorMessage)){
+  //           alert(errorMessage[0])
+  //         }else{
+  //           alert(errorMessage)
+  //         }
+  //     }
+  // }
+    // setOpen(false);
   };
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
