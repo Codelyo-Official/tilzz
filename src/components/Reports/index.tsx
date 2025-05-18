@@ -8,6 +8,8 @@ import { FaRegHeart } from "react-icons/fa";
 import { FiArrowUpCircle } from "react-icons/fi";
 import { useLocation } from 'react-router-dom';
 import { FaRegFlag } from "react-icons/fa";
+import { ApiError } from '../../types/apiError';
+import axios from 'axios';
 
 type episode = {
   id: number,
@@ -81,6 +83,8 @@ const mastories:story[] = [
   }
 ]
 
+const API_BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const Reports = () => {
 
   console.log("story preview rendered")
@@ -99,6 +103,31 @@ const Reports = () => {
     }
     return false;
   }
+
+  const getAllQuarantinedStories = async () =>{
+    try {
+      const token = sessionStorage.getItem("token");
+      const QEpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/episode-reports/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(QEpisodesApi_response);
+
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+      }
+    }
+
+  }
+
+  React.useEffect(()=>{
+    getAllQuarantinedStories();
+  },[])
 
   return (
     <>

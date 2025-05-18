@@ -17,15 +17,6 @@ import { ApiError } from '../../types/apiError';
 import { story } from '../../types/story';
 import axios from 'axios';
 
-// type episode = {
-//   current_variation_number: number;
-//   variations: string[],
-//   id: number,
-//   episode: number,
-//   title: string,
-//   content: string;
-//   creator: string;
-// }
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -315,6 +306,40 @@ const StoryPreview = () => {
     setShowNewEpisodeForm(false);
   }
 
+  const reportEpisode = async (eid: number) => {
+
+    try {
+      const token = sessionStorage.getItem('token');
+      const reportEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/episode-reports/`, {
+        episode: eid,
+        reason: "inappropriate"
+
+      }, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(reportEpisode_response);
+
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
+        alert(errorMessage);
+      }
+    } finally {
+    }
+  };
+
+  const confirmReport = (eid: number) => {
+    const confirmed = window.confirm("Are you sure you want to report this?");
+    if (confirmed) {
+      reportEpisode(eid);
+    }
+  }
+
   return (
     <>
       {dataStory === null ? (
@@ -355,29 +380,34 @@ const StoryPreview = () => {
                             </div>
                           </div>
                         ) : (
-                          <p>{episode.title} <span className="episode-options">
-                            {(episode.next_version === null || true) && (
-                              <button className="tooltip1" onClick={() => {
-                                addVersion(episode)
-                              }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
-                            )}
-                            {episode.creator === user.id && (<button onClick={() => {
+                          <p>{!episode.is_reported ? (episode.content) : (<>under review</>)} <span className="episode-options">
+
+                            <button className="tooltip1" onClick={() => {
+                              addVersion(episode)
+                            }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+
+                            {!episode.is_reported && episode.creator === user.id && (<button onClick={() => {
                               setCurrentEditId(episode.id);
                               setUpdateEpisodeObject({
                                 title: episode.title,
                                 content: episode.content
                               });
                             }}><FiEdit /></button>)}
-                            <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>
-                            <button className="tooltip1"><FaRegFlag /><span className="tooltiptext1">Report</span></button>
+                            {(!episode.is_reported) && (
+                              <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>)}
+                            {(!episode.is_reported || true) && (
+                              <button className="tooltip1" onClick={() => {
+                                confirmReport(episode.id)
+                              }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
                             {episode.previous_version !== null && (<button className="tooltip1" onClick={() => {
                               prevVariation(episode);
                             }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
                             {episode.next_version !== null && (<button className="tooltip1" onClick={() => {
                               nextVariation(episode);
                             }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                            <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button>
-                            <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>
+                            {/* <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button> */}
+                            {(!episode.is_reported) && (
+                              <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
                           </span></p>)}
 
                       </div>
