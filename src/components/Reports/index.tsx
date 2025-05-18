@@ -107,7 +107,7 @@ const Reports = () => {
   const getAllQuarantinedStories = async () =>{
     try {
       const token = sessionStorage.getItem("token");
-      const QEpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/episode-reports/`, {
+      const QEpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/api/quarantined-episodes/`, {
         headers: {
           Authorization: `Token ${token}`,
         }

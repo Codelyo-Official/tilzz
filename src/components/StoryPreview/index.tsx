@@ -320,6 +320,7 @@ const StoryPreview = () => {
         }
       });
       console.log(reportEpisode_response);
+      alert('reported successfully')
 
     } catch (err: any) {
       console.log(err)
@@ -395,7 +396,7 @@ const StoryPreview = () => {
                             }}><FiEdit /></button>)}
                             {(!episode.is_reported) && (
                               <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>)}
-                            {(!episode.is_reported || true) && (
+                            {(!episode.is_reported) && (
                               <button className="tooltip1" onClick={() => {
                                 confirmReport(episode.id)
                               }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
