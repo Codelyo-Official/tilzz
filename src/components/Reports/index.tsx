@@ -27,8 +27,12 @@ const Reports = () => {
     content: "",
   });
 
-  const handleEpisodeToggle = (episodeId: number) => {
-    setActiveEpisode(activeEpisode === episodeId ? null : episodeId);
+  const handleEpisodeToggle = (episode: any) => {
+    setActiveEpisode(activeEpisode === episode.id ? null : episode.id);
+    setUpdateEpisodeObject({
+      title: episode.title,
+      content: episode.content,
+    })
   };
 
   const cancel = () => {
@@ -157,7 +161,7 @@ const Reports = () => {
                   if (episode.status === tabselected)
                     return (
                       <div key={episode.id} className="episode">
-                        <div className="episode-header" onClick={() => handleEpisodeToggle(episode.id)}>
+                        <div className="episode-header" onClick={() => handleEpisodeToggle(episode)}>
                           {/* <h4>episode {episode.episode} : {episode.title}</h4> */}
                           <h4 className='episode-title-ok-al'> {episode.content}</h4>
                           <button className="edit-episode-btn"><FiEdit style={{ height: "14px", width: "14px", display: "inline-block", margin: "0", color: "black", marginRight: "5px", marginTop: "-2px" }} /></button>
