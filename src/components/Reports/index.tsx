@@ -10,78 +10,8 @@ import { useLocation } from 'react-router-dom';
 import { FaRegFlag } from "react-icons/fa";
 import { ApiError } from '../../types/apiError';
 import axios from 'axios';
+import { story } from '../../types/story';
 
-type episode = {
-  id: number,
-  episode: number,
-  title: string,
-  content: string;
-  creator: string;
-  status:string;
-}
-
-type story = {
-  storyId: string;
-  storyImage: string;
-  title: string;
-  description: string;
-  creator: string;
-  episodes: episode[]
-}
-
-
-const mastories:story[] = [
-  {
-    storyId: "5bhja9",
-    storyImage: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-      "&cs=tinysrgb&w=1260&h=750&dpr=1",
-    title: 'The Mysterious Journey',
-    description: 'Follow the journey of a young explorer seeking the hidden treasures of the ancient world.',
-    creator: 'user123',
-    episodes: [
-
-      {
-        id: 2,
-        episode: 2,
-        title: 'The Forbidden Temple',
-        content: 'A forbidden temple stands in their path, filled with puzzles and dangers',
-        creator: 'johndoe',
-        status: "review"
-      },
-    ],
-  },
-  {
-    storyId: "5b09hja9",
-    storyImage: "https://images.pexels.com/photos/3218465/pexels-photo-3218465.jpeg?auto=compress" +
-      "&cs=tinysrgb&w=1260&h=750&dpr=1",
-    title: 'New Era',
-    description: 'this is another story here',
-    creator: 'user123',
-    episodes: [
-
-      {
-        id: 2,
-        episode: 2,
-        title: 'the start of new era',
-        content: `Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
-  
-  The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.`,
-        creator: 'johndoe',
-        status: "approval"
-
-      },
-
-      {
-        id: 3,
-        episode: 3,
-        title: 'the start of new era 2',
-        content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
-        creator: 'johndoe',
-        status: "review"
-      },
-    ],
-  }
-]
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -90,21 +20,30 @@ const Reports = () => {
   console.log("story preview rendered")
   const { user } = useAuth();
   const [activeEpisode, setActiveEpisode] = useState<number | null>(null);
-  const [tabselected, setTabselected] = React.useState("review")
+  const [tabselected, setTabselected] = React.useState("quarantined")
+  const [reports, setReports] = React.useState<any>([]);
+  const [updateEpisodeObject, setUpdateEpisodeObject] = React.useState<any>({
+    title: "",
+    content: "",
+  });
 
-  const handleEpisodeToggle = (episodeId:number) => {
+  const handleEpisodeToggle = (episodeId: number) => {
     setActiveEpisode(activeEpisode === episodeId ? null : episodeId);
   };
 
-  const checkifanyepisodehasstatus = (st:story, tempstatus:string) => {
-    for (let i = 0; i < st.episodes.length; i++) {
-      if (st.episodes[i].status === tempstatus)
+  const cancel = () => {
+    setActiveEpisode(null);
+  }
+
+  const checkifanyepisodehasstatus = (report: any, tempstatus: string) => {
+    for (let i = 0; i < report.quarantined_episodes.length; i++) {
+      if (report.quarantined_episodes[i].status === tempstatus)
         return true;
     }
     return false;
   }
 
-  const getAllQuarantinedStories = async () =>{
+  const getAllQuarantinedStories = async () => {
     try {
       const token = sessionStorage.getItem("token");
       const QEpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/api/quarantined-episodes/`, {
@@ -113,7 +52,7 @@ const Reports = () => {
         }
       });
       console.log(QEpisodesApi_response);
-
+      setReports(QEpisodesApi_response.data);
     } catch (err: any) {
       console.log(err)
       const apiError = err as ApiError;
@@ -125,53 +64,117 @@ const Reports = () => {
 
   }
 
-  React.useEffect(()=>{
-    getAllQuarantinedStories();
-  },[])
+
+
+  const handleUpdateEpisode = async (ep: any) => {
+    // Add the new episode (this is just for demonstration purposes)
+
+    try {
+      const token = sessionStorage.getItem("token");
+      const updateEpisode_response = await axios.put(`${API_BASE_URL}/api/stories/episodes/${ep.id}/`, { ...updateEpisodeObject, title: ep.title }, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(updateEpisode_response);
+      console.log('episdoe updated')
+      setUpdateEpisodeObject({
+        title: '',
+        content: ''
+      });
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+      }
+    }
+
+  }
+
+  const submitforapproval = async (ep: any) => {
+    // /api/stories/api/episodes/{episode_id}/submit-for-approval/
+    if (updateEpisodeObject.content.trim().length === 0) {
+      alert("content cannot be empty");
+      return;
+    }
+
+    await handleUpdateEpisode(ep);
+
+    try {
+      const token = sessionStorage.getItem("token");
+      const QEpisodesApi_response = await axios.post(`${API_BASE_URL}/api/stories/api/episodes/${ep.id}/submit-for-approval/`, {
+        title: ep.title,
+        content: ep.content
+      }, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(QEpisodesApi_response);
+      alert("report submitted for approval")
+      setActiveEpisode(null);
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+      }
+    }
+  }
+
+  React.useEffect(() => {
+    if (reports.length === 0)
+      getAllQuarantinedStories();
+  }, [])
 
   return (
     <>
       <div style={{ width: "100%", height: "60px", display: "flex", justifyContent: "flex-end", paddingRight: "40px", }}>
-        <button className={`tabs-select ${tabselected === "review" ? "tab-selected" : ""}`} onClick={() => {
-          setTabselected('review')
+        <button className={`tabs-select ${tabselected === "quarantined" ? "tab-selected" : ""}`} onClick={() => {
+          setTabselected('quarantined')
         }}>To Review</button>
-        <button className={`tabs-select ${tabselected === "approval" ? "tab-selected" : ""}`} onClick={() => {
-          setTabselected('approval')
-        }}>Approval Pending</button>
+        {/*} <button className={`tabs-select ${tabselected === "pending" ? "tab-selected" : ""}`} onClick={() => {
+          setTabselected('pending')
+        }}>Approval Pending</button>*/}
       </div>
-      {mastories.map(st => {
-        if (checkifanyepisodehasstatus(st, tabselected))
+      {reports.map((report: any) => {
+        if (checkifanyepisodehasstatus(report, tabselected))
           return (
             <div className="story-preview">
               <div className="story-header">
-                <img src={st.storyImage} alt="Story Preview" className="story-image" />
+                <img src={`${API_BASE_URL}/${report.story.cover_image}`} alt="Story Preview" className="story-image" />
                 <div className="story-info">
-                  <h2 className="story-title">{st.title}</h2>
-                  {/* <p className="story-description">{st.description}</p> */}
+                  <h2 className="story-title">{report.story.title}</h2>
                 </div>
               </div>
 
               <div className="episodes-list">
                 <h3>Episodes to Review</h3>
-                {st.episodes.map((episode) => {
+                {report.quarantined_episodes.map((episode: any) => {
                   if (episode.status === tabselected)
                     return (
                       <div key={episode.id} className="episode">
                         <div className="episode-header" onClick={() => handleEpisodeToggle(episode.id)}>
                           {/* <h4>episode {episode.episode} : {episode.title}</h4> */}
                           <h4 className='episode-title-ok-al'> {episode.content}</h4>
-                          {episode.creator === user.username && (
-                            <button className="edit-episode-btn"><FiEdit style={{ height: "14px", width: "14px", display: "inline-block", margin: "0", color: "black", marginRight: "5px", marginTop: "-2px" }} /></button>
-                          )}
+                          <button className="edit-episode-btn"><FiEdit style={{ height: "14px", width: "14px", display: "inline-block", margin: "0", color: "black", marginRight: "5px", marginTop: "-2px" }} /></button>
                           <span>{activeEpisode === episode.id ? <FiArrowUpCircle /> : <FiArrowDownCircle />}</span>
                         </div>
                         {activeEpisode === episode.id && (
                           <div className="episode-content" style={{ marginTop: "20px" }}>
                             <div className="new-episode-form">
-                              {episode.status === "review" ? (<textarea>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
-                              {episode.status === "review" ? (<div style={{ display: "flex", justifyContent: "center" }}>
-                                <button className="new-episode-submit" style={{ margin: "5px" }}>submit for approval</button>
+                              {episode.status === "quarantined" ? (<textarea onChange={(e: any) => {
+                                setUpdateEpisodeObject({ ...updateEpisodeObject, content: e.target.value })
+                              }}>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
+                              {episode.status === "quarantined" ? (<div style={{ display: "flex", justifyContent: "center" }}>
+                                <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
+                                  submitforapproval(episode);
+                                }}>submit for approval</button>
                                 <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                  cancel();
                                 }} >Cancel</button>
                               </div>) : (<p>Pending for approval</p>)}
 

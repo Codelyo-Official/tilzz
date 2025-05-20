@@ -334,12 +334,41 @@ const StoryPreview = () => {
     }
   };
 
+  const deleteEpisode = async (eid:number)=>{
+      //  /api/stories/episodes/<episode_id>/delete/
+  
+      try {
+        const token = sessionStorage.getItem("token");
+        const DelEpisodesApi_response = await axios.put(`${API_BASE_URL}/api/stories/episodes/${eid}/delete/`,{}, {
+          headers: {
+            Authorization: `Token ${token}`,
+          }
+        });
+        console.log(DelEpisodesApi_response);
+      } catch (err: any) {
+        console.log(err)
+        const apiError = err as ApiError;
+        if (apiError.response) {
+          const status = apiError.response.status;
+          const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+        }
+      }
+    }
+
   const confirmReport = (eid: number) => {
     const confirmed = window.confirm("Are you sure you want to report this?");
     if (confirmed) {
       reportEpisode(eid);
     }
   }
+
+  const confirmDelete = (eid: number) => {
+    const confirmed = window.confirm("Are you sure you want to delete this?");
+    if (confirmed) {
+      deleteEpisode(eid);
+    }
+  }
+
 
   return (
     <>
@@ -381,22 +410,22 @@ const StoryPreview = () => {
                             </div>
                           </div>
                         ) : (
-                          <p>{!episode.is_reported ? (episode.content) : (<>under review</>)} <span className="episode-options">
+                          <p>{(!episode.is_reported && ( episode.status==="public" || episode.status==="private")) ? (episode.content) : (<>under review</>)} <span className="episode-options">
 
                             <button className="tooltip1" onClick={() => {
                               addVersion(episode)
                             }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
 
-                            {!episode.is_reported && episode.creator === user.id && (<button onClick={() => {
+                            {(!episode.is_reported && ( episode.status==="public" || episode.status==="private")) && episode.creator === user.id && (<button onClick={() => {
                               setCurrentEditId(episode.id);
                               setUpdateEpisodeObject({
                                 title: episode.title,
                                 content: episode.content
                               });
                             }}><FiEdit /></button>)}
-                            {(!episode.is_reported) && (
+                            {(!episode.is_reported && ( episode.status==="public" || episode.status==="private")) && (
                               <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>)}
-                            {(!episode.is_reported) && (
+                            {(!episode.is_reported && ( episode.status==="public" || episode.status==="private")) && (
                               <button className="tooltip1" onClick={() => {
                                 confirmReport(episode.id)
                               }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
@@ -407,8 +436,10 @@ const StoryPreview = () => {
                               nextVariation(episode);
                             }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
                             {/* <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button> */}
-                            {(!episode.is_reported) && (
-                              <button className="tooltip1"><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
+                            {((!episode.is_reported && ( episode.status==="public" || episode.status==="private")) && episode.creator === user.id) && (
+                              <button className="tooltip1" onClick={()=>{
+                                confirmDelete(episode.id)
+                              }}><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
                           </span></p>)}
 
                       </div>
