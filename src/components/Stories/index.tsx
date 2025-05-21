@@ -282,7 +282,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                         </p>
                                         {(st.creator !== user.id) && (
                                                 <button
-                                                    style={{zIndex:"9"}}
+                                                    style={{zIndex:"9",position:"relative"}}
                                                     onClick={() => { toggleFollow(st) }}
                                                     className={checkIfInFollowing(user, st)
                                                         ? "following-btn"
