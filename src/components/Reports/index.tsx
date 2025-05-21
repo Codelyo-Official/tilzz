@@ -97,7 +97,8 @@ const Reports = () => {
 
   }
 
-  const submitforapproval = async (ep: any) => {
+  const submitforapproval = async (ep: any,st:any) => {
+    console.log(st)
     // /api/stories/api/episodes/{episode_id}/submit-for-approval/
     if (updateEpisodeObject.content.trim().length === 0) {
       alert("content cannot be empty");
@@ -118,6 +119,16 @@ const Reports = () => {
       });
       console.log(QEpisodesApi_response);
       alert("report submitted for approval")
+
+      let result = reports.map((r:any)=>{
+        if(r.id===st.id){
+          let temp_eps = r.quarantined_episodes.filter((e:any)=>e.id!==ep.id)
+          return {...r,quarantined_episodes:temp_eps}
+        }else
+          return r;
+      })
+      setReports(result);
+
       setActiveEpisode(null);
     } catch (err: any) {
       console.log(err)
@@ -175,7 +186,7 @@ const Reports = () => {
                               }}>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
                               {episode.status === "quarantined" ? (<div style={{ display: "flex", justifyContent: "center" }}>
                                 <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
-                                  submitforapproval(episode);
+                                  submitforapproval(episode,report);
                                 }}>submit for approval</button>
                                 <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
                                   cancel();
