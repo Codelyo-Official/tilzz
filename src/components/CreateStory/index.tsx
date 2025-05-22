@@ -2,15 +2,17 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import './story.css';
 import axios from 'axios';
 import { ApiError } from '../../types/apiError';
+import Spinner from 'react-bootstrap/Spinner';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const CreateStory: React.FC = () => {
   const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [description, setDescription] = useState<string>('story description');
   const [visibility, setVisibility] = useState<'private' | 'public'>('public');
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [errors, setErrors] = useState<string | null>(null);  // Typed state
 
@@ -85,7 +87,7 @@ const CreateStory: React.FC = () => {
           />
         </div>
 
-        <div className="input-group">
+        {/* <div className="input-group">
           <label htmlFor="description">Description</label>
           <textarea
             required
@@ -95,7 +97,7 @@ const CreateStory: React.FC = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Write a description for your story"
           />
-        </div>
+        </div> */}
 
         <div className="input-group">
           <label>Visibility</label>
@@ -112,6 +114,7 @@ const CreateStory: React.FC = () => {
         <div className="input-group">
           <label htmlFor="banner-image">Upload Banner Image</label>
           <input
+            required
             type="file"
             id="banner-image"
             accept="image/*"
@@ -124,7 +127,13 @@ const CreateStory: React.FC = () => {
           )}
         </div>
         {errors && <p className='errors'>{errors}</p>}
-        <button type="submit" className="submit-btn">Create Story</button>
+        {!loading ? (
+          <button type="submit" className="submit-btn">Create Story</button>
+        ) : (
+          <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        )}
       </form>
     </div>
   );

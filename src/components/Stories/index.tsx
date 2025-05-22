@@ -222,13 +222,24 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         return false;
     }
 
+    const getfirstepsiodedescp = (st:any)=>{
+        
+        if(st.versions.length>0){
+            if(st.versions[0].episodes.length>0){
+                return st.versions[0].episodes[0].content;
+            }
+        }
+
+        return '';
+    }
+
     return (
         <div>
             <div className="logged-in-user-story-div" style={{
                 backgroundColor: slugStories === "public-feed" ? "transparent" : "white",
                 boxShadow: slugStories === "public-feed" ? "none" : "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             }}>
-                <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : slugStories === "following-stories" ? "Favorite Stories" : "Favorite Stories"}</h2>
+                <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : slugStories === "following-stories" ? "Following Stories" : "Following Stories"}</h2>
                 <div className="story-container">
                     <ul className="story-box101">
                         {dataStories.map((st, index) => {
@@ -290,7 +301,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                                             ? "following"
                                                             : "follow"}</button>
                                             )}
-                                        <p className="descp">{st.description}</p>
+                                        <p className="descp">{getfirstepsiodedescp(st)}</p>
                                     </div>
                                 </li>
                             )
