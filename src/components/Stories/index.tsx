@@ -249,7 +249,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                                     console.log("like btn hit")
                                                     handle_like(st)
                                                 }}
-                                                style={{ height: "20px", width: "20px", color: "white" }}
+                                                style={{ height: "20px", width: "20px", color: "white",zIndex:"9",position:"relative" }}
                                             >
                                                 <div className="heart-icon">
                                                     <svg
