@@ -37,6 +37,8 @@ const StoryPreview = () => {
   const queryParams = new URLSearchParams(location.search);
   const paramvalue = queryParams.get('storyId');
 
+  const [likedepisodes, setLikedEpisodes] = useState<number[]>([]);
+
   const [addNewEpisodeObject, setAddNewEpisodeObject] = React.useState<any>({
     title: "title of story",
     content: "",
@@ -324,14 +326,14 @@ const StoryPreview = () => {
       });
       console.log(reportEpisode_response);
       alert('reported successfully')
-      if(reportEpisode_response.data?.reports_count && reportEpisode_response.data?.reports_count>=3){
+      if (reportEpisode_response.data?.reports_count && reportEpisode_response.data?.reports_count >= 3) {
         let result = episodes.map((ep: any) => {
           if (ep.id === eid) {
-            return { ...ep, status: "quarantined",is_reported: true };
+            return { ...ep, status: "quarantined", is_reported: true };
           } else
             return ep;
         })
-  
+
         setEpisodes(result);
       }
 
@@ -393,6 +395,12 @@ const StoryPreview = () => {
     }
   }
 
+  const checkIfInLiking = (eid: number, ep: any) => {
+    if (likedepisodes.includes(eid))
+      return true;
+    return false;
+  }
+
 
   return (
     <>
@@ -452,7 +460,24 @@ const StoryPreview = () => {
                               });
                             }}><FiEdit /></button>)}
                             {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
-                              <button className="tooltip1"><FaRegHeart /><span className="tooltiptext1">Like</span></button>)}
+                              <button className="tooltip1" onClick={() => {
+                                if (likedepisodes.includes(episode.id))
+                                  setLikedEpisodes(likedepisodes.filter(l => l !== episode.id))
+                                else
+                                  setLikedEpisodes([...likedepisodes, episode.id]);
+                              }}>
+                                <div className="heart-icon from-preview">
+                                  <svg
+                                    className={`heart ${checkIfInLiking(episode.id, likedepisodes) ? 'clicked' : ''}`}
+                                    version="1.1"
+                                    id="Layer_1"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 541 471">
+                                    <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" />
+                                  </svg>
+
+                                </div>
+                                <span className="tooltiptext1">Like</span></button>)}
                             {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
                               <button className="tooltip1" onClick={() => {
                                 confirmReport(episode.id)
