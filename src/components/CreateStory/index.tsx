@@ -48,6 +48,7 @@ const CreateStory: React.FC = () => {
     const token = sessionStorage.getItem("token");
     try {
       console.log(payload)
+      setLoading(true);
       const createStory_api_response = await axios.post(`${API_BASE_URL}/api/stories/stories/`, formData,
         {
           headers: {
@@ -57,6 +58,7 @@ const CreateStory: React.FC = () => {
         });
       console.log(createStory_api_response);
       if (createStory_api_response.request.status === 201) {
+        setLoading(false);
         alert("story created")
       }
     } catch (err: any) {
