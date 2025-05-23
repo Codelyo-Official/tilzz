@@ -5,10 +5,13 @@ import { setActiveTab } from "../../redux/features/tabSlice";
 import { User } from "../../types/user";
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
+const PUBLIC_BASE_URL = process.env.REACT_APP_PUBLIC_BASE_URL;
 
 const TopBarDashboard = ({ user }: {
     user: any
 }) => {
+
+    console.log(PUBLIC_BASE_URL)
 
     console.log("user from top bar:",user)
     const navigate = useNavigate();
@@ -28,7 +31,7 @@ const TopBarDashboard = ({ user }: {
             ? user.profile_picture
             : `${API_BASE_URL}${user.profile_picture}`}
             /> */}
-            <img src={`/images/avatar.png`}/>
+            <img src={`${PUBLIC_BASE_URL}/images/avatar.png`} />
             </button>
             <div className="dropdown-content" id="dropdown-content-id">
                 <a onClick={() => {
