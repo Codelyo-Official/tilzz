@@ -324,6 +324,16 @@ const StoryPreview = () => {
       });
       console.log(reportEpisode_response);
       alert('reported successfully')
+      if(reportEpisode_response.data?.reports_count && reportEpisode_response.data?.reports_count>=3){
+        let result = episodes.map((ep: any) => {
+          if (ep.id === eid) {
+            return { ...ep, status: "quarantined",is_reported: true };
+          } else
+            return ep;
+        })
+  
+        setEpisodes(result);
+      }
 
     } catch (err: any) {
       console.log(err)

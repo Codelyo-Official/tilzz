@@ -224,7 +224,7 @@
   margin-left: 14px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2; /* Show 3 lines */
+  -webkit-line-clamp: 1; /* Show 3 lines */
   overflow: hidden;
 }
 
