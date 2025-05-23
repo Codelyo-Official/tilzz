@@ -132,9 +132,11 @@ const CreateStory: React.FC = () => {
         {!loading ? (
           <button type="submit" className="submit-btn">Create Story</button>
         ) : (
+          <div style={{width:"100%",height:"auto",display:"flex",justifyContent:"center",alignItems:"center"}}>
           <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
             <span className="visually-hidden">Loading...</span>
           </Spinner>
+          </div>
         )}
       </form>
     </div>
