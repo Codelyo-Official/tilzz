@@ -38,12 +38,12 @@ const StoryPreview = () => {
   const paramvalue = queryParams.get('storyId');
 
   const [addNewEpisodeObject, setAddNewEpisodeObject] = React.useState<any>({
-    title: "",
+    title: "title of story",
     content: "",
   });
 
   const [updateEpisodeObject, setUpdateEpisodeObject] = React.useState<any>({
-    title: "",
+    title: "title of story",
     content: "",
   });
 
@@ -103,8 +103,7 @@ const StoryPreview = () => {
 
   const handleNewEpisode = () => {
     setAddNewEpisodeObject({
-      title: "",
-      content: "",
+      ...addNewEpisodeObject, content: "",
     })
     setShowNewEpisodeForm(true);
   };
@@ -222,7 +221,7 @@ const StoryPreview = () => {
       })
       setEpisodes(newresult);
       setUpdateEpisodeObject({
-        title: '',
+        ...updateEpisodeObject,
         content: ''
       });
       setCurrentEditId(null);
@@ -286,7 +285,7 @@ const StoryPreview = () => {
     console.log(ep)
     setNewVAt(ep);
     setAddNewEpisodeObject({
-      title: "",
+      ...addNewEpisodeObject,
       content: "",
     })
   }
@@ -295,7 +294,7 @@ const StoryPreview = () => {
     setIsAddNewVersion(false);
     setNewVAt(null);
     setAddNewEpisodeObject({
-      title: "",
+      ...addNewEpisodeObject,
       content: "",
     })
   }
@@ -304,7 +303,7 @@ const StoryPreview = () => {
     setIsAddNewVersion(false);
     setNewVAt(null);
     setAddNewEpisodeObject({
-      title: "",
+      ...addNewEpisodeObject,
       content: "",
     })
     setShowNewEpisodeForm(false);
@@ -349,6 +348,17 @@ const StoryPreview = () => {
         }
       });
       console.log(DelEpisodesApi_response);
+
+
+      let result = episodes.map((ep: any) => {
+        if (ep.id === eid) {
+          return { ...ep, status: "deleted" };
+        } else
+          return ep;
+      })
+
+      setEpisodes(result);
+
     } catch (err: any) {
       console.log(err)
       const apiError = err as ApiError;
@@ -377,7 +387,11 @@ const StoryPreview = () => {
   return (
     <>
       {dataStory === null ? (
-        <div>loading</div>
+        <div style={{ width: "100%", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
       ) : (
         <div className="story-preview">
           <div className="story-header">
@@ -400,9 +414,9 @@ const StoryPreview = () => {
                       <div className="episode-content">
                         {episode.id === currentEditId ? (
                           <div className="new-episode-form">
-                            <input type="text" placeholder='title' value={updateEpisodeObject.title} onChange={(e) => {
+                            {/* <input type="text" placeholder='title' value={updateEpisodeObject.title} onChange={(e) => {
                               setUpdateEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
-                            }} />
+                            }} /> */}
                             <textarea placeholder='content' onChange={(e) => {
                               setUpdateEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
                             }}>{updateEpisodeObject.content}</textarea>
@@ -456,9 +470,9 @@ const StoryPreview = () => {
           <div className="add-episode">
             {showNewEpisodeForm || isAddNewVersion ? (
               <div className="new-episode-form">
-                <input required type="text" placeholder='chapter title' value={addNewEpisodeObject.title} onChange={(e) => {
+                {/* <input required type="text" placeholder='chapter title' value={addNewEpisodeObject.title} onChange={(e) => {
                   setAddNewEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
-                }} />
+                }} /> */}
                 <textarea required placeholder='content' value={addNewEpisodeObject.content} onChange={(e) => {
                   setAddNewEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
                 }}></textarea>

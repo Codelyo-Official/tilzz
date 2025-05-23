@@ -11,7 +11,7 @@ function Home() {
             <div className="main-banner">
                 <div className="main-banner-top-sec">
                     <h1 className="main-banner-top-sec-h">STORIES</h1>
-                    <button className="main-banner-top-sec-btn">Read Our Stories <FiArrowRightCircle style={{display:"inline", marginBottom:"2px", marginLeft:"5px"}}/></button>
+                    <Link to="/stories-feed"> <button className="main-banner-top-sec-btn">Read Our Stories <FiArrowRightCircle style={{display:"inline", marginBottom:"2px", marginLeft:"5px"}}/></button></Link>
                 </div>
                 <div className="main-banner-grid-imgs">
                     <div className="box left0">

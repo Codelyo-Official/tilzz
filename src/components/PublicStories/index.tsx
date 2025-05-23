@@ -35,6 +35,18 @@ function PublicStoriesFeed() {
         getPublicStories();
     }, []);
 
+    const getfirstepsiodedescp = (st: any) => {
+
+        if (st.versions.length > 0) {
+            if (st.versions[0].episodes.length > 0) {
+                return st.versions[0].episodes[0].content;
+            }
+        }
+
+        return '';
+    }
+
+
     return (
         <div>
             <div className="logged-in-user-story-div" style={{
@@ -93,7 +105,7 @@ function PublicStoriesFeed() {
                                                     : "follow"}</button>
                                             )} */}
                                         </p>
-                                        <p className="descp-public-stories">{st.description}</p>
+                                        <p className="descp-public-stories">{getfirstepsiodedescp(st)}</p>
                                     </div>
                                     <NavLink
                                         className="view-btn-public-feed"

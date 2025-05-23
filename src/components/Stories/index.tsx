@@ -184,7 +184,6 @@ function Stories({ slugStories }: { slugStories: string | null }) {
             });
             console.log(likeStoryApi_response);
             //setDataStories(likeStoryApi_response.data);
-
             setDataStories(prevStories =>
                 prevStories.map(s =>
                     s.id === st.id
@@ -222,10 +221,10 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         return false;
     }
 
-    const getfirstepsiodedescp = (st:any)=>{
-        
-        if(st.versions.length>0){
-            if(st.versions[0].episodes.length>0){
+    const getfirstepsiodedescp = (st: any) => {
+
+        if (st.versions.length > 0) {
+            if (st.versions[0].episodes.length > 0) {
                 return st.versions[0].episodes[0].content;
             }
         }
@@ -247,7 +246,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                 <li className="story-box" key={index}>
                                     <NavLink
                                         className=""
-                                        style={{ position: "absolute", top: "0px", left: "0px", width: "100%", height: "100%",zIndex:2 }}
+                                        style={{ position: "absolute", top: "0px", left: "0px", width: "100%", height: "100%", zIndex: 2 }}
                                         to={`/dashboard?activeTab=story-preview&storyId=${st.id}`}
                                         onClick={() => { handleActiveMenu("story-preview") }}
                                     >
@@ -260,27 +259,18 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                                     console.log("like btn hit")
                                                     handle_like(st)
                                                 }}
-                                                style={{ height: "20px", width: "20px", color: "white",zIndex:"9",position:"relative" }}
+                                                style={{ height: "20px", width: "20px", color: "white", zIndex: "9", position: "relative" }}
                                             >
                                                 <div className="heart-icon">
                                                     <svg
-                                                        fill="white"
+                                                        className={`heart ${checkIfInLiking(user, st) ? 'clicked' : ''}`}
                                                         version="1.1"
                                                         id="Layer_1"
                                                         xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 511.996 511.996">
-                                                        <g>
-                                                            <g>
-                                                                <path
-                                                                    d="M467.01,64.373c-29.995-29.995-69.299-44.988-108.612-44.988c-36.779,0-73.259,13.662-102.4,39.919
-                                                        c-29.15-26.257-65.621-39.919-102.4-39.919c-39.313,0-78.618,14.993-108.612,44.988c-59.981,59.981-59.981,157.235,0,217.225
-                                                        L255.998,492.61L467.01,281.598C526.991,221.609,526.991,124.363,467.01,64.373z M448.919,263.49L255.998,456.403L63.085,263.499
-                                                        c-49.903-49.911-49.903-131.115,0-181.018c24.175-24.175,56.32-37.487,90.513-37.487c31.206,0,60.399,11.563,83.695,31.889
-                                                        l18.705,17.485l18.714-17.493c23.296-20.318,52.489-31.889,83.695-31.889c34.193,0,66.33,13.312,90.513,37.487
-                                                        C498.831,132.375,498.822,213.587,448.919,263.49z"/>
-                                                            </g>
-                                                        </g>
+                                                        viewBox="0 0 541 471">
+                                                        <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" fill="white" />
                                                     </svg>
+
                                                 </div>
                                             </button>
                                             <h4 className="like-count">{st.likes_count}</h4>
@@ -292,15 +282,15 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                                         <p >{st.title}
                                         </p>
                                         {(st.creator !== user.id) && (
-                                                <button
-                                                    style={{zIndex:"9",position:"relative"}}
-                                                    onClick={() => { toggleFollow(st) }}
-                                                    className={checkIfInFollowing(user, st)
-                                                        ? "following-btn"
-                                                        : "follow-btn"}>{checkIfInFollowing(user, st)
-                                                            ? "following"
-                                                            : "follow"}</button>
-                                            )}
+                                            <button
+                                                style={{ zIndex: "9", position: "relative" }}
+                                                onClick={() => { toggleFollow(st) }}
+                                                className={checkIfInFollowing(user, st)
+                                                    ? "following-btn"
+                                                    : "follow-btn"}>{checkIfInFollowing(user, st)
+                                                        ? "following"
+                                                        : "follow"}</button>
+                                        )}
                                         <p className="descp">{getfirstepsiodedescp(st)}</p>
                                     </div>
                                 </li>
