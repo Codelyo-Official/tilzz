@@ -423,7 +423,7 @@
     left:0px;
     width: 100%;
     font-family: 'Montserrat', sans-serif !important;
-    font-size: 15px;
+    font-size: 12px;
     display: flex;
     justify-content: left;
 }
@@ -453,23 +453,14 @@
   .right1 .icon .iconBox span {
     border-radius: 50%;
     background-color: #FFFFFD;
-    padding: 10px;
+    padding: 15px;
     color: #2c2c2c;
     font-size: 1.5rem;
   }
 
 .video-descp-banner{
-    position: absolute;
-    bottom: 0px;
-    left:0px;
-    width: 95%;
     font-family: benzinextb;
-    letter-spacing: 1px;
     color:white;
-    font-size: 11px;
-    padding: 14px;
-    text-align: left;
-    font-weight: light;
 }
 
 .box {
