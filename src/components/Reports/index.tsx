@@ -147,10 +147,10 @@ const Reports = () => {
 
   return (
     <>
-      <div style={{ width: "100%", height: "60px", display: "flex", justifyContent: "flex-end", paddingRight: "40px", }}>
-        <button className={`tabs-select ${tabselected === "quarantined" ? "tab-selected" : ""}`} onClick={() => {
+      <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "flex-end", paddingRight: "40px", }}>
+        {/* <button className={`tabs-select ${tabselected === "quarantined" ? "tab-selected" : ""}`} onClick={() => {
           setTabselected('quarantined')
-        }}>To Review</button>
+        }}>To Review</button> */}
         {/*} <button className={`tabs-select ${tabselected === "pending" ? "tab-selected" : ""}`} onClick={() => {
           setTabselected('pending')
         }}>Approval Pending</button>*/}

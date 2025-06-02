@@ -75,7 +75,7 @@ export default function Account() {
           {/* <img src={user.profile_picture!==null && user.profile_picture.startsWith('http')
             ? user.profile_picture
             : `${API_BASE_URL}${user.profile_picture}`} alt="Profile" className="avatar-img" /> */}
-                        <img src={`/images/avatar.png`} className="avatar-img"/>
+                        <img src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} className="avatar-img"/>
 
         </div>
         <button className="edit-btn" onClick={() => setOpen(true)}>

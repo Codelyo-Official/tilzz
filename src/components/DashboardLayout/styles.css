@@ -572,7 +572,7 @@
 }
 
 .tab-selected {
-  background-color: rgba(128, 128, 128, 0.222);
+  background-color: rgb(255, 255, 255);
 }
 
 .logged-in-user-avatar img {

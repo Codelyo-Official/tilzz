@@ -385,7 +385,7 @@
 .right1 {
     position: relative;
     grid-area: right1;
-    background-color: #ebd3f8;
+    background-color: #efd8fb;
     display: flex;
     align-items: center;
     justify-content: center;

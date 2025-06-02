@@ -31,7 +31,7 @@ const TopBarDashboard = ({ user }: {
             ? user.profile_picture
             : `${API_BASE_URL}${user.profile_picture}`}
             /> */}
-            <img src={`https://toppng.com/uploads/preview/avatar-png-115540218987bthtxfhls.png`} alt="avatar"/>
+            <img src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} alt="avatar"/>
             </button>
             <div className="dropdown-content" id="dropdown-content-id">
                 <a onClick={() => {
