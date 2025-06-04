@@ -11,6 +11,8 @@ import PublicStories from "./pages/publicStories";
 import Login from "./pages/registeration/login";
 import Register from "./pages/registeration/register";
 import Profile from "./pages/profile";
+import AboutPage from "./pages/about";
+import ContactPage from "./pages/contact";
 import NotFound from "./common/components/NotFound";
 
 const App = () => {
@@ -20,6 +22,8 @@ const App = () => {
         <Router>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/about" element={<AboutPage/>}/>
+              <Route path="/contact" element={<ContactPage/>}/>
               <Route path="/stories-feed" element={<PublicStories />} />
               <Route path="/login" element={<ProtectedRoute><Login /></ProtectedRoute>} />
               <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />

@@ -1,0 +1,88 @@
+.contact-container {
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+  height: 100%;
+  padding: 60px 20px;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: auto;
+}
+
+.page-title {
+  font-family: benzinextb;
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 30px;
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: bold;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.description {
+  font-family: 'Montserrat', sans-serif !important;
+  margin-bottom: 30px;
+  font-size: 18px;
+  color:rgb(73, 73, 73);
+  width: 90%;
+  font-size: 16px;
+
+}
+
+.contact-form input,
+.contact-form textarea {
+  font-family: 'Montserrat', sans-serif !important;
+
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.contact-form button {
+  font-family: 'Montserrat', sans-serif !important;
+  padding: 12px 24px;
+  background-color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 26px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 120px;
+  border-color: #4F46E5;
+  color: #4F46E5;
+  border: solid 1px #4F46E5;
+}
+
+.contact-container-item {
+  width: 100%;
+  height: 100%;
+  text-align: left;
+}
+
+.contact-container-item label{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  
+}
+
+@media only screen and (max-width:940px){
+  .contact-container {
+    grid-template-columns: 100%;
+  }
+
+  .contact-container-item {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 40px;
+  }
+  
+}

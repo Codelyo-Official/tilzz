@@ -143,6 +143,13 @@ const LoginSignup = () => {
         >
           {"Create an Account"}
         </div>
+        <div
+          className="toggle-link"
+          onClick={()=>{}}
+          style={{ fontSize: "12px", color: "black",marginTop:"5px" }}
+        >
+          {"forgot your password?"}
+        </div>
       </div>
     </div>
   );

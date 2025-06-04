@@ -25,9 +25,13 @@ function HomeNavbar() {
                         navigate("/stories-feed")
                     }}>Stories</button>
                     <div className="dot"></div>
-                    <button>Contact</button>
+                    <button onClick={()=>{
+                        navigate("/contact")
+                    }}>Contact</button>
                     <div className="dot"></div>
-                    <button>About Us</button>
+                    <button  onClick={()=>{
+                        navigate("/about")
+                    }}>About Us</button>
                 </div>
                 <Link to={"/login"} className="login-btn-home">
                     Login
