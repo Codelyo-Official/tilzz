@@ -16,6 +16,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import { ApiError } from '../../types/apiError';
 import { story } from '../../types/story';
 import axios from 'axios';
+import Dots from '../../common/components/dots';
 
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -134,6 +135,7 @@ const StoryPreview = () => {
     console.log('New episode added:', temp_obj);
 
     try {
+      setLoading(true);
       const token = sessionStorage.getItem("token");
       const createNewEpisode_response = await axios.post(`${API_BASE_URL}/api/stories/${paramvalue}/episodes/ `, temp_obj, {
         headers: {
@@ -141,9 +143,12 @@ const StoryPreview = () => {
         }
       });
       console.log(createNewEpisode_response);
+      setLoading(false);
       setEpisodes([...episodes, createNewEpisode_response.data])
 
     } catch (err: any) {
+      setLoading(false);
+
       console.log(err)
       const apiError = err as ApiError;
       if (apiError.response) {
@@ -167,6 +172,8 @@ const StoryPreview = () => {
     console.log(addNewEpisodeObject)
 
     try {
+      setLoading(true);
+
       const token = sessionStorage.getItem("token");
       const createNewEpisodeVersion_response = await axios.post(`${API_BASE_URL}/api/stories/episodes/${newVAt.id}/branch/`, addNewEpisodeObject, {
         headers: {
@@ -183,11 +190,15 @@ const StoryPreview = () => {
           ...episodes.slice(0, index),
           createNewEpisodeVersion_response.data
         ];
+        setLoading(false);
+
 
         setEpisodes(updatedEpisodes);
       }
 
     } catch (err: any) {
+      setLoading(false);
+
       console.log(err)
       const apiError = err as ApiError;
       if (apiError.response) {
@@ -208,6 +219,8 @@ const StoryPreview = () => {
     }
 
     try {
+      setLoading(true);
+
       const token = sessionStorage.getItem("token");
       const updateEpisode_response = await axios.put(`${API_BASE_URL}/api/stories/episodes/${currentEditId}/`, updateEpisodeObject, {
         headers: {
@@ -221,6 +234,8 @@ const StoryPreview = () => {
         else
           return updateEpisode_response.data;
       })
+      setLoading(false);
+
       setEpisodes(newresult);
       setUpdateEpisodeObject({
         ...updateEpisodeObject,
@@ -229,6 +244,8 @@ const StoryPreview = () => {
       setCurrentEditId(null);
 
     } catch (err: any) {
+      setLoading(false);
+
       console.log(err)
       const apiError = err as ApiError;
       if (apiError.response) {
@@ -406,9 +423,10 @@ const StoryPreview = () => {
     <>
       {dataStory === null ? (
         <div style={{ width: "100%", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
+          {/* <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
             <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          </Spinner> */}
+          <Dots />
         </div>
       ) : (
         <div className="story-preview">
@@ -422,7 +440,7 @@ const StoryPreview = () => {
           <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
             {episodes.map((episode: any) => (
               (episode.number >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Spinner animation="grow" role="status" variant="light" style={{ color: "white", fontSize: "20px" }}>
+                <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
                   <span className="visually-hidden">Loading...</span>
                 </Spinner>
               </div>) : (
@@ -438,12 +456,18 @@ const StoryPreview = () => {
                             <textarea placeholder='content' onChange={(e) => {
                               setUpdateEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
                             }}>{updateEpisodeObject.content}</textarea>
-                            <div style={{ display: "flex", justifyContent: "center" }}>
-                              <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleUpdateEpisode}>save</button>
-                              <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                                setCurrentEditId(null)
-                              }} >Cancel</button>
-                            </div>
+                            {loading ? (
+                              <div key={episode.id} style={{ width: "100%", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                                  <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                              </div>) : (<div style={{ display: "flex", justifyContent: "center" }}>
+                                <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleUpdateEpisode}>save</button>
+                                <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                  setCurrentEditId(null)
+                                }} >Cancel</button>
+                              </div>)}
+
                           </div>
                         ) : (
                           <p>{(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (episode.content) : (<>under review</>)} <span className="episode-options">
@@ -512,22 +536,29 @@ const StoryPreview = () => {
                   setAddNewEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
                 }}></textarea>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  {isAddNewVersion ? (<>
-                    <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
-                      console.log("submit new version")
-                      handleSubmitNewVersion();
-                    }}>Submit New Version</button>
-                    <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                      cancelVersion()
-                    }}>Cancel</button>
-                  </>) : (
-                    <>
-                      <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>Submit New Episode</button>
+
+                  {loading ? (
+                    <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  ) : (<>
+                    {isAddNewVersion ? (<>
+                      <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
+                        console.log("submit new version")
+                        handleSubmitNewVersion();
+                      }}>Submit New Version</button>
                       <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                        cancelNewEpisode();
+                        cancelVersion()
                       }}>Cancel</button>
-                    </>
-                  )}
+                    </>) : (
+                      <>
+                        <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleSubmitNewEpisode}>Submit New Episode</button>
+                        <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                          cancelNewEpisode();
+                        }}>Cancel</button>
+                      </>
+                    )}
+                  </>)}
 
                 </div>
               </div>

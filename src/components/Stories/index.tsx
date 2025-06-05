@@ -7,7 +7,8 @@ import axios from "axios";
 import { ApiError } from "../../types/apiError";
 import { story } from "../../types/story";
 import { User } from "../../types/user";
-
+import Spinner from 'react-bootstrap/Spinner';
+import Dots from "../../common/components/dots";
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -17,21 +18,26 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
     const dispatch = useDispatch();
     const { user }: any = useAuth();
-
     const [dataStories, setDataStories] = React.useState<story[]>([]);
+    const [loading, setLoading] = React.useState<boolean>(true);
+
 
     const getMyStories = async () => {
         try {
+            setLoading(true);
             const token = sessionStorage.getItem("token");
             const myStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/stories/my_stories/`, {
                 headers: {
                     Authorization: `Token ${token}`,
                 }
             });
+            setLoading(false);
             console.log(myStoriesApi_response);
             setDataStories(myStoriesApi_response.data);
 
         } catch (err: any) {
+            setLoading(false);
+
             console.log(err)
             const apiError = err as ApiError;
             if (apiError.response) {
@@ -43,6 +49,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
     const getAllStories = async () => {
         try {
+            setLoading(true);
+
             const token = sessionStorage.getItem("token");
             const allStoriesApi_response = await axios.get(`${API_BASE_URL}/api/stories/stories/`, {
                 headers: {
@@ -50,9 +58,13 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 }
             });
             console.log(allStoriesApi_response);
+            setLoading(false);
+
             setDataStories(allStoriesApi_response.data);
 
         } catch (err: any) {
+            setLoading(false);
+
             console.log(err)
             const apiError = err as ApiError;
             if (apiError.response) {
@@ -64,6 +76,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
     const getFavStories = async () => {
         try {
+            setLoading(true);
+
             const token = sessionStorage.getItem("token");
             const favStoriesApi_response = await axios.get(`${API_BASE_URL}/api/accounts/favorite-stories/`, {
                 headers: {
@@ -71,9 +85,13 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 }
             });
             console.log(favStoriesApi_response);
+            setLoading(false);
+
             // setDataStories(favStoriesApi_response.data);
 
         } catch (err: any) {
+            setLoading(false);
+
             console.log(err)
             const apiError = err as ApiError;
             if (apiError.response) {
@@ -85,6 +103,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
     const getFollowedStories = async () => {
         try {
+            setLoading(true);
+
             const token = sessionStorage.getItem("token");
             const followedStoriesApi_response = await axios.get(`${API_BASE_URL}/api/accounts/followed-stories/`, {
                 headers: {
@@ -92,9 +112,13 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 }
             });
             console.log(followedStoriesApi_response);
+            setLoading(false);
+
             setDataStories(followedStoriesApi_response.data);
 
         } catch (err: any) {
+            setLoading(false);
+
             console.log(err)
             const apiError = err as ApiError;
             if (apiError.response) {
@@ -239,66 +263,71 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 boxShadow: slugStories === "public-feed" ? "none" : "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             }}>
                 <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : slugStories === "following-stories" ? "Following Stories" : "Following Stories"}</h2>
-                <div className="story-container">
-                    <ul className="story-box101">
-                        {dataStories.map((st, index) => {
-                            return (
-                                <li className="story-box" key={index}>
-                                    <NavLink
-                                        className=""
-                                        style={{ position: "absolute", top: "0px", left: "0px", width: "100%", height: "100%", zIndex: 2 }}
-                                        to={`/dashboard?activeTab=story-preview&storyId=${st.id}`}
-                                        onClick={() => { handleActiveMenu("story-preview") }}
-                                    >
-                                    </NavLink>
-                                    {(st.creator !== user.id || true) && (
-                                        <div className="like-dislike-div"
+                {loading ? (<div style={{ width: "100%", height: "120px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Dots/>
+                </div>) : (
+                    <div className="story-container">
+                        <ul className="story-box101">
+                            {dataStories.map((st, index) => {
+                                return (
+                                    <li className="story-box" key={index}>
+                                        <NavLink
+                                            className=""
+                                            style={{ position: "absolute", top: "0px", left: "0px", width: "100%", height: "100%", zIndex: 2 }}
+                                            to={`/dashboard?activeTab=story-preview&storyId=${st.id}`}
+                                            onClick={() => { handleActiveMenu("story-preview") }}
                                         >
-                                            <button
-                                                onClick={() => {
-                                                    console.log("like btn hit")
-                                                    handle_like(st)
-                                                }}
-                                                style={{ height: "20px", width: "20px", color: "white", zIndex: "9", position: "relative" }}
+                                        </NavLink>
+                                        {(st.creator !== user.id || true) && (
+                                            <div className="like-dislike-div"
                                             >
-                                                <div className="heart-icon">
-                                                    <svg
-                                                        className={`heart ${checkIfInLiking(user, st) ? 'clicked' : ''}`}
-                                                        version="1.1"
-                                                        id="Layer_1"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 541 471">
-                                                        <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" fill="white" />
-                                                    </svg>
+                                                <button
+                                                    onClick={() => {
+                                                        console.log("like btn hit")
+                                                        handle_like(st)
+                                                    }}
+                                                    style={{ height: "20px", width: "20px", color: "white", zIndex: "9", position: "relative" }}
+                                                >
+                                                    <div className="heart-icon">
+                                                        <svg
+                                                            className={`heart ${checkIfInLiking(user, st) ? 'clicked' : ''}`}
+                                                            version="1.1"
+                                                            id="Layer_1"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 541 471">
+                                                            <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" fill="white" />
+                                                        </svg>
 
-                                                </div>
-                                            </button>
-                                            <h4 className="like-count">{st.likes_count}</h4>
-                                        </div>)}
-                                    {/* <div className="story-by-user"><img src={st.author.profile_picture} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.author.username}</div></div> */}
+                                                    </div>
+                                                </button>
+                                                <h4 className="like-count">{st.likes_count}</h4>
+                                            </div>)}
+                                        {/* <div className="story-by-user"><img src={st.author.profile_picture} /> <div style={{ position: "absolute", top: "2px", left: "32px" }}>{st.author.username}</div></div> */}
 
-                                    <img src={st.cover_image} alt="" />
-                                    <div className="title">
-                                        <p >{st.title}
-                                        </p>
-                                        {(st.creator !== user.id) && (
-                                            <button
-                                                style={{ zIndex: "9", position: "relative" }}
-                                                onClick={() => { toggleFollow(st) }}
-                                                className={checkIfInFollowing(user, st)
-                                                    ? "following-btn"
-                                                    : "follow-btn"}>{checkIfInFollowing(user, st)
-                                                        ? "following"
-                                                        : "follow"}</button>
-                                        )}
-                                        <p className="descp">{getfirstepsiodedescp(st)}</p>
-                                    </div>
-                                </li>
-                            )
-                        })}
-                    </ul>
+                                        <img src={st.cover_image} alt="" />
+                                        <div className="title">
+                                            <p >{st.title}
+                                            </p>
+                                            {(st.creator !== user.id) && (
+                                                <button
+                                                    style={{ zIndex: "9", position: "relative" }}
+                                                    onClick={() => { toggleFollow(st) }}
+                                                    className={checkIfInFollowing(user, st)
+                                                        ? "following-btn"
+                                                        : "follow-btn"}>{checkIfInFollowing(user, st)
+                                                            ? "following"
+                                                            : "follow"}</button>
+                                            )}
+                                            <p className="descp">{getfirstepsiodedescp(st)}</p>
+                                        </div>
+                                    </li>
+                                )
+                            })}
+                        </ul>
 
-                </div>
+                    </div>
+                )}
+
                 {/* <div className="viewmore-div">
                     <button>View More</button>
                 </div> */}

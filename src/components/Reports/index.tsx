@@ -11,7 +11,7 @@ import { FaRegFlag } from "react-icons/fa";
 import { ApiError } from '../../types/apiError';
 import axios from 'axios';
 import { story } from '../../types/story';
-
+import Dots from "../../common/components/dots";
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -19,6 +19,8 @@ const Reports = () => {
 
   console.log("story preview rendered")
   const { user } = useAuth();
+  const [loading, setLoading] = React.useState<boolean>(true);
+
   const [activeEpisode, setActiveEpisode] = useState<number | null>(null);
   const [tabselected, setTabselected] = React.useState("quarantined")
   const [reports, setReports] = React.useState<any>([]);
@@ -48,6 +50,7 @@ const Reports = () => {
   }
 
   const getAllQuarantinedStories = async () => {
+    setLoading(true)
     try {
       const token = sessionStorage.getItem("token");
       const QEpisodesApi_response = await axios.get(`${API_BASE_URL}/api/stories/api/quarantined-episodes/`, {
@@ -56,8 +59,10 @@ const Reports = () => {
         }
       });
       console.log(QEpisodesApi_response);
+      setLoading(false);
       setReports(QEpisodesApi_response.data);
     } catch (err: any) {
+      setLoading(false);
       console.log(err)
       const apiError = err as ApiError;
       if (apiError.response) {
@@ -97,7 +102,7 @@ const Reports = () => {
 
   }
 
-  const submitforapproval = async (ep: any,st:any) => {
+  const submitforapproval = async (ep: any, st: any) => {
     console.log(st)
     // /api/stories/api/episodes/{episode_id}/submit-for-approval/
     if (updateEpisodeObject.content.trim().length === 0) {
@@ -120,11 +125,11 @@ const Reports = () => {
       console.log(QEpisodesApi_response);
       alert("report submitted for approval")
 
-      let result = reports.map((r:any)=>{
-        if(r.id===st.id){
-          let temp_eps = r.quarantined_episodes.filter((e:any)=>e.id!==ep.id)
-          return {...r,quarantined_episodes:temp_eps}
-        }else
+      let result = reports.map((r: any) => {
+        if (r.id === st.id) {
+          let temp_eps = r.quarantined_episodes.filter((e: any) => e.id !== ep.id)
+          return { ...r, quarantined_episodes: temp_eps }
+        } else
           return r;
       })
       setReports(result);
@@ -147,67 +152,65 @@ const Reports = () => {
 
   return (
     <>
-      <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "flex-end", paddingRight: "40px", }}>
-        {/* <button className={`tabs-select ${tabselected === "quarantined" ? "tab-selected" : ""}`} onClick={() => {
-          setTabselected('quarantined')
-        }}>To Review</button> */}
-        {/*} <button className={`tabs-select ${tabselected === "pending" ? "tab-selected" : ""}`} onClick={() => {
-          setTabselected('pending')
-        }}>Approval Pending</button>*/}
-      </div>
-      {reports.map((report: any) => {
-        if (checkifanyepisodehasstatus(report, tabselected))
-          return (
-            <div className="story-preview">
-              <div className="story-header">
-                <img src={`${API_BASE_URL}/${report.story.cover_image}`} alt="Story Preview" className="story-image" />
-                <div className="story-info">
-                  <h2 className="story-title">{report.story.title}</h2>
-                </div>
-              </div>
+      {loading ? (
+        <div style={{ width: "100%", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Dots />
+        </div>) : (<>
+          {reports.map((report: any) => {
+            if (checkifanyepisodehasstatus(report, tabselected))
+              return (
+                <div className="story-preview">
+                  <div className="story-header">
+                    <img src={`${API_BASE_URL}/${report.story.cover_image}`} alt="Story Preview" className="story-image" />
+                    <div className="story-info">
+                      <h2 className="story-title">{report.story.title}</h2>
+                    </div>
+                  </div>
 
-              <div className="episodes-list">
-                <h3>Episodes to Review</h3>
-                {report.quarantined_episodes.map((episode: any) => {
-                  if (episode.status === tabselected)
-                    return (
-                      <div key={episode.id} className="episode">
-                        <div className="episode-header" onClick={() => handleEpisodeToggle(episode)}>
-                          {/* <h4>episode {episode.episode} : {episode.title}</h4> */}
-                          <h4 className='episode-title-ok-al'> {episode.content}</h4>
-                          <button className="edit-episode-btn"><FiEdit style={{ height: "14px", width: "14px", display: "inline-block", margin: "0", color: "black", marginRight: "5px", marginTop: "-2px" }} /></button>
-                          <span>{activeEpisode === episode.id ? <FiArrowUpCircle /> : <FiArrowDownCircle />}</span>
-                        </div>
-                        {activeEpisode === episode.id && (
-                          <div className="episode-content" style={{ marginTop: "20px" }}>
-                            <div className="new-episode-form">
-                              {episode.status === "quarantined" ? (<textarea onChange={(e: any) => {
-                                setUpdateEpisodeObject({ ...updateEpisodeObject, content: e.target.value })
-                              }}>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
-                              {episode.status === "quarantined" ? (<div style={{ display: "flex", justifyContent: "center" }}>
-                                <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
-                                  submitforapproval(episode,report);
-                                }}>submit for approval</button>
-                                <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                                  cancel();
-                                }} >Cancel</button>
-                              </div>) : (<p>Pending for approval</p>)}
-
+                  <div className="episodes-list">
+                    <h3>Episodes to Review</h3>
+                    {report.quarantined_episodes.map((episode: any) => {
+                      if (episode.status === tabselected)
+                        return (
+                          <div key={episode.id} className="episode">
+                            <div className="episode-header" onClick={() => handleEpisodeToggle(episode)}>
+                              {/* <h4>episode {episode.episode} : {episode.title}</h4> */}
+                              <h4 className='episode-title-ok-al'> {episode.content}</h4>
+                              <button className="edit-episode-btn"><FiEdit style={{ height: "14px", width: "14px", display: "inline-block", margin: "0", color: "black", marginRight: "5px", marginTop: "-2px" }} /></button>
+                              <span>{activeEpisode === episode.id ? <FiArrowUpCircle /> : <FiArrowDownCircle />}</span>
                             </div>
-                            <div className="episode-options">
+                            {activeEpisode === episode.id && (
+                              <div className="episode-content" style={{ marginTop: "20px" }}>
+                                <div className="new-episode-form">
+                                  {episode.status === "quarantined" ? (<textarea onChange={(e: any) => {
+                                    setUpdateEpisodeObject({ ...updateEpisodeObject, content: e.target.value })
+                                  }}>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
+                                  {episode.status === "quarantined" ? (<div style={{ display: "flex", justifyContent: "center" }}>
+                                    <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
+                                      submitforapproval(episode, report);
+                                    }}>submit for approval</button>
+                                    <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                      cancel();
+                                    }} >Cancel</button>
+                                  </div>) : (<p>Pending for approval</p>)}
 
-                            </div>
-                          </div>
-                        )}
-                      </div>);
-                  else
-                    return (<div></div>)
-                })}
-              </div>
+                                </div>
+                                <div className="episode-options">
 
-            </div>);
+                                </div>
+                              </div>
+                            )}
+                          </div>);
+                      else
+                        return (<div></div>)
+                    })}
+                  </div>
 
-      })}
+                </div>);
+
+          })}
+        </>)
+      }
 
     </>
   );

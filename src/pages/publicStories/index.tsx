@@ -8,13 +8,14 @@ import Footer from "../../components/Footer";
 
 function PublicStories() {
     console.log("pUBLIC dTORY PAGE LOADED")
+
     return (
         <>
             <HomeNavbar />
             <div>
                 <PublicStoriesFeed />
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 }

@@ -6,6 +6,7 @@ import { User } from "../../../types/user";
 import { ApiError } from "../../../types/apiError";
 import axios from "axios";
 import "../login.css";
+import Spinner from 'react-bootstrap/Spinner';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -18,6 +19,7 @@ const LoginSignup = () => {
 
   const { login } = useAuth();
   const [errors, setErrors] = useState<string | null>(null);  // Typed state
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
@@ -36,6 +38,7 @@ const LoginSignup = () => {
     };
 
     try {
+      setLoading(true);
       const login_api_response = await axios.post(`${API_BASE_URL}/api/accounts/login/`, payload);
       console.log(login_api_response);
       const token = login_api_response.data.token;
@@ -52,6 +55,7 @@ const LoginSignup = () => {
         // "role": login_api_response.data.user.role,
         "username": login_api_response.data.user.username
       };
+      setLoading(false);
 
       console.log("from above:", user_temp)
 
@@ -62,6 +66,7 @@ const LoginSignup = () => {
         setErrors('signup failed, please try again!');
       }
     } catch (err: any) {
+      setLoading(false);
       console.log(err)
       const apiError = err as ApiError;
       setErrors(apiError.message);
@@ -132,9 +137,18 @@ const LoginSignup = () => {
             }}
           />
           {errors && <p className="errors">{errors}</p>}
-          <button type="submit" style={{ fontSize: "14px" }}>
-            {"Login"}
-          </button>
+
+          {!loading ? (
+            <button type="submit" style={{ fontSize: "14px" }}>
+              {"Login"}
+            </button>) : (
+            <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px",background:"#ACA6FF" }}>
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          )}
+
         </form>
         <div
           className="toggle-link"
@@ -145,8 +159,8 @@ const LoginSignup = () => {
         </div>
         <div
           className="toggle-link"
-          onClick={()=>{}}
-          style={{ fontSize: "12px", color: "black",marginTop:"5px" }}
+          onClick={() => { }}
+          style={{ fontSize: "12px", color: "black", marginTop: "5px" }}
         >
           {"forgot your password?"}
         </div>

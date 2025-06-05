@@ -6,6 +6,8 @@ import axios from 'axios';
 import { User } from "../../../types/user";
 import { ApiError } from "../../../types/apiError";
 import "../login.css";
+import Spinner from 'react-bootstrap/Spinner';
+
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -20,6 +22,8 @@ const Register = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
 
   const { login } = useAuth();
   const [errors, setErrors] = useState<string | null>(null);  // Typed state for errors
@@ -55,6 +59,7 @@ const Register = () => {
     };
 
     try {
+      setLoading(true);
       const signup_api_response: any = await axios.post(`${API_BASE_URL}/api/accounts/register/`, payload);
 
       console.log(signup_api_response)
@@ -73,6 +78,8 @@ const Register = () => {
         "username": signup_api_response.data.user.username
       };
 
+      setLoading(false);
+
       const response = login(token, user_temp);
       if (response.success) {
         navigate("/dashboard");
@@ -81,6 +88,8 @@ const Register = () => {
       }
 
     } catch (err: any) {
+      setLoading(false);
+
       console.log(err)
       const apiError = err as ApiError;
       setErrors(apiError.message);
@@ -170,9 +179,16 @@ const Register = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           {errors && <p className="errors">{errors}</p>}
-          <button type="submit" style={{ fontSize: "14px" }}>
-            {"Create Account"}
-          </button>
+          {!loading ? (
+            <button type="submit" style={{ fontSize: "14px" }}>
+              {"Create Account"}
+            </button>) : (
+            <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          )}
         </form>
         <div
           className="toggle-link"
