@@ -12,6 +12,7 @@ import { ApiError } from '../../types/apiError';
 import axios from 'axios';
 import { story } from '../../types/story';
 import Dots from "../../common/components/dots";
+import Spinner from 'react-bootstrap/esm/Spinner';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -20,6 +21,8 @@ const Reports = () => {
   console.log("story preview rendered")
   const { user } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [loading1, setLoading1] = React.useState<boolean>(false);
+
 
   const [activeEpisode, setActiveEpisode] = useState<number | null>(null);
   const [tabselected, setTabselected] = React.useState("quarantined")
@@ -73,8 +76,6 @@ const Reports = () => {
 
   }
 
-
-
   const handleUpdateEpisode = async (ep: any) => {
     // Add the new episode (this is just for demonstration purposes)
 
@@ -110,6 +111,7 @@ const Reports = () => {
       return;
     }
 
+    setLoading1(true);
     await handleUpdateEpisode(ep);
 
     try {
@@ -123,6 +125,8 @@ const Reports = () => {
         }
       });
       console.log(QEpisodesApi_response);
+      setLoading1(false);
+
       alert("report submitted for approval")
 
       let result = reports.map((r: any) => {
@@ -185,14 +189,25 @@ const Reports = () => {
                                   {episode.status === "quarantined" ? (<textarea onChange={(e: any) => {
                                     setUpdateEpisodeObject({ ...updateEpisodeObject, content: e.target.value })
                                   }}>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
-                                  {episode.status === "quarantined" ? (<div style={{ display: "flex", justifyContent: "center" }}>
-                                    <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
-                                      submitforapproval(episode, report);
-                                    }}>submit for approval</button>
-                                    <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                                      cancel();
-                                    }} >Cancel</button>
-                                  </div>) : (<p>Pending for approval</p>)}
+                                  {episode.status === "quarantined" ? (
+                                    <>
+                                      {loading1 ? (
+                                        <div key={episode.id} style={{ width: "100%", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                          <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                                            <span className="visually-hidden">Loading...</span>
+                                          </Spinner>
+                                        </div>) : (
+                                        <div style={{ display: "flex", justifyContent: "center" }}>
+                                          <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
+                                            submitforapproval(episode, report);
+                                          }}>submit for approval</button>
+                                          <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                            cancel();
+                                          }} >Cancel</button>
+                                        </div>
+                                      )}
+                                    </>
+                                  ) : (<p>Pending for approval</p>)}
 
                                 </div>
                                 <div className="episode-options">

@@ -37,6 +37,7 @@ const StoryPreview = () => {
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
   const queryParams = new URLSearchParams(location.search);
   const paramvalue = queryParams.get('storyId');
+  const [varChangeAt, setVarChangeAt] = React.useState<any>(null);
 
   const [likedepisodes, setLikedEpisodes] = useState<number[]>([]);
 
@@ -258,8 +259,10 @@ const StoryPreview = () => {
 
   const nextVariation = async (ep: any) => {
     console.log(ep)
+    setVarChangeAt(ep);
     const mres = await getEpisodes(ep.next_version.version)
     //console.log(mres);
+
     if (mres.versions.length > 0 && mres.versions[0].episodes.length > 0) {
       let toadd = [...mres.versions[0].episodes];
       let result = [];
@@ -272,6 +275,7 @@ const StoryPreview = () => {
       }
       result = [...result, ...toadd]
       console.log("new episodes:", result)
+      setVarChangeAt(null);
       setEpisodes(result)
     }
 
@@ -279,6 +283,7 @@ const StoryPreview = () => {
 
   const prevVariation = async (ep: any) => {
     console.log(ep)
+    setVarChangeAt(ep);
     const mres = await getEpisodes(ep.previous_version.version)
     console.log(mres)
 
@@ -294,6 +299,8 @@ const StoryPreview = () => {
       }
       result = [...result, ...toadd]
       console.log("new episodes:", result)
+      setVarChangeAt(null);
+
       setEpisodes(result)
     }
 
@@ -423,9 +430,6 @@ const StoryPreview = () => {
     <>
       {dataStory === null ? (
         <div style={{ width: "100%", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          {/* <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
-            <span className="visually-hidden">Loading...</span>
-          </Spinner> */}
           <Dots />
         </div>
       ) : (
@@ -439,20 +443,20 @@ const StoryPreview = () => {
 
           <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
             {episodes.map((episode: any) => (
-              (episode.number >= activeEpisode && loading) ? (<div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </div>) : (
+              (varChangeAt !== null && varChangeAt.id <= episode.id) ? (
+                <>
+                  {varChangeAt.id === episode.id ? (
+                    <div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <Dots />
+                    </div>
+                  ) : (<></>)}
+                </>) : (
                 <>
                   {(newVAt === null || (episode.id < newVAt.id)) && (
                     <div key={episode.id} className="episode">
                       <div className="episode-content">
                         {episode.id === currentEditId ? (
                           <div className="new-episode-form">
-                            {/* <input type="text" placeholder='title' value={updateEpisodeObject.title} onChange={(e) => {
-                              setUpdateEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
-                            }} /> */}
                             <textarea placeholder='content' onChange={(e) => {
                               setUpdateEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
                             }}>{updateEpisodeObject.content}</textarea>
