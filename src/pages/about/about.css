@@ -137,8 +137,9 @@
 .about-us-grid button{
   font-family: 'Montserrat', sans-serif !important;
   background-color: white;
-  border: 1px solid black;
-  color:black;
+  border-color: #4F46E5;
+  color: #4F46E5;
+  border: solid 1px #4F46E5;
   height: 56px;
   padding-left: 25px;
   padding-right: 25px;

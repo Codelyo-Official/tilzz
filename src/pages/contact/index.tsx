@@ -3,6 +3,8 @@ import HomeNavbar from "../../components/HomeNavbar";
 import { LuPhone } from "react-icons/lu";
 import { MdOutlineMailOutline } from "react-icons/md";
 import "./contact.css";
+import Footer from "../../components/Footer";
+
 
 const ContactPage = () => {
     const [form, setForm] = useState({
@@ -78,6 +80,7 @@ const ContactPage = () => {
                     </form>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };

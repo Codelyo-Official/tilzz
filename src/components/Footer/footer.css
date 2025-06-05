@@ -1,0 +1,129 @@
+  footer {
+      position: relative;
+      font-family: 'Montserrat', sans-serif !important;
+      overflow: hidden;
+      min-height: 200px;
+      height: auto;
+  }
+
+  footer .logo101 {
+      position: absolute;
+      left: 0%;
+      top: 40px;
+      font-family: benzinextb;
+      font-weight: bold;
+  }
+
+  .logo101 h2 {
+      font-size: 20px;
+  }
+
+  .social-links {
+      position: absolute;
+      top: 40px;
+      right: 0px;
+      width: 180px;
+      height: 90px;
+  }
+
+  .social-links div {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      margin: 0;
+      margin-top: 20px;
+      width: 120px;
+  }
+
+  .social-links h3 {
+      font-size: 14px;
+  }
+
+  .social-links a {
+      font-size: 18px;
+  }
+
+  .copyr {
+      position: absolute;
+      left: 0%;
+      top: 72px;
+  }
+
+  footer .copyright {
+      color: rgb(27, 27, 27);
+      font-family: 'Montserrat', sans-serif !important;
+      font-size: 12px;
+      width: 180px;
+  }
+
+  .q-links {
+      position: absolute;
+      width: 100px;
+      right: 220px;
+      top: 40px;
+  }
+
+  .q-links h3 {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 8px;
+  }
+
+  .q-links a {
+      font-size: 12px;
+      display: block;
+  }
+
+  @media only screen and (max-width:680px) {
+
+    footer{
+        height: 100%;
+    }
+      footer .logo101 {
+          top: 0px;
+          left: 50%;
+          transform: translateX(-50%);
+      }
+
+      .q-links {
+          position: relative;
+          width: 100%;
+          right: 0;
+          margin-top: 40px;
+      }
+
+      .q-links h3 {
+          display: none;
+      }
+
+      .q-links a {
+          text-align: center;
+          font-size: 14px;
+      }
+
+      .social-links {
+        position: relative;
+          width: 100%;
+          height: 50px;
+          display: flex;
+          justify-content: center;
+      }
+
+      .social-links h3{
+        display: none;
+      }
+
+      .copyr{
+        position: relative;
+        margin: 0px;
+        height: 160px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .copyr .copyright{
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+  }

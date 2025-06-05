@@ -1,6 +1,7 @@
 import React from "react";
 import "./about.css";
 import HomeNavbar from "../../components/HomeNavbar";
+import Footer from "../../components/Footer";
 
 const AboutPage = () => {
     return (
@@ -39,6 +40,7 @@ const AboutPage = () => {
                     </section>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };

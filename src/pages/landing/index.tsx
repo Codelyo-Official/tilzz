@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FiArrowRightCircle } from "react-icons/fi";
 import HomeNavbar from "../../components/HomeNavbar";
+import Footer from "../../components/Footer"
 import "./home.css";
 
 function Home() {
@@ -83,6 +84,7 @@ function Home() {
                     </div>
                 </div>
             </div>
+            <Footer/>
         </div>
     );
 }
