@@ -350,7 +350,7 @@ const StoryPreview = () => {
       });
       console.log(reportEpisode_response);
       alert('reported successfully')
-      if (reportEpisode_response.data?.reports_count && reportEpisode_response.data?.reports_count >= 3) {
+      if (true || reportEpisode_response.data?.reports_count && reportEpisode_response.data?.reports_count >= 3) {
         let result = episodes.map((ep: any) => {
           if (ep.id === eid) {
             return { ...ep, status: "quarantined", is_reported: true };
@@ -419,12 +419,34 @@ const StoryPreview = () => {
     }
   }
 
+  const handleLikeEpisode = async (ep:any) =>{
+    console.log(ep)
+    try {
+      const token = sessionStorage.getItem('token');
+      const likeEpisode_response = await axios.post(`${API_BASE_URL}/api/episodes/${ep.id}/like/`,{}, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      console.log(likeEpisode_response);
+      
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
+        alert(errorMessage);
+      }
+    } finally {
+    }
+  }
+
   const checkIfInLiking = (eid: number, ep: any) => {
     if (likedepisodes.includes(eid))
       return true;
     return false;
   }
-
 
   return (
     <>
@@ -490,10 +512,11 @@ const StoryPreview = () => {
                             }}><FiEdit /></button>)}
                             {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
                               <button className="tooltip1" onClick={() => {
-                                if (likedepisodes.includes(episode.id))
-                                  setLikedEpisodes(likedepisodes.filter(l => l !== episode.id))
-                                else
-                                  setLikedEpisodes([...likedepisodes, episode.id]);
+                                handleLikeEpisode(episode)
+                                // if (likedepisodes.includes(episode.id))
+                                //   setLikedEpisodes(likedepisodes.filter(l => l !== episode.id))
+                                // else
+                                //   setLikedEpisodes([...likedepisodes, episode.id]);
                               }}>
                                 <div className="heart-icon from-preview">
                                   <svg
