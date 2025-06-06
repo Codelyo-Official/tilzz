@@ -442,7 +442,7 @@ const StoryPreview = () => {
           </div>
 
           <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
-            {episodes.map((episode: any) => (
+            {episodes.map((episode: any,index:number) => (
               (varChangeAt !== null && varChangeAt.id <= episode.id) ? (
                 <>
                   {varChangeAt.id === episode.id ? (
@@ -474,11 +474,12 @@ const StoryPreview = () => {
 
                           </div>
                         ) : (
-                          <p>{(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (episode.content) : (<>under review</>)} <span className="episode-options">
-
-                            <button className="tooltip1" onClick={() => {
-                              addVersion(episode)
-                            }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                          <p>{(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (episode.content) : (<>under review</>)} <div className="episode-options">
+                            {index!==0 &&(
+                              <button className="tooltip1" onClick={() => {
+                                addVersion(episode)
+                              }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                            )}
 
                             {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id && (<button onClick={() => {
                               setCurrentEditId(episode.id);
@@ -521,7 +522,7 @@ const StoryPreview = () => {
                               <button className="tooltip1" onClick={() => {
                                 confirmDelete(episode.id)
                               }}><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
-                          </span></p>)}
+                          </div></p>)}
 
                       </div>
                     </div>)}
