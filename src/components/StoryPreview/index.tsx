@@ -533,9 +533,6 @@ const StoryPreview = () => {
           <div className="add-episode">
             {showNewEpisodeForm || isAddNewVersion ? (
               <div className="new-episode-form">
-                {/* <input required type="text" placeholder='chapter title' value={addNewEpisodeObject.title} onChange={(e) => {
-                  setAddNewEpisodeObject((prev: any) => ({ ...prev, title: e.target.value }));
-                }} /> */}
                 <textarea required placeholder='content' value={addNewEpisodeObject.content} onChange={(e) => {
                   setAddNewEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
                 }}></textarea>
