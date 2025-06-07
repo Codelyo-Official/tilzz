@@ -1,15 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import {  ChangeEvent, FormEvent } from "react";
 import './StoryPreview.css';
 import { useAuth } from "../../contexts/AuthProvider";
 import { FiEdit } from 'react-icons/fi';
 import 'react-quill/dist/quill.snow.css';
-import { FiArrowDownCircle, FiArrowRightCircle, FiArrowLeftCircle } from "react-icons/fi";
+import { FiArrowRightCircle, FiArrowLeftCircle } from "react-icons/fi";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { TiDeleteOutline } from "react-icons/ti";
-import { MdOutlineReportProblem } from "react-icons/md";
-
-import { FaRegHeart } from "react-icons/fa";
-import { FiArrowUpCircle } from "react-icons/fi";
 import { useLocation } from 'react-router-dom';
 import { FaRegFlag } from "react-icons/fa";
 import Spinner from 'react-bootstrap/Spinner';
@@ -17,7 +14,8 @@ import { ApiError } from '../../types/apiError';
 import { story } from '../../types/story';
 import axios from 'axios';
 import Dots from '../../common/components/dots';
-
+import ModalDialog from "../../common/components/ModalDialog";
+import { MdVisibility } from 'react-icons/md';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -29,15 +27,16 @@ const StoryPreview = () => {
   const [episodes, setEpisodes] = React.useState<any>([]);
   const [currentEditId, setCurrentEditId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
   const location = useLocation();
   const [isAddNewVersion, setIsAddNewVersion] = useState(false);
   const [newVAt, setNewVAt] = useState<any | null>(null)
   const { user } = useAuth();
-  const [activeEpisode, setActiveEpisode] = useState(1);
   const [showNewEpisodeForm, setShowNewEpisodeForm] = useState(false);
   const queryParams = new URLSearchParams(location.search);
   const paramvalue = queryParams.get('storyId');
   const [varChangeAt, setVarChangeAt] = React.useState<any>(null);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const [likedepisodes, setLikedEpisodes] = useState<number[]>([]);
 
@@ -51,6 +50,13 @@ const StoryPreview = () => {
     content: "",
   });
 
+  const [updateStoryObject, setUpdateStoryObject] = React.useState<any>({
+    title: "title of story",
+    description: "",
+    visibility: "public",
+    cover_image: ""
+  })
+
   const getStoryDetails = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -61,6 +67,12 @@ const StoryPreview = () => {
       });
       console.log(StoryApi_response);
       setDataStory(StoryApi_response.data);
+      setUpdateStoryObject({
+        ...updateStoryObject,
+        title: StoryApi_response.data.title,
+        visibility: StoryApi_response.data.visibility,
+        cover_image: StoryApi_response.data.cover_image
+      })
       if (StoryApi_response.data.versions.length > 0) {
         setEpisodes(StoryApi_response.data.versions[0].episodes)
 
@@ -419,17 +431,17 @@ const StoryPreview = () => {
     }
   }
 
-  const handleLikeEpisode = async (ep:any) =>{
+  const handleLikeEpisode = async (ep: any) => {
     console.log(ep)
     try {
       const token = sessionStorage.getItem('token');
-      const likeEpisode_response = await axios.post(`${API_BASE_URL}/api/episodes/${ep.id}/like/`,{}, {
+      const likeEpisode_response = await axios.post(`${API_BASE_URL}/api/episodes/${ep.id}/like/`, {}, {
         headers: {
           Authorization: `Token ${token}`,
         }
       });
       console.log(likeEpisode_response);
-      
+
     } catch (err: any) {
       console.log(err)
       const apiError = err as ApiError;
@@ -458,13 +470,16 @@ const StoryPreview = () => {
         <div className="story-preview">
           <div className="story-header">
             <img src={dataStory.cover_image} alt="Story Preview" className="story-image" />
+            <button className='story-edit-btn' onClick={() => {
+              setOpen(prev => !prev);
+            }}><FiEdit style={{ color: "white", height: "16px", width: "16px" }} /></button>
             <div className="story-info">
               <h2 className="story-title">{dataStory.title}</h2>
             </div>
           </div>
 
           <div className="episodes-list" style={{ paddingTop: "0px", marginTop: "0px" }}>
-            {episodes.map((episode: any,index:number) => (
+            {episodes.map((episode: any, index: number) => (
               (varChangeAt !== null && varChangeAt.id <= episode.id) ? (
                 <>
                   {varChangeAt.id === episode.id ? (
@@ -497,7 +512,7 @@ const StoryPreview = () => {
                           </div>
                         ) : (
                           <p>{(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (episode.content) : (<>under review</>)} <div className="episode-options">
-                            {index!==0 &&(
+                            {index !== 0 && (
                               <button className="tooltip1" onClick={() => {
                                 addVersion(episode)
                               }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
@@ -513,10 +528,6 @@ const StoryPreview = () => {
                             {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
                               <button className="tooltip1" onClick={() => {
                                 handleLikeEpisode(episode)
-                                // if (likedepisodes.includes(episode.id))
-                                //   setLikedEpisodes(likedepisodes.filter(l => l !== episode.id))
-                                // else
-                                //   setLikedEpisodes([...likedepisodes, episode.id]);
                               }}>
                                 <div className="heart-icon from-preview">
                                   <svg
@@ -595,6 +606,41 @@ const StoryPreview = () => {
           </div>
 
         </div>)}
+
+      <ModalDialog isOpen={open} onClose={() => setOpen(false)}>
+        <div >
+          <form onSubmit={() => { }}>
+            <div >
+              <h2 id='story-title-edit-id'>Edit {dataStory !== null && (dataStory.title)}</h2>
+              <label style={{ fontSize: "14px" }}>Title</label>
+              <input
+                type="text"
+                id="story-title-id"
+                name="story-title"
+                value={updateStoryObject !== null ? (updateStoryObject.title) : ("")}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setUpdateStoryObject({ ...updateStoryObject, title: e.target.value })}
+                required
+              />
+            </div>
+
+            {!loading1 ? (
+              <div >
+                <button type="submit"
+                >Create</button>
+                <button type="button" onClick={() => setOpen(false)}>
+                  Cancel
+                </button>
+              </div>) : (
+              <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            )}
+
+          </form>
+        </div>
+      </ModalDialog>
     </>
   );
 };

@@ -600,3 +600,27 @@
 svg.heart.clicked path{
   fill: rgb(255, 74, 74);
 }
+
+.story-edit-btn{
+  position: absolute;
+  top:12px;
+  right:12px;
+}
+
+#story-title-id{
+  display: block;
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 5px;
+  border: solid 1px black;
+  border-radius: 5px;
+}
+
+#story-title-edit-id{
+  font-family: vice;
+  text-align: center;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+}
