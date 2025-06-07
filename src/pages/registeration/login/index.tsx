@@ -14,12 +14,14 @@ const LoginSignup = () => {
   const navigate = useNavigate();
 
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
+  const inputUserRef = useRef<HTMLInputElement | null>(null);  // Typed ref
   const inputEmailRef = useRef<HTMLInputElement | null>(null);  // Typed ref
   const inputPasswordRef = useRef<HTMLInputElement | null>(null);  // Typed ref
 
   const { login } = useAuth();
   const [errors, setErrors] = useState<string | null>(null);  // Typed state
   const [loading, setLoading] = useState<boolean>(false);
+  const [loginState, setLoginState] = useState<number>(0)
 
   const handleLoginSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
@@ -31,52 +33,79 @@ const LoginSignup = () => {
     // }
     // setIsRequestInProgress(true); 
 
-    // Ensure refs are non-null before accessing
-    const payload = {
-      username: inputEmailRef.current?.value,
-      password: inputPasswordRef.current?.value,
-    };
-
-    try {
-      setLoading(true);
-      const login_api_response = await axios.post(`${API_BASE_URL}/api/accounts/login/`, payload);
-      console.log(login_api_response);
-      const token = login_api_response.data.token;
-      let p_temp = undefined;
-      if (login_api_response.data.user.profile !== null) {
-        p_temp = login_api_response.data.user.profile.profile_picture;
-      }
-      let user_temp: User = {
-        id: login_api_response.data.user.id,
-        "email": login_api_response.data.user.email,
-        // "first_name": login_api_response.data.user.first_name,
-        // "last_name": login_api_response.data.user.last_name,
-        "profile_picture": p_temp,
-        // "role": login_api_response.data.user.role,
-        "username": login_api_response.data.user.username
+    if (loginState === 0) {
+      const payload = {
+        username: inputUserRef.current?.value,
+        password: inputPasswordRef.current?.value,
       };
-      setLoading(false);
 
-      console.log("from above:", user_temp)
+      try {
+        setLoading(true);
+        const login_api_response = await axios.post(`${API_BASE_URL}/api/accounts/login/`, payload);
+        console.log(login_api_response);
+        const token = login_api_response.data.token;
+        let p_temp = undefined;
+        if (login_api_response.data.user.profile !== null) {
+          p_temp = login_api_response.data.user.profile.profile_picture;
+        }
+        let user_temp: User = {
+          id: login_api_response.data.user.id,
+          "email": login_api_response.data.user.email,
+          // "first_name": login_api_response.data.user.first_name,
+          // "last_name": login_api_response.data.user.last_name,
+          "profile_picture": p_temp,
+          // "role": login_api_response.data.user.role,
+          "username": login_api_response.data.user.username
+        };
+        setLoading(false);
 
-      const response = login(token, user_temp);
-      if (response.success) {
-        navigate("/dashboard");
-      } else {
-        setErrors('signup failed, please try again!');
+        console.log("from above:", user_temp)
+
+        const response = login(token, user_temp);
+        if (response.success) {
+          navigate("/dashboard");
+        } else {
+          setErrors('signup failed, please try again!');
+        }
+      } catch (err: any) {
+        setLoading(false);
+        console.log(err)
+        const apiError = err as ApiError;
+        setErrors(apiError.message);
+        if (apiError.response) {
+          const status = apiError.response.status;
+          const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
+          setErrors(errorMessage);
+        }
+      } finally {
+        //setIsRequestInProgress(false); 
       }
-    } catch (err: any) {
-      setLoading(false);
-      console.log(err)
-      const apiError = err as ApiError;
-      setErrors(apiError.message);
-      if (apiError.response) {
-        const status = apiError.response.status;
-        const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
-        setErrors(errorMessage);
+    }else if(loginState===1){
+      // /api/accounts/password-reset/
+
+      const payload = {
+        email: inputEmailRef.current?.value,
+      };
+
+      try {
+        setLoading(true);
+        const sendCodeEmail_api_response = await axios.post(`${API_BASE_URL}/api/accounts/password-reset/`, payload);
+        console.log(sendCodeEmail_api_response);
+        setLoading(false);
+        
+      } catch (err: any) {
+        setLoading(false);
+        console.log(err)
+        const apiError = err as ApiError;
+        setErrors(apiError.message);
+        if (apiError.response) {
+          const status = apiError.response.status;
+          const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
+          setErrors(errorMessage);
+        }
+      } finally {
+        //setIsRequestInProgress(false); 
       }
-    } finally {
-      //setIsRequestInProgress(false); 
     }
 
   };
@@ -112,38 +141,60 @@ const LoginSignup = () => {
       </div>
 
       <div className={`form-container`} style={{ marginTop: "120px" }}>
-        <h2 style={{ fontSize: "16px", color: "black" }}>{"Login"}</h2>
+        <h2 style={{ fontSize: "16px", color: "black" }}>{loginState === 0 ? "Login" : loginState === 1 ? "Send Verification code to your email" : "Verify Update Password"}</h2>
         <form onSubmit={handleLoginSubmit}>
-          <input
-            type="text"
-            placeholder="username"
-            ref={inputEmailRef}
-            required
-            onChange={(e) => {
-              if (inputEmailRef.current) {
-                inputEmailRef.current.value = e.target.value;
-              }
-            }}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            ref={inputPasswordRef}
-            required
-            onChange={(e) => {
-              if (inputPasswordRef.current) {
-                inputPasswordRef.current.value = e.target.value;
-              }
-            }}
-          />
+
+          {loginState === 0 && (
+            <>
+              <input
+                type="text"
+                placeholder="username"
+                ref={inputUserRef}
+                required
+                onChange={(e) => {
+                  if (inputUserRef.current) {
+                    inputUserRef.current.value = e.target.value;
+                  }
+                }}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                ref={inputPasswordRef}
+                required
+                onChange={(e) => {
+                  if (inputPasswordRef.current) {
+                    inputPasswordRef.current.value = e.target.value;
+                  }
+                }}
+              />
+            </>
+          )}
+
+          {loginState === 1 && (
+            <>
+              <input
+                type="email"
+                placeholder="example@email.com"
+                ref={inputEmailRef}
+                required
+                onChange={(e) => {
+                  if (inputEmailRef.current) {
+                    inputEmailRef.current.value = e.target.value;
+                  }
+                }}
+              />
+            </>
+          )}
+
           {errors && <p className="errors">{errors}</p>}
 
           {!loading ? (
             <button type="submit" style={{ fontSize: "14px" }}>
-              {"Login"}
+              {loginState === 0 ? "Login" : loginState === 1 ? "Send Code" : "Submit"}
             </button>) : (
             <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px",background:"#ACA6FF" }}>
+              <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
             </div>
@@ -159,10 +210,15 @@ const LoginSignup = () => {
         </div>
         <div
           className="toggle-link"
-          onClick={() => { }}
+          onClick={() => {
+            if (loginState === 0)
+              setLoginState(1)
+            else
+              setLoginState(0)
+          }}
           style={{ fontSize: "12px", color: "black", marginTop: "5px" }}
         >
-          {"forgot your password?"}
+          {loginState === 0 ? "forgot your password?" : "back to login"}
         </div>
       </div>
     </div>
