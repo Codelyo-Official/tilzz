@@ -697,10 +697,22 @@ const StoryPreview = () => {
             </div>
 
             {!loading1 ? (
-              <div >
+              <div style={{width:"fit-content", marginLeft:"auto",marginRight:"auto"}}>
                 <button type="submit"
-                >Create</button>
-                <button type="button" onClick={() => setOpen(false)}>
+                style={{  fontSize: "14px",
+                  width:"120px",
+                  padding:"8px",
+                  margin:"0"
+                }}>Save</button>
+                <button type="button" style={{  fontSize: "14px",
+                width:"120px",
+                padding:"8px",
+                margin:"0",
+                border:"1px solid",
+                borderRadius:"22px",
+                marginLeft:"5px",
+                borderColor:"#e54646",color:"#e54646"
+              }} onClick={() => setOpen(false)}>
                   Cancel
                 </button>
               </div>) : (
