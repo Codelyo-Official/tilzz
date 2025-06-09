@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { ChangeEvent, FormEvent } from "react";
 import './StoryPreview.css';
 import { useAuth } from "../../contexts/AuthProvider";
@@ -15,9 +15,63 @@ import { story } from '../../types/story';
 import axios from 'axios';
 import Dots from '../../common/components/dots';
 import ModalDialog from "../../common/components/ModalDialog";
-import { MdVisibility } from 'react-icons/md';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
+
+const ParagraphWithOptions = ({ text }: { text: string }) => {
+  const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const [isMultiline, setIsMultiline] = useState(false);
+
+  useEffect(() => {
+    const checkIfMultiline = () => {
+      const para = paragraphRef.current;
+      if (!para) return;
+
+      const parent = para.parentElement;
+      if (!parent) return;
+
+      const parentWidth = parent.clientWidth;
+
+      // Create a canvas context for measuring text
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Match computed styles
+      const computedStyle = getComputedStyle(para);
+      const font = `${computedStyle.fontStyle} ${computedStyle.fontWeight} ${computedStyle.fontSize} ${computedStyle.fontFamily}`;
+      ctx.font = font;
+
+      // Measure each word plus a space
+      const words = text.split(" ");
+      let currentLineWidth = 0;
+      let willWrap = false;
+
+      for (const word of words) {
+        const wordWidth = ctx.measureText(word + " ").width;
+
+        if (currentLineWidth + wordWidth > parentWidth) {
+          willWrap = true;
+          break;
+        } else {
+          currentLineWidth += wordWidth;
+        }
+      }
+
+      setIsMultiline(willWrap);
+    };
+
+    checkIfMultiline();
+    window.addEventListener("resize", checkIfMultiline);
+    return () => window.removeEventListener("resize", checkIfMultiline);
+  }, [text]);
+
+  return (
+    <p ref={paragraphRef} style={{display:isMultiline?"inline":"block"}}>
+      {text}
+    </p>
+  );
+};
 
 const StoryPreview = () => {
 
@@ -455,7 +509,7 @@ const StoryPreview = () => {
       console.log(likeEpisode_response);
       let result = episodes.map((e: any) => {
         if (ep.id === e.id) {
-          return {...e,is_liked:!ep.is_liked,likes_count:ep.is_liked?ep.likes_count-1:ep.likes_count+1}
+          return { ...e, is_liked: !ep.is_liked, likes_count: ep.is_liked ? ep.likes_count - 1 : ep.likes_count + 1 }
         } else
           return e;
       })
@@ -576,57 +630,60 @@ const StoryPreview = () => {
 
                           </div>
                         ) : (
-                          <p>{(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (episode.content) : (<div className='under-review'>
-                            <p className='r-tag'>under review</p>
-                            <p style={{ filter: 'blur(2px)'}}>{episode.content}</p>
-                          </div>)} <div className="episode-options">
-                            {index !== 0 && (
-                              <button className="tooltip1" onClick={() => {
-                                addVersion(episode)
-                              }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
-                            )}
-
-                            {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id && (<button onClick={() => {
-                              setCurrentEditId(episode.id);
-                              setUpdateEpisodeObject({
-                                title: episode.title,
-                                content: episode.content
-                              });
-                            }}><FiEdit /></button>)}
-                            {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
-                              <button className="tooltip1" onClick={() => {
-                                handleLikeEpisode(episode)
-                              }}>
-                                <div className="heart-icon from-preview" style={{position:"relative",display:"flex",justifyContent:"flex-start",height:"fit-content"}}>
-                                  <svg
-                                    className={`heart ${episode.is_liked ? 'clicked' : ''}`}
-                                    version="1.1"
-                                    id="Layer_1"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 541 471">
-                                    <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" />
-                                  </svg>
-                                  <span style={{fontSize:"11px",position:"absolute",bottom:"-5px",right:"-2px"}}>{episode.likes_count}</span>
-                                </div>
-                                <span className="tooltiptext1">Like</span></button>
+                          <>
+                            {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (<ParagraphWithOptions text={episode.content}/>) : (<div className='under-review'>
+                              <p className='r-tag'>under review</p>
+                              <p style={{ filter: 'blur(2px)' }}>{episode.content}</p>
+                            </div>)}
+                            <div className="episode-options">
+                              {index !== 0 && (
+                                <button className="tooltip1" onClick={() => {
+                                  addVersion(episode)
+                                }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
                               )}
-                            {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
-                              <button className="tooltip1" onClick={() => {
-                                confirmReport(episode.id)
-                              }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
-                            {episode.previous_version !== null && (<button className="tooltip1" onClick={() => {
-                              prevVariation(episode);
-                            }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                            {episode.next_version !== null && (<button className="tooltip1" onClick={() => {
-                              nextVariation(episode);
-                            }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                            {/* <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button> */}
-                            {((!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id) && (
-                              <button className="tooltip1" onClick={() => {
-                                confirmDelete(episode.id)
-                              }}><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
-                          </div></p>)}
 
+                              {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id && (<button onClick={() => {
+                                setCurrentEditId(episode.id);
+                                setUpdateEpisodeObject({
+                                  title: episode.title,
+                                  content: episode.content
+                                });
+                              }}><FiEdit /></button>)}
+                              {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
+                                <button className="tooltip1" onClick={() => {
+                                  handleLikeEpisode(episode)
+                                }}>
+                                  <div className="heart-icon from-preview" style={{ position: "relative", display: "flex", justifyContent: "flex-start", height: "fit-content" }}>
+                                    <svg
+                                      className={`heart ${episode.is_liked ? 'clicked' : ''}`}
+                                      version="1.1"
+                                      id="Layer_1"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 541 471">
+                                      <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" />
+                                    </svg>
+                                    <span style={{ fontSize: "11px", position: "absolute", bottom: "-5px", right: "-2px" }}>{episode.likes_count}</span>
+                                  </div>
+                                  <span className="tooltiptext1">Like</span></button>
+                              )}
+                              {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
+                                <button className="tooltip1" onClick={() => {
+                                  confirmReport(episode.id)
+                                }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
+                              {episode.previous_version !== null && (<button className="tooltip1" onClick={() => {
+                                prevVariation(episode);
+                              }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
+                              {episode.next_version !== null && (<button className="tooltip1" onClick={() => {
+                                nextVariation(episode);
+                              }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
+                              {/* <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button> */}
+                              {((!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id) && (
+                                <button className="tooltip1" onClick={() => {
+                                  confirmDelete(episode.id)
+                                }}><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>)}
                 </>)

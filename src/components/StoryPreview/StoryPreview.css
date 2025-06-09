@@ -46,7 +46,7 @@
   padding: 20px;
 }
 
-.episodes-list h3{
+.episodes-list h3 {
   font-size: 14px;
 }
 
@@ -96,15 +96,15 @@
   text-align: center;
 }
 
-.episode-content textarea{
+.episode-content textarea {
   width: 100%;
 }
 
 .edit-episode-btn {
   position: absolute;
-  top:50%;
+  top: 50%;
   transform: translateY(-50%);
-  right:30px;
+  right: 30px;
   color: white;
   border: none;
   cursor: pointer;
@@ -147,7 +147,7 @@
 .new-episode-btn:hover,
 .new-episode-submit:hover {
   background: #4F46E5;
-  color:white;
+  color: white;
 }
 
 .new-episode-form {
@@ -159,7 +159,8 @@
   border-radius: 8px;
 }
 
-.new-episode-form input, .new-episode-form textarea {
+.new-episode-form input,
+.new-episode-form textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -168,41 +169,40 @@
 }
 
 .new-episode-form button {
- width: 200px;
+  width: 200px;
 }
 
 
 
-.episode-title-ok-al{
-  white-space: nowrap;            /* Prevent text from wrapping to the next line */
-    overflow: hidden;               /* Hide the overflowed text */
-    text-overflow: ellipsis;        /* Add the ellipsis (...) */
-    width: 250px;
-    font-weight: bold;
+.episode-title-ok-al {
+  white-space: nowrap;
+  /* Prevent text from wrapping to the next line */
+  overflow: hidden;
+  /* Hide the overflowed text */
+  text-overflow: ellipsis;
+  /* Add the ellipsis (...) */
+  width: 250px;
+  font-weight: bold;
 }
 
-.episode-options{
- /* position: absolute; */
- /* bottom: 16px; */
- /* right:18px; */
-  /* display: inline-block; */
- /* margin-top: 15px; */
- margin-right: 5px;
+.episode-options {
+  display: inline-block;
+  margin-right: 5px;
 }
 
-.episode-options button{
- margin-left: 10px;
- }
+.episode-options button {
+  margin-left: 10px;
+}
 
- .episode-options svg{
+.episode-options svg {
   height: 16px;
   width: 16px;
- }
+}
 
 
- .tooltip1 {
+.tooltip1 {
   position: relative;
-  display: inline-block; 
+  display: inline-block;
 }
 
 .tooltip1 .tooltiptext1 {
@@ -241,24 +241,24 @@
 
 .read-only-editor .ql-toolbar.ql-snow {
   /* display: none !important; */
- height: 0px;
- padding: 0px;
- border: none;
- border-bottom: 1px solid #ccc;
- /* background-color: red; */
+  height: 0px;
+  padding: 0px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  /* background-color: red; */
 }
 
-.myeditarea{
+.myeditarea {
   background-color: #F9F9F9;
 }
 
-.under-review{
+.under-review {
   background-color: rgb(239, 239, 239);
   height: auto;
   border-radius: 11px;
   margin-bottom: 5px;
   padding: 5px;
   padding-bottom: 5px;
-  padding-left:10px;
+  padding-left: 10px;
   padding-right: 10px;
 }
