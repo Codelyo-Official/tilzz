@@ -446,12 +446,20 @@ const StoryPreview = () => {
     console.log(ep)
     try {
       const token = sessionStorage.getItem('token');
-      const likeEpisode_response = await axios.post(`${API_BASE_URL}/api/episodes/${ep.id}/like/`, {}, {
+      const turl = !ep.is_liked ? `/api/stories/episodes/${ep.id}/like/` : `/api/stories/episodes/${ep.id}/unlike/`;
+      const likeEpisode_response = await axios.post(`${API_BASE_URL}${turl}`, {}, {
         headers: {
           Authorization: `Token ${token}`,
         }
       });
       console.log(likeEpisode_response);
+      let result = episodes.map((e: any) => {
+        if (ep.id === e.id) {
+          return {...e,is_liked:!ep.is_liked,likes_count:ep.is_liked?ep.likes_count-1:ep.likes_count+1}
+        } else
+          return e;
+      })
+      setEpisodes(result);
 
     } catch (err: any) {
       console.log(err)
@@ -540,7 +548,7 @@ const StoryPreview = () => {
               (varChangeAt !== null && varChangeAt.id <= episode.id) ? (
                 <>
                   {varChangeAt.id === episode.id ? (
-                    <div key={episode.id} style={{ width: "100%", backgroundColor: "#F1F1F1", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <div key={episode.id} style={{ width: "100%", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
                       <Dots />
                     </div>
                   ) : (<></>)}
@@ -568,7 +576,10 @@ const StoryPreview = () => {
 
                           </div>
                         ) : (
-                          <p>{(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (episode.content) : (<>under review</>)} <div className="episode-options">
+                          <p>{(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (episode.content) : (<div className='under-review'>
+                            <p className='r-tag'>under review</p>
+                            <p style={{ filter: 'blur(2px)'}}>{episode.content}</p>
+                          </div>)} <div className="episode-options">
                             {index !== 0 && (
                               <button className="tooltip1" onClick={() => {
                                 addVersion(episode)
@@ -586,18 +597,19 @@ const StoryPreview = () => {
                               <button className="tooltip1" onClick={() => {
                                 handleLikeEpisode(episode)
                               }}>
-                                <div className="heart-icon from-preview">
+                                <div className="heart-icon from-preview" style={{position:"relative",display:"flex",justifyContent:"flex-start",height:"fit-content"}}>
                                   <svg
-                                    className={`heart ${checkIfInLiking(episode.id, likedepisodes) ? 'clicked' : ''}`}
+                                    className={`heart ${episode.is_liked ? 'clicked' : ''}`}
                                     version="1.1"
                                     id="Layer_1"
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 541 471">
                                     <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" />
                                   </svg>
-
+                                  <span style={{fontSize:"11px",position:"absolute",bottom:"-5px",right:"-2px"}}>{episode.likes_count}</span>
                                 </div>
-                                <span className="tooltiptext1">Like</span></button>)}
+                                <span className="tooltiptext1">Like</span></button>
+                              )}
                             {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
                               <button className="tooltip1" onClick={() => {
                                 confirmReport(episode.id)
@@ -682,7 +694,7 @@ const StoryPreview = () => {
             </div>
 
             <div className="input-group">
-              <label htmlFor="banner-image"  style={{ fontSize: "14px" ,marginTop:"10px"}}>Upload Banner Image</label>
+              <label htmlFor="banner-image" style={{ fontSize: "14px", marginTop: "10px" }}>Upload Banner Image</label>
               <input
                 type="file"
                 id="banner-image"
@@ -697,22 +709,24 @@ const StoryPreview = () => {
             </div>
 
             {!loading1 ? (
-              <div style={{width:"fit-content", marginLeft:"auto",marginRight:"auto"}}>
+              <div style={{ width: "fit-content", marginLeft: "auto", marginRight: "auto" }}>
                 <button type="submit"
-                style={{  fontSize: "14px",
-                  width:"120px",
-                  padding:"8px",
-                  margin:"0"
-                }}>Save</button>
-                <button type="button" style={{  fontSize: "14px",
-                width:"120px",
-                padding:"8px",
-                margin:"0",
-                border:"1px solid",
-                borderRadius:"22px",
-                marginLeft:"5px",
-                borderColor:"#e54646",color:"#e54646"
-              }} onClick={() => setOpen(false)}>
+                  style={{
+                    fontSize: "14px",
+                    width: "120px",
+                    padding: "8px",
+                    margin: "0"
+                  }}>Save</button>
+                <button type="button" style={{
+                  fontSize: "14px",
+                  width: "120px",
+                  padding: "8px",
+                  margin: "0",
+                  border: "1px solid",
+                  borderRadius: "22px",
+                  marginLeft: "5px",
+                  borderColor: "#e54646", color: "#e54646"
+                }} onClick={() => setOpen(false)}>
                   Cancel
                 </button>
               </div>) : (
