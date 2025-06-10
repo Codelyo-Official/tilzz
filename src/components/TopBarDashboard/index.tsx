@@ -13,7 +13,7 @@ const TopBarDashboard = ({ user }: {
 
     console.log(PUBLIC_BASE_URL)
 
-    console.log("user from top bar:",user)
+    console.log("user from top bar:", user)
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -27,12 +27,13 @@ const TopBarDashboard = ({ user }: {
                 element.style.display = "none";
             }
         }}>
-            {/* <img src={user.profile_picture!==null && user.profile_picture.startsWith('http')
-            ? user.profile_picture
-            : `${API_BASE_URL}${user.profile_picture}`}
-            /> */}
-            <img src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} alt="avatar"/>
-            </button>
+            {user.profile_picture === null ? (<img src={`https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`} alt="avatar" />) : (
+                <img src={user.profile_picture.startsWith('http')
+                    ? user.profile_picture
+                    : `${API_BASE_URL}${user.profile_picture}`}
+                />
+            )}
+        </button>
             <div className="dropdown-content" id="dropdown-content-id">
                 <a onClick={() => {
                     let element = document.getElementById("dropdown-content-id") as HTMLDivElement;
