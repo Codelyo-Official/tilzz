@@ -7,6 +7,8 @@ import { useAuth } from "../../contexts/AuthProvider";
 import axios from "axios";
 import { ApiError } from "../../types/apiError";
 import "./AccountPage.css";
+import Spinner from 'react-bootstrap/Spinner';
+
 
 type FormData = {
   // first_name: string;
@@ -27,6 +29,7 @@ export default function Account() {
   const [open, setOpen] = useState<boolean>(false);
   const [image, setImage] = useState<string>(user.avatar);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
 
@@ -46,6 +49,7 @@ export default function Account() {
       formData.append('profile_picture', imageFile); // payload.file should be a File object
 
     try {
+      setLoading(true);
       const token = sessionStorage.getItem("token");
       const updateUserInfoApi_response = await axios.put(`${API_BASE_URL}/api/accounts/profile/`, formData, {
         headers: {
@@ -61,7 +65,10 @@ export default function Account() {
         setUser({ ...user, email: payload.email, username: payload.username, profile_picture: updateUserInfoApi_response.data.profile_picture });
         localStorage.setItem('user', JSON.stringify({ ...user, email: payload.email, username: payload.username, profile_picture: updateUserInfoApi_response.data.profile_picture }));
       }
+      setLoading(false)
     } catch (err: any) {
+      setLoading(false)
+
       console.log(err)
       const apiError = err as ApiError;
       if (apiError.response) {
@@ -145,9 +152,18 @@ export default function Account() {
                   type="email"
                   className="input-field"
                 />
-                <button type="submit" className="save-btn">
-                  Save Changes
-                </button>
+
+                {!loading ? (
+                  <button type="submit" className="save-btn">
+                    Save Changes
+                  </button>) : (
+                  <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  </div>
+                )}
+
               </form>
               <button className="close-btn" onClick={() => setOpen(false)}>
                 Close
