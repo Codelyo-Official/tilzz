@@ -100,7 +100,7 @@ const Register = () => {
       setErrors(apiError.message);
       if (apiError.response) {
         const status = apiError.response.status;
-        const errorMessage = apiError.response.data?.username[0] || 'Something went wrong on the server!';
+        const errorMessage = apiError.response.data?.username ? apiError.response.data?.username[0] : apiError.response.data?.email ? apiError.response.data?.email[0] : 'Something went wrong on the server!';
         setErrors(errorMessage);
       }
     } finally {
