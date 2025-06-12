@@ -14,11 +14,12 @@ const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function Stories({ slugStories }: { slugStories: string | null }) {
 
-
     const dispatch = useDispatch();
     const { user }: any = useAuth();
     const [dataStories, setDataStories] = React.useState<story[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
+    const [isRequestInProgress, setIsRequestInProgress] = React.useState(false);
+    const [isRequestInProgress1, setIsRequestInProgress1] = React.useState(false);
 
 
     const getMyStories = async () => {
@@ -36,13 +37,14 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
         } catch (err: any) {
             setLoading(false);
-
             console.log(err)
             const apiError = err as ApiError;
+            let errorMessage = apiError.message;
             if (apiError.response) {
                 const status = apiError.response.status;
-                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+                errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
             }
+            alert(errorMessage);
         }
     }
 
@@ -63,13 +65,14 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
         } catch (err: any) {
             setLoading(false);
-
             console.log(err)
             const apiError = err as ApiError;
+            let errorMessage = apiError.message;
             if (apiError.response) {
                 const status = apiError.response.status;
-                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+                errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
             }
+            alert(errorMessage);
         }
     }
 
@@ -90,13 +93,14 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
         } catch (err: any) {
             setLoading(false);
-
             console.log(err)
             const apiError = err as ApiError;
+            let errorMessage = apiError.message;
             if (apiError.response) {
                 const status = apiError.response.status;
-                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+                errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
             }
+            alert(errorMessage);
         }
     }
 
@@ -117,13 +121,14 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
         } catch (err: any) {
             setLoading(false);
-
             console.log(err)
             const apiError = err as ApiError;
+            let errorMessage = apiError.message;
             if (apiError.response) {
                 const status = apiError.response.status;
-                const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+                errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
             }
+            alert(errorMessage);
         }
     }
 
@@ -155,13 +160,22 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
     const toggleFollow = async (st: story) => {
 
+        const controller = new AbortController();
+        const { signal } = controller;
+        if (isRequestInProgress) {
+            console.log("follow alreadyin progress")
+            controller.abort();
+            return;
+        }
+        setIsRequestInProgress(true);
+
         try {
             const token = sessionStorage.getItem("token");
             let follow_flag = checkIfInFollowing(user, st);
             const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/stories/${st.id}/${!follow_flag ? 'follow' : 'unfollow'}/`, {}, {
                 headers: {
                     Authorization: `Token ${token}`,
-                }
+                }, signal: signal
             });
             console.log(followStoryApi_response);
             //setDataStories(followStoryApi_response.data);
@@ -188,10 +202,21 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
                 alert(errorMessage)
             }
+        } finally {
+            setIsRequestInProgress(false);
         }
     }
 
     const handle_like = async (st: story) => {
+
+        const controller = new AbortController();
+        const { signal } = controller;
+        if (isRequestInProgress1) {
+            console.log("like alreadyin progress")
+            controller.abort();
+            return;
+        }
+        setIsRequestInProgress1(true);
 
         try {
             const token = sessionStorage.getItem("token");
@@ -200,7 +225,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
             const likeStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/stories/${st.id}/${!like_flag ? 'like' : 'unlike'}/`, {}, {
                 headers: {
                     Authorization: `Token ${token}`,
-                }
+                },
+                signal: signal
             });
             console.log(likeStoryApi_response);
             //setDataStories(likeStoryApi_response.data);
@@ -226,6 +252,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                 const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
                 alert(errorMessage)
             }
+        } finally {
+            setIsRequestInProgress1(false);
         }
     }
 
@@ -260,7 +288,7 @@ function Stories({ slugStories }: { slugStories: string | null }) {
             }}>
                 <h2 className="heading-your-story">{slugStories === null || slugStories === "stories-feed" ? ("Stories") : slugStories === "my-stories" ? "My Stories" : slugStories === "following-stories" ? "Following Stories" : "Following Stories"}</h2>
                 {loading ? (<div style={{ width: "100%", height: "120px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <Dots/>
+                    <Dots />
                 </div>) : (
                     <div className="story-container">
                         <ul className="story-box101">
