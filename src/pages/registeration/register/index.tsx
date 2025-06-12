@@ -25,7 +25,7 @@ const Register = () => {
 
 
   const { login } = useAuth();
-  const [errors, setErrors] = useState<string | null>(null);  // Typed state for errors
+  const [errors, setErrors] = useState<string | null>(null);  // Typed  state for errors
 
   const handleSignupSubmit = async (e: React.FormEvent) => {  // Event type
     e.preventDefault();
@@ -34,6 +34,7 @@ const Register = () => {
     // const { signal } = controller;
     // if (isRequestInProgress) {
     //   controller.abort(); 
+    //   return;
     // }
     // setIsRequestInProgress(true); 
 
@@ -62,33 +63,38 @@ const Register = () => {
       const signup_api_response: any = await axios.post(`${API_BASE_URL}/api/accounts/register/`, payload);
 
       console.log(signup_api_response)
-      const token = signup_api_response.data.token;
-      let p_temp = undefined;
-      if (signup_api_response.data.user.profile !== null) {
-        p_temp = signup_api_response.data.user.profile.profile_picture;
-      }
-      let user_temp: User = {
-        id: signup_api_response.data.user.id,
-        "email": signup_api_response.data.user.email,
-        // "first_name": signup_api_response.data.user.first_name,
-        // "last_name": signup_api_response.data.user.last_name,
-        "profile_picture": p_temp,
-        // "role": signup_api_response.data.user.role,
-        "username": signup_api_response.data.user.username
-      };
 
-      setLoading(false);
+      if (signup_api_response.data?.token) {
+        const token = signup_api_response.data.token;
+        let p_temp = undefined;
+        if (signup_api_response.data.user.profile !== null) {
+          p_temp = signup_api_response.data.user.profile.profile_picture;
+        }
+        let user_temp: User = {
+          id: signup_api_response.data.user.id,
+          "email": signup_api_response.data.user.email,
+          // "first_name": signup_api_response.data.user.first_name,
+          // "last_name": signup_api_response.data.user.last_name,
+          "profile_picture": p_temp,
+          // "role": signup_api_response.data.user.role,
+          "username": signup_api_response.data.user.username
+        };
 
-      const response = login(token, user_temp);
-      if (response.success) {
-        navigate("/dashboard");
+        setLoading(false);
+
+        const response = login(token, user_temp);
+        if (response.success) {
+          navigate("/dashboard");
+        } else {
+          setErrors('signup failed, please try again!');
+        }
       } else {
-        setErrors('signup failed, please try again!');
+        setLoading(false);
+        setErrors("something went wrong");
       }
 
     } catch (err: any) {
       setLoading(false);
-
       console.log(err)
       const apiError = err as ApiError;
       setErrors(apiError.message);
@@ -98,7 +104,7 @@ const Register = () => {
         setErrors(errorMessage);
       }
     } finally {
-      //setIsRequestInProgress(false); 
+      // setIsRequestInProgress(false); 
     }
   };
 

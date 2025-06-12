@@ -43,29 +43,34 @@ const LoginSignup = () => {
         setLoading(true);
         const login_api_response = await axios.post(`${API_BASE_URL}/api/accounts/login/`, payload);
         console.log(login_api_response);
-        const token = login_api_response.data.token;
-        let p_temp = undefined;
-        if (login_api_response.data.user.profile !== null) {
-          p_temp = login_api_response.data.user.profile.profile_picture;
-        }
-        let user_temp: User = {
-          id: login_api_response.data.user.id,
-          "email": login_api_response.data.user.email,
-          // "first_name": login_api_response.data.user.first_name,
-          // "last_name": login_api_response.data.user.last_name,
-          "profile_picture": p_temp,
-          // "role": login_api_response.data.user.role,
-          "username": login_api_response.data.user.username
-        };
-        setLoading(false);
+        if (login_api_response.data?.token) {
+          const token = login_api_response.data.token;
+          let p_temp = undefined;
+          if (login_api_response.data.user.profile !== null) {
+            p_temp = login_api_response.data.user.profile.profile_picture;
+          }
+          let user_temp: User = {
+            id: login_api_response.data.user.id,
+            "email": login_api_response.data.user.email,
+            // "first_name": login_api_response.data.user.first_name,
+            // "last_name": login_api_response.data.user.last_name,
+            "profile_picture": p_temp,
+            // "role": login_api_response.data.user.role,
+            "username": login_api_response.data.user.username
+          };
+          setLoading(false);
 
-        console.log("from above:", user_temp)
+          console.log("from above:", user_temp)
 
-        const response = login(token, user_temp);
-        if (response.success) {
-          navigate("/dashboard");
+          const response = login(token, user_temp);
+          if (response.success) {
+            navigate("/dashboard");
+          } else {
+            setErrors('login failed, please try again!');
+          }
         } else {
-          setErrors('signup failed, please try again!');
+          setLoading(false);
+          setErrors('something went wrong!');
         }
       } catch (err: any) {
         setLoading(false);
@@ -80,7 +85,7 @@ const LoginSignup = () => {
       } finally {
         //setIsRequestInProgress(false); 
       }
-    }else if(loginState===1){
+    } else if (loginState === 1) {
       // /api/accounts/password-reset/
 
       const payload = {
@@ -92,7 +97,7 @@ const LoginSignup = () => {
         const sendCodeEmail_api_response = await axios.post(`${API_BASE_URL}/api/accounts/password-reset/`, payload);
         console.log(sendCodeEmail_api_response);
         setLoading(false);
-        
+
       } catch (err: any) {
         setLoading(false);
         console.log(err)
