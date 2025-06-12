@@ -1,3 +1,5 @@
+import { Version } from "./version";
+
 export type story = {
     creator: number;
     creator_username: string;
@@ -15,7 +17,7 @@ export type story = {
     updated_at: string;
     followed_by: number[];
     liked_by: number[];
-    versions: any;
+    versions: Version[];
     visibility: string;
     organization: null | number;
 }
