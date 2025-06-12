@@ -648,7 +648,6 @@ const StoryPreview = () => {
                                   addVersion(episode)
                                 }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
                               )}
-
                               {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id && (<button onClick={() => {
                                 setCurrentEditId(episode.id);
                                 setUpdateEpisodeObject({
