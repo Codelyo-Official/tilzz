@@ -11,9 +11,6 @@ const TopBarDashboard = ({ user }: {
     user: any
 }) => {
 
-    console.log(PUBLIC_BASE_URL)
-
-    console.log("user from top bar:", user)
     const navigate = useNavigate();
     const dispatch = useDispatch();
 

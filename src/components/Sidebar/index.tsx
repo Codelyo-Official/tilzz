@@ -11,7 +11,6 @@ import type { RootState } from "../../redux/state/store"; // adjust path
 
 const Sidebar = () => {
 
-  console.log("sidebar component rendered");
 
   const navigate = useNavigate();
   const { logout } = useAuth();

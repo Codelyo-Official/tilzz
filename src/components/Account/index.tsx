@@ -19,7 +19,6 @@ type FormData = {
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export default function Account() {
-  console.log("account rendered");
 
   const { register, handleSubmit } = useForm<FormData>();
   const { user, setUser }: any = useAuth();

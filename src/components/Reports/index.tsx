@@ -18,7 +18,6 @@ const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Reports = () => {
 
-  console.log("story preview rendered")
   const { user } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(true);
   const [loading1, setLoading1] = React.useState<boolean>(false);

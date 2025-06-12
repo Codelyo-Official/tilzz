@@ -75,7 +75,6 @@ const ParagraphWithOptions = ({ text }: { text: string }) => {
 
 const StoryPreview = () => {
 
-  console.log("story preview rendered")
 
   const [dataStory, setDataStory] = React.useState<story | null>(null);
   const [episodes, setEpisodes] = React.useState<any>([]);
@@ -205,12 +204,10 @@ const StoryPreview = () => {
       version = episodes[episodes.length - 1].version;
     }
     let temp_obj = { ...addNewEpisodeObject };
-    console.log(temp_obj)
     if (version !== null) {
       // do some other stuff
       temp_obj.version_id = version;
     }
-    console.log('New episode added:', temp_obj);
 
     try {
       setLoading(true);

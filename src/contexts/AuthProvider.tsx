@@ -22,7 +22,6 @@ type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 
-    console.log("auth invoked")
 
     const [token, setToken] = useState<string | null>(
         () => sessionStorage.getItem("token")

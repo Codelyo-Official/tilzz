@@ -10,7 +10,6 @@ const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function PublicStoriesFeed() {
 
-    console.log("public stories component rendered");
 
     const [dataStories, setDataStories] = React.useState<story[]>([]);
 

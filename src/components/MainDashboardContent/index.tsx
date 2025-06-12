@@ -10,7 +10,6 @@ import Reports from "../Reports";
 
 function MainContent() {
 
-    console.log("maincontent component rendered");
     const dispatch = useDispatch();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);

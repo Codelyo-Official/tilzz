@@ -14,7 +14,6 @@ const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function Stories({ slugStories }: { slugStories: string | null }) {
 
-    console.log("stories component rendered");
 
     const dispatch = useDispatch();
     const { user }: any = useAuth();
@@ -129,7 +128,6 @@ function Stories({ slugStories }: { slugStories: string | null }) {
     }
 
     useEffect(() => {
-        console.log(`sending req to recieve stories for user:${user.username}`)
         if (slugStories === "stories-feed" || slugStories === null) {
             // api call for all stories
             // setDataStories(FeedStories);
@@ -160,7 +158,6 @@ function Stories({ slugStories }: { slugStories: string | null }) {
         try {
             const token = sessionStorage.getItem("token");
             let follow_flag = checkIfInFollowing(user, st);
-            console.log(token);
             const followStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/stories/${st.id}/${!follow_flag ? 'follow' : 'unfollow'}/`, {}, {
                 headers: {
                     Authorization: `Token ${token}`,
@@ -198,7 +195,6 @@ function Stories({ slugStories }: { slugStories: string | null }) {
 
         try {
             const token = sessionStorage.getItem("token");
-            console.log(token);
             let like_flag = checkIfInLiking(user, st);
 
             const likeStoryApi_response = await axios.post(`${API_BASE_URL}/api/stories/stories/${st.id}/${!like_flag ? 'like' : 'unlike'}/`, {}, {
