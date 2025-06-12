@@ -90,6 +90,7 @@ const StoryPreview = () => {
   const paramvalue = queryParams.get('storyId');
   const [varChangeAt, setVarChangeAt] = React.useState<any>(null);
   const [open, setOpen] = React.useState<boolean>(false);
+  const [isRequestInProgress, setIsRequestInProgress] = React.useState(false);
 
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
@@ -494,14 +495,22 @@ const StoryPreview = () => {
   }
 
   const handleLikeEpisode = async (ep: any) => {
-    console.log(ep)
+    const controller = new AbortController();
+        const { signal } = controller;
+        if (isRequestInProgress) {
+            console.log("episode like already in progress")
+            controller.abort();
+            return;
+        }
+        setIsRequestInProgress(true);
+
     try {
       const token = sessionStorage.getItem('token');
       const turl = !ep.is_liked ? `/api/stories/episodes/${ep.id}/like/` : `/api/stories/episodes/${ep.id}/unlike/`;
       const likeEpisode_response = await axios.post(`${API_BASE_URL}${turl}`, {}, {
         headers: {
           Authorization: `Token ${token}`,
-        }
+        },signal:signal
       });
       console.log(likeEpisode_response);
       let result = episodes.map((e: any) => {
@@ -521,6 +530,7 @@ const StoryPreview = () => {
         alert(errorMessage);
       }
     } finally {
+      setIsRequestInProgress(false);
     }
   }
 
