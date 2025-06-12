@@ -1,7 +1,7 @@
 import React from "react";
-import "./about.css";
 import HomeNavbar from "../../components/HomeNavbar";
 import Footer from "../../components/Footer";
+import "./about.css";
 
 const AboutPage = () => {
     return (

@@ -28,7 +28,7 @@
   font-family: 'Montserrat', sans-serif !important;
   margin-bottom: 30px;
   font-size: 18px;
-  color:rgb(73, 73, 73);
+  color: rgb(73, 73, 73);
   width: 90%;
   font-size: 16px;
 
@@ -68,13 +68,13 @@
   text-align: left;
 }
 
-.contact-container-item label{
+.contact-container-item label {
   font-family: 'Montserrat', sans-serif;
   font-weight: bold;
-  
+
 }
 
-@media only screen and (max-width:940px){
+@media only screen and (max-width:940px) {
   .contact-container {
     grid-template-columns: 100%;
   }
@@ -84,5 +84,5 @@
     height: 100%;
     margin-bottom: 40px;
   }
-  
+
 }

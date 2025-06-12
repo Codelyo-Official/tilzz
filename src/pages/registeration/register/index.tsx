@@ -5,9 +5,8 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { User } from "../../../types/user";
 import { ApiError } from "../../../types/apiError";
-import "../login.css";
 import Spinner from 'react-bootstrap/Spinner';
-
+import "../login.css";
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 

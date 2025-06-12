@@ -6,9 +6,8 @@ import { User } from "../../types/user";
 import { useAuth } from "../../contexts/AuthProvider";
 import axios from "axios";
 import { ApiError } from "../../types/apiError";
-import "./AccountPage.css";
 import Spinner from 'react-bootstrap/Spinner';
-
+import "./AccountPage.css";
 
 type FormData = {
   // first_name: string;

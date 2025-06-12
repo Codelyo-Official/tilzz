@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { Link, NavLink } from 'react-router-dom';
-import "./publicfeed.css"
 import { story } from "../../types/story";
 import { ApiError } from "../../types/apiError";
 import axios from "axios";
+import "./publicfeed.css"
+
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 

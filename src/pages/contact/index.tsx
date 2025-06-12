@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import HomeNavbar from "../../components/HomeNavbar";
 import { LuPhone } from "react-icons/lu";
 import { MdOutlineMailOutline } from "react-icons/md";
-import "./contact.css";
 import Footer from "../../components/Footer";
-
+import "./contact.css";
 
 const ContactPage = () => {
     const [form, setForm] = useState({

@@ -1,14 +1,13 @@
-import React, {Children, useEffect,useMemo} from "react";
-import "./styles.css";
+import React from "react";
 import { useAuth } from "../../contexts/AuthProvider";
 import Sidebar from "../Sidebar";
 import { Link } from 'react-router-dom';
 import BottomBarDashboard from "../BottomBarDashboard";
 import TopBarDashboard from "../TopBarDashboard";
+import "./dashboardstyles.css";
 
 function DashboardLayout({children}:{children:React.ReactNode}) {
 
-    console.log("dashboard layout component rendered");
     const {user} = useAuth();
 
     return (

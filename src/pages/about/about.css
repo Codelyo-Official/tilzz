@@ -10,7 +10,7 @@
   margin-bottom: 100px;
 }
 
-.about-container video{
+.about-container video {
   width: 100%;
   height: 70vh;
   object-fit: cover;
@@ -18,8 +18,8 @@
 
 .page-title-about {
   position: absolute;
-  top:10%;
-  left:50%;
+  top: 10%;
+  left: 50%;
   transform: translateX(-50%);
   font-family: benzinextb;
   font-size: 32px;
@@ -65,28 +65,28 @@
   line-height: 1.6;
 }
 
-.section-101-about{
+.section-101-about {
   position: absolute;
-  top:20%;
-  left:50%;
+  top: 20%;
+  left: 50%;
   transform: translateX(-50%);
   color: white;
 }
 
-.about-us-grid{
+.about-us-grid {
   display: grid;
   grid-template-columns: 60% 40%;
   grid-template-rows: auto;
 }
 
-.about-us-grid .our-mission-h{
+.about-us-grid .our-mission-h {
   font-size: 6vw;
   text-transform: uppercase;
   text-align: left;
   margin-left: 5%;
 }
 
-.about-us-grid .our-mission-p{
+.about-us-grid .our-mission-p {
   font-size: 16px;
   text-align: left;
   margin-left: 0px;
@@ -96,10 +96,10 @@
   margin-right: 5%;
   margin-right: 10px;
   margin-top: 20px;
-  color:rgb(73, 73, 73);
+  color: rgb(73, 73, 73);
 }
 
-.our-mission-img{
+.our-mission-img {
   width: 90%;
   margin-left: 5%;
   margin-right: 5%;
@@ -109,7 +109,7 @@
   display: inline-block;
 }
 
-.our-mission-img1{
+.our-mission-img1 {
   width: 95%;
   margin-right: 5%;
   height: 240px;
@@ -118,23 +118,23 @@
   display: inline-block;
 }
 
-.about-us-grid .our-involved{
+.about-us-grid .our-involved {
   margin-top: 40px;
   font-size: 3vw;
 }
 
-.about-us-grid .our-mission-p1{
+.about-us-grid .our-mission-p1 {
   font-size: 16px;
   text-align: left;
   margin-left: 0px;
   display: inline-block;
   width: 100%;
   margin-right: 10px;
-  color:rgb(73, 73, 73);
+  color: rgb(73, 73, 73);
 
 }
 
-.about-us-grid button{
+.about-us-grid button {
   font-family: 'Montserrat', sans-serif !important;
   background-color: white;
   border-color: #4F46E5;
@@ -150,14 +150,14 @@
   margin-top: 20px;
 }
 
-@media only screen and (max-width:1000px){
-  .about-us-grid{
+@media only screen and (max-width:1000px) {
+  .about-us-grid {
     display: grid;
     grid-template-columns: 100%;
     grid-template-rows: auto;
   }
 
-  .our-mission-img1{
+  .our-mission-img1 {
     width: 90%;
     margin-right: 5%;
     margin-left: 5%;
@@ -167,7 +167,7 @@
     display: inline-block;
   }
 
-  .about-us-grid .our-mission-p1{
+  .about-us-grid .our-mission-p1 {
     font-size: 16px;
     text-align: left;
     margin-left: 0px;
@@ -177,25 +177,25 @@
     margin-right: 5%;
     margin-right: 10px;
     margin-top: 20px;
-    color:rgb(73, 73, 73);
+    color: rgb(73, 73, 73);
   }
 
-  .about-us-grid .our-involved{
+  .about-us-grid .our-involved {
     margin-top: 40px;
     margin-left: 6%;
     font-size: 32px;
   }
 
-  .about-us-grid .our-mission-h{
+  .about-us-grid .our-mission-h {
     font-size: 32px;
     margin-bottom: 40px;
   }
 
-  .about-us-grid button{
+  .about-us-grid button {
     font-family: 'Montserrat', sans-serif !important;
     background-color: white;
     border: 1px solid black;
-    color:black;
+    color: black;
     height: 56px;
     padding-left: 25px;
     padding-right: 25px;
@@ -208,16 +208,16 @@
   }
 
   .page-title-about {
-    top:5%;
+    top: 5%;
   }
-  
-  .section-101-about{
-    top:8%;
+
+  .section-101-about {
+    top: 8%;
   }
 
   .section-101-about p {
     width: 100%;
   }
-  
+
 
 }

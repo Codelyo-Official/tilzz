@@ -329,6 +329,7 @@
   border-top-color: #3b3b3b21;
   background-color: white;
   font-size: 20px;
+  z-index: 999;
 }
 
 
