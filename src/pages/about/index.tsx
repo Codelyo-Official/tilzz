@@ -18,7 +18,7 @@ const AboutPage = () => {
                 <div className="about-us-grid">
                     <section className="section">
                         <h2 className="our-mission-h">Our Mission</h2>
-                        <img className="our-mission-img" src={"/images/our-mission.jpg"} alt="ok" />
+                        <img className="our-mission-img" src={"/Images/our-mission.jpg"} alt="ok" />
                         <p className="our-mission-p">
                             We believe in the power of storytelling and <strong>collaboration</strong>. Our
                             goal is to provide a space where writers of all <strong>levels</strong> can
@@ -27,7 +27,7 @@ const AboutPage = () => {
                         </p>
                     </section>
                     <section className="section">
-                        <img className="our-mission-img1" src={"/images/comunity.jpg"} alt="ok" />
+                        <img className="our-mission-img1" src={"/Images/comunity.jpg"} alt="ok" />
                         <h2 className="our-involved">Get Involved</h2>
                         <p className="our-mission-p1">
                             Whether you're a seasoned writer or just starting out, Narrato offers{" "}
