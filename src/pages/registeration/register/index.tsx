@@ -189,7 +189,7 @@ const Register = () => {
               {"Create Account"}
             </button>) : (
             <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Spinner animation="grow" role="status" variant="light" style={{ color: "blue", fontSize: "20px" }}>
+               <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
             </div>
