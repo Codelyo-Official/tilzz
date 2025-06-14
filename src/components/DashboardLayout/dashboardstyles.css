@@ -536,8 +536,8 @@
 .dropdown-content {
   display: none;
   position: absolute;
-  top: 34px;
-  right: 0px;
+  top: 28px;
+  right: 2px;
   background-color: #ffffff;
   border-radius: 12px;
   min-width: 160px;

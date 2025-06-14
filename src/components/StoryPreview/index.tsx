@@ -638,7 +638,7 @@ const StoryPreview = () => {
                           </div>
                         ) : (
                           <>
-                            {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) ? (<ParagraphWithOptions text={episode.content}/>) : (<div className='under-review'>
+                            {(episode.status !== "deleted") ? (<ParagraphWithOptions text={episode.content}/>) : (<div className='under-review'>
                               <p className='r-tag'>under review</p>
                               <p style={{ filter: 'blur(2px)' }}>{episode.content}</p>
                             </div>)}
@@ -648,14 +648,14 @@ const StoryPreview = () => {
                                   addVersion(episode)
                                 }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
                               )}
-                              {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id && (<button onClick={() => {
+                              {(episode.status !== "deleted") && episode.creator === user.id && (<button onClick={() => {
                                 setCurrentEditId(episode.id);
                                 setUpdateEpisodeObject({
                                   title: episode.title,
                                   content: episode.content
                                 });
                               }}><FiEdit /></button>)}
-                              {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
+                              {(episode.status !== "deleted") && (
                                 <button className="tooltip1" onClick={() => {
                                   handleLikeEpisode(episode)
                                 }}>
@@ -672,7 +672,7 @@ const StoryPreview = () => {
                                   </div>
                                   <span className="tooltiptext1">Like</span></button>
                               )}
-                              {(!episode.is_reported && (episode.status === "public" || episode.status === "private")) && (
+                              {(episode.status !== "deleted") && (
                                 <button className="tooltip1" onClick={() => {
                                   confirmReport(episode.id)
                                 }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
@@ -683,7 +683,7 @@ const StoryPreview = () => {
                                 nextVariation(episode);
                               }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
                               {/* <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button> */}
-                              {((!episode.is_reported && (episode.status === "public" || episode.status === "private")) && episode.creator === user.id) && (
+                              {((episode.status !== "deleted") && episode.creator === user.id) && (
                                 <button className="tooltip1" onClick={() => {
                                   confirmDelete(episode.id)
                                 }}><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
