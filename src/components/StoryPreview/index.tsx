@@ -15,6 +15,7 @@ import { story } from '../../types/story';
 import axios from 'axios';
 import Dots from '../../common/components/dots';
 import ModalDialog from "../../common/components/ModalDialog";
+import { ToastContainer, toast } from 'react-toastify';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -75,6 +76,7 @@ const ParagraphWithOptions = ({ text }: { text: string }) => {
 
 const StoryPreview = () => {
 
+  const notify = (msg:string) => toast(msg);
 
   const [dataStory, setDataStory] = React.useState<story | null>(null);
   const [episodes, setEpisodes] = React.useState<any>([]);
@@ -193,7 +195,7 @@ const StoryPreview = () => {
     // Add the new episode (this is just for demonstration purposes)
 
     if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0) {
-      alert("title and content cannot be empty");
+      notify("content cannot be empty");
       return;
     }
 
@@ -239,7 +241,7 @@ const StoryPreview = () => {
   const handleSubmitNewVersion = async () => {
 
     if (addNewEpisodeObject.title.trim().length === 0 || addNewEpisodeObject.content.trim().length === 0) {
-      alert("title and content cannot be empty");
+      notify("content cannot be empty");
       return;
     }
 
@@ -290,7 +292,7 @@ const StoryPreview = () => {
     // Add the new episode (this is just for demonstration purposes)
 
     if (updateEpisodeObject.title.trim().length === 0 || updateEpisodeObject.content.trim().length === 0) {
-      alert("title and content cannot be empty");
+      notify("content cannot be empty");
       return;
     }
 
@@ -424,7 +426,7 @@ const StoryPreview = () => {
         }
       });
       console.log(reportEpisode_response);
-      alert('reported successfully')
+      notify('reported successfully')
       if (true || reportEpisode_response.data?.reports_count && reportEpisode_response.data?.reports_count >= 3) {
         let result = episodes.map((ep: any) => {
           if (ep.id === eid) {
@@ -544,7 +546,7 @@ const StoryPreview = () => {
     e.preventDefault();
     console.log(updateStoryObject)
     if (updateStoryObject.title.trim() === "") {
-      alert("title cannot be empty")
+      notify("title cannot be empty")
       return;
     }
 
@@ -802,6 +804,19 @@ const StoryPreview = () => {
           </div>
         </form>
       </ModalDialog>
+
+      <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
     </>
   );
 };

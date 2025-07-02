@@ -44,6 +44,7 @@
 .main-user-dashboard {
   display: grid;
   grid-template-columns: 20% 80%;
+  grid-template-rows: auto;
   grid-template-areas: "leftbar dashboard";
   margin-top: 80px;
   overflow: hidden;
@@ -51,8 +52,7 @@
 
 .leftdiv {
   grid-area: leftbar;
-  min-height: 100vh;
-  height: auto;
+  /* min-height: 100vh; */
   font-family: 'Montserrat', sans-serif !important;
   background-color: rgb(255, 255, 255);
 }
@@ -364,8 +364,7 @@
 
   .main-user-dashboard {
     display: grid;
-    grid-template-columns: 100%;
-    grid-template-areas: "dashboard";
+    grid-template-areas: "dashboard dashboard";
   }
 
   .logo {

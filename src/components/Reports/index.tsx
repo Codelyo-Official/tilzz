@@ -13,10 +13,13 @@ import axios from 'axios';
 import { story } from '../../types/story';
 import Dots from "../../common/components/dots";
 import Spinner from 'react-bootstrap/esm/Spinner';
+import { ToastContainer, toast } from 'react-toastify';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Reports = () => {
+
+  const notify = (msg:string) => toast(msg);
 
   const { user } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -106,7 +109,7 @@ const Reports = () => {
     console.log(st)
     // /api/stories/api/episodes/{episode_id}/submit-for-approval/
     if (updateEpisodeObject.content.trim().length === 0) {
-      alert("content cannot be empty");
+      notify("content cannot be empty");
       return;
     }
 
@@ -126,7 +129,7 @@ const Reports = () => {
       console.log(QEpisodesApi_response);
       setLoading1(false);
 
-      alert("report submitted for approval")
+      notify("report submitted successfully! Please wait for approval");
 
       let result = reports.map((r: any) => {
         if (r.id === st.id) {
@@ -136,7 +139,6 @@ const Reports = () => {
           return r;
       })
       setReports(result);
-
       setActiveEpisode(null);
     } catch (err: any) {
       console.log(err)
@@ -159,72 +161,93 @@ const Reports = () => {
         <div style={{ width: "100%", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Dots />
         </div>) : (<>
-          {reports.map((report: any) => {
-            if (checkifanyepisodehasstatus(report, tabselected))
-              return (
-                <div className="story-preview">
-                  <div className="story-header">
-                    <img src={`${API_BASE_URL}/${report.story.cover_image}`} alt="Story Preview" className="story-image" />
-                    <div className="story-info">
-                      <h2 className="story-title">{report.story.title}</h2>
-                    </div>
-                  </div>
 
-                  <div className="episodes-list">
-                    <h3>Episodes to Review</h3>
-                    {report.quarantined_episodes.map((episode: any) => {
-                      if (episode.status === tabselected)
-                        return (
-                          <div key={episode.id} className="episode">
-                            <div className="episode-header" onClick={() => handleEpisodeToggle(episode)}>
-                              {/* <h4>episode {episode.episode} : {episode.title}</h4> */}
-                              <h4 className='episode-title-ok-al'> {episode.content}</h4>
-                              <button className="edit-episode-btn"><FiEdit style={{ height: "14px", width: "14px", display: "inline-block", margin: "0", color: "black", marginRight: "5px", marginTop: "-2px" }} /></button>
-                              <span>{activeEpisode === episode.id ? <FiArrowUpCircle /> : <FiArrowDownCircle />}</span>
-                            </div>
-                            {activeEpisode === episode.id && (
-                              <div className="episode-content" style={{ marginTop: "20px" }}>
-                                <div className="new-episode-form">
-                                  {episode.status === "quarantined" ? (<textarea onChange={(e: any) => {
-                                    setUpdateEpisodeObject({ ...updateEpisodeObject, content: e.target.value })
-                                  }}>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
-                                  {episode.status === "quarantined" ? (
-                                    <>
-                                      {loading1 ? (
-                                        <div key={episode.id} style={{ width: "100%", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                          <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
-                                            <span className="visually-hidden">Loading...</span>
-                                          </Spinner>
-                                        </div>) : (
-                                        <div style={{ display: "flex", justifyContent: "center" }}>
-                                          <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
-                                            submitforapproval(episode, report);
-                                          }}>submit for approval</button>
-                                          <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                                            cancel();
-                                          }} >Cancel</button>
-                                        </div>
-                                      )}
-                                    </>
-                                  ) : (<p>Pending for approval</p>)}
+          {reports.length === 0 ? (
+            <div className='story-preview' style={{ height: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <p style={{ textAlign: "center" }}>Nothing to review or currently under review by the admin</p>
+            </div>) : (
+            <>
+              {reports.map((report: any) => {
+                if (checkifanyepisodehasstatus(report, tabselected))
+                  return (
+                    <div className="story-preview">
+                      <div className="story-header">
+                        <img src={`${API_BASE_URL}/${report.story.cover_image}`} alt="Story Preview" className="story-image" />
+                        <div className="story-info">
+                          <h2 className="story-title">{report.story.title}</h2>
+                        </div>
+                      </div>
 
+                      <div className="episodes-list">
+                        <h3>Episodes to Review</h3>
+                        {report.quarantined_episodes.map((episode: any) => {
+                          if (episode.status === tabselected)
+                            return (
+                              <div key={episode.id} className="episode">
+                                <div className="episode-header" onClick={() => handleEpisodeToggle(episode)}>
+                                  {/* <h4>episode {episode.episode} : {episode.title}</h4> */}
+                                  <h4 className='episode-title-ok-al'> {episode.content}</h4>
+                                  <button className="edit-episode-btn"><FiEdit style={{ height: "14px", width: "14px", display: "inline-block", margin: "0", color: "black", marginRight: "5px", marginTop: "-2px" }} /></button>
+                                  <span>{activeEpisode === episode.id ? <FiArrowUpCircle /> : <FiArrowDownCircle />}</span>
                                 </div>
-                                <div className="episode-options">
+                                {activeEpisode === episode.id && (
+                                  <div className="episode-content" style={{ marginTop: "20px" }}>
+                                    <div className="new-episode-form">
+                                      {episode.status === "quarantined" ? (<textarea onChange={(e: any) => {
+                                        setUpdateEpisodeObject({ ...updateEpisodeObject, content: e.target.value })
+                                      }}>{episode.content}</textarea>) : (<p>{episode.content}</p>)}
+                                      {episode.status === "quarantined" ? (
+                                        <>
+                                          {loading1 ? (
+                                            <div key={episode.id} style={{ width: "100%", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                              <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                                                <span className="visually-hidden">Loading...</span>
+                                              </Spinner>
+                                            </div>) : (
+                                            <div style={{ display: "flex", justifyContent: "center" }}>
+                                              <button className="new-episode-submit" style={{ margin: "5px" }} onClick={() => {
+                                                submitforapproval(episode, report);
+                                              }}>submit for approval</button>
+                                              <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                                cancel();
+                                              }} >Cancel</button>
+                                            </div>
+                                          )}
+                                        </>
+                                      ) : (<p>Pending for approval</p>)}
 
-                                </div>
-                              </div>
-                            )}
-                          </div>);
-                      else
-                        return (<div></div>)
-                    })}
-                  </div>
+                                    </div>
+                                    <div className="episode-options">
 
-                </div>);
+                                    </div>
+                                  </div>
+                                )}
+                              </div>);
+                          else
+                            return (<div></div>)
+                        })}
+                      </div>
 
-          })}
+                    </div>);
+
+              })}
+            </>
+          )}
         </>)
       }
+
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
 
     </>
   );

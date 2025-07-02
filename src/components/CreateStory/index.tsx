@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import { ApiError } from '../../types/apiError';
 import Spinner from 'react-bootstrap/Spinner';
+import { ToastContainer, toast } from 'react-toastify';
 import './story.css';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -13,9 +14,8 @@ const CreateStory: React.FC = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
   const [errors, setErrors] = useState<string | null>(null);  // Typed state
-
+  const notify = () => toast("Story Created Successfully!");
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -59,7 +59,7 @@ const CreateStory: React.FC = () => {
       console.log(createStory_api_response);
       if (createStory_api_response.request.status === 201) {
         setLoading(false);
-        alert("story created")
+        notify();
       }
     } catch (err: any) {
       console.log(err)
@@ -132,13 +132,25 @@ const CreateStory: React.FC = () => {
         {!loading ? (
           <button type="submit" className="submit-btn">Create Story</button>
         ) : (
-          <div style={{width:"100%",height:"auto",display:"flex",justifyContent:"center",alignItems:"center"}}>
-          <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px",background:"#ACA6FF" }}>
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
           </div>
         )}
       </form>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };
