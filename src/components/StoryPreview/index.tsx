@@ -16,6 +16,7 @@ import axios from 'axios';
 import Dots from '../../common/components/dots';
 import ModalDialog from "../../common/components/ModalDialog";
 import { ToastContainer, toast } from 'react-toastify';
+import { useSwipeable } from 'react-swipeable';
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -68,15 +69,51 @@ const ParagraphWithOptions = ({ text }: { text: string }) => {
   }, [text]);
 
   return (
-    <p ref={paragraphRef} style={{display:isMultiline?"inline":"block"}}>
+    <p ref={paragraphRef} style={{ display: isMultiline ? "inline" : "block" }}>
       {text}
     </p>
   );
 };
 
+type EpisodeWrapperProps = {
+  episode: any;
+  children: any;
+  onNext?: any;
+  onPrev?: any
+};
+
+const EpisodeWrapper: React.FC<EpisodeWrapperProps> = ({
+  episode,
+  children,
+  onNext,
+  onPrev
+}) => {
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      console.log("swipe left from",episode)
+      if (episode.next_version!==null) {
+        onNext?.(episode);
+      }
+    },
+    onSwipedRight: () => {
+      console.log("swipe right from",episode)
+      if (episode.previous_version!==null) {
+        onPrev?.(episode);
+      }
+    },
+    trackMouse: true
+  });
+
+  return (
+    <div {...handlers} className="select-none w-full">
+      {children}
+    </div>
+  );
+};
+
 const StoryPreview = () => {
 
-  const notify = (msg:string) => toast(msg);
+  const notify = (msg: string) => toast(msg);
 
   const [dataStory, setDataStory] = React.useState<story | null>(null);
   const [episodes, setEpisodes] = React.useState<any>([]);
@@ -498,13 +535,13 @@ const StoryPreview = () => {
 
   const handleLikeEpisode = async (ep: any) => {
     const controller = new AbortController();
-        const { signal } = controller;
-        if (isRequestInProgress) {
-            console.log("episode like already in progress")
-            controller.abort();
-            return;
-        }
-        setIsRequestInProgress(true);
+    const { signal } = controller;
+    if (isRequestInProgress) {
+      console.log("episode like already in progress")
+      controller.abort();
+      return;
+    }
+    setIsRequestInProgress(true);
 
     try {
       const token = sessionStorage.getItem('token');
@@ -512,7 +549,7 @@ const StoryPreview = () => {
       const likeEpisode_response = await axios.post(`${API_BASE_URL}${turl}`, {}, {
         headers: {
           Authorization: `Token ${token}`,
-        },signal:signal
+        }, signal: signal
       });
       console.log(likeEpisode_response);
       let result = episodes.map((e: any) => {
@@ -586,6 +623,24 @@ const StoryPreview = () => {
     }
   }
 
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      // if (currentEpisode.next && currentIndex < episodes.length - 1) {
+      //   const nextEpisode = episodes[currentIndex + 1];
+      //   onNext(nextEpisode, currentIndex + 1, currentEpisode); // also pass current
+      // }
+      console.log("swiped left")
+    },
+    onSwipedRight: () => {
+      // if (currentEpisode.prev && currentIndex > 0) {
+      //   const prevEpisode = episodes[currentIndex - 1];
+      //   onPrev(prevEpisode, currentIndex - 1, currentEpisode); // also pass current
+      // }
+      console.log("swiped right")
+    },
+    trackMouse: true
+  });
+
   return (
     <>
       {dataStory === null ? (
@@ -618,82 +673,87 @@ const StoryPreview = () => {
                 </>) : (
                 <>
                   {(newVAt === null || (episode.id < newVAt.id)) && (
-                    <div key={episode.id} className="episode">
-                      <div className="episode-content">
-                        {episode.id === currentEditId ? (
-                          <div className="new-episode-form">
-                            <textarea placeholder='content' onChange={(e) => {
-                              setUpdateEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
-                            }}>{updateEpisodeObject.content}</textarea>
-                            {loading ? (
-                              <div key={episode.id} style={{ width: "100%", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
-                                  <span className="visually-hidden">Loading...</span>
-                                </Spinner>
-                              </div>) : (<div style={{ display: "flex", justifyContent: "center" }}>
-                                <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleUpdateEpisode}>save</button>
-                                <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
-                                  setCurrentEditId(null)
-                                }} >Cancel</button>
-                              </div>)}
+                    <EpisodeWrapper episode={episode}
+                      onNext={nextVariation}
+                      onPrev={prevVariation}>
+                      <div key={episode.id} className="episode">
+                        <div className="episode-content">
+                          {episode.id === currentEditId ? (
+                            <div className="new-episode-form">
+                              <textarea placeholder='content' onChange={(e) => {
+                                setUpdateEpisodeObject((prev: any) => ({ ...prev, content: e.target.value }));
+                              }}>{updateEpisodeObject.content}</textarea>
+                              {loading ? (
+                                <div key={episode.id} style={{ width: "100%", borderRadius: "10px", marginTop: "10px", marginBottom: "10px", height: "40px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                  <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                                    <span className="visually-hidden">Loading...</span>
+                                  </Spinner>
+                                </div>) : (<div style={{ display: "flex", justifyContent: "center" }}>
+                                  <button className="new-episode-submit" style={{ margin: "5px" }} onClick={handleUpdateEpisode}>save</button>
+                                  <button style={{ margin: "5px" }} className="new-version-cancel" onClick={() => {
+                                    setCurrentEditId(null)
+                                  }} >Cancel</button>
+                                </div>)}
 
-                          </div>
-                        ) : (
-                          <>
-                            {(episode.status !== "deleted") ? (<ParagraphWithOptions text={episode.content}/>) : (<div className='under-review'>
-                              <p className='r-tag'>under review</p>
-                              <p style={{ filter: 'blur(2px)' }}>{episode.content}</p>
-                            </div>)}
-                            <div className="episode-options">
-                              {index !== 0 && (
-                                <button className="tooltip1" onClick={() => {
-                                  addVersion(episode)
-                                }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
-                              )}
-                              {(episode.status !== "deleted") && episode.creator === user.id && (<button onClick={() => {
-                                setCurrentEditId(episode.id);
-                                setUpdateEpisodeObject({
-                                  title: episode.title,
-                                  content: episode.content
-                                });
-                              }}><FiEdit /></button>)}
-                              {(episode.status !== "deleted") && (
-                                <button className="tooltip1" onClick={() => {
-                                  handleLikeEpisode(episode)
-                                }}>
-                                  <div className="heart-icon from-preview" style={{ position: "relative", display: "flex", justifyContent: "flex-start", height: "fit-content" }}>
-                                    <svg
-                                      className={`heart ${episode.is_liked ? 'clicked' : ''}`}
-                                      version="1.1"
-                                      id="Layer_1"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 541 471">
-                                      <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" />
-                                    </svg>
-                                    <span style={{ fontSize: "11px", position: "absolute", bottom: "-5px", right: "-2px" }}>{episode.likes_count}</span>
-                                  </div>
-                                  <span className="tooltiptext1">Like</span></button>
-                              )}
-                              {(episode.status !== "deleted") && (
-                                <button className="tooltip1" onClick={() => {
-                                  confirmReport(episode.id)
-                                }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
-                              {episode.previous_version !== null && (<button className="tooltip1" onClick={() => {
-                                prevVariation(episode);
-                              }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
-                              {episode.next_version !== null && (<button className="tooltip1" onClick={() => {
-                                nextVariation(episode);
-                              }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
-                              {/* <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button> */}
-                              {((episode.status !== "deleted") && episode.creator === user.id) && (
-                                <button className="tooltip1" onClick={() => {
-                                  confirmDelete(episode.id)
-                                }}><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
                             </div>
-                          </>
-                        )}
+                          ) : (
+                            <>
+                              {(episode.status !== "deleted") ? (<ParagraphWithOptions text={episode.content} />) : (<div className='under-review'>
+                                <p className='r-tag'>under review</p>
+                                <p style={{ filter: 'blur(2px)' }}>{episode.content}</p>
+                              </div>)}
+                              <div className="episode-options">
+                                {index !== 0 && (
+                                  <button className="tooltip1" onClick={() => {
+                                    addVersion(episode)
+                                  }}><IoAddCircleOutline /><span className="tooltiptext1">Add Version</span></button>
+                                )}
+                                {(episode.status !== "deleted") && episode.creator === user.id && (<button onClick={() => {
+                                  setCurrentEditId(episode.id);
+                                  setUpdateEpisodeObject({
+                                    title: episode.title,
+                                    content: episode.content
+                                  });
+                                }}><FiEdit /></button>)}
+                                {(episode.status !== "deleted") && (
+                                  <button className="tooltip1" onClick={() => {
+                                    handleLikeEpisode(episode)
+                                  }}>
+                                    <div className="heart-icon from-preview" style={{ position: "relative", display: "flex", justifyContent: "flex-start", height: "fit-content" }}>
+                                      <svg
+                                        className={`heart ${episode.is_liked ? 'clicked' : ''}`}
+                                        version="1.1"
+                                        id="Layer_1"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 541 471">
+                                        <path d="M531.74 179.384C523.11 207.414 507.72 237.134 485.99 267.714V267.724C430.11 346.374 362.17 413.124 284.06 466.134C279.83 469.004 274.93 470.444 270.03 470.444C265.12 470.444 260.23 469.004 255.99 466.134C177.88 413.134 109.94 346.374 54.05 267.724C32.32 237.134 16.93 207.414 8.30003 179.384C-3.38997 141.424 -2.73 106.594 10.27 75.8437C23.4 44.7837 49.2 20.9136 82.91 8.61363C114.03 -2.73637 149.33 -2.87637 179.77 8.23363C213.87 20.6836 244.58 45.1136 270.02 79.7436C295.46 45.1136 326.16 20.6836 360.27 8.23363C390.71 -2.87637 426.02 -2.73637 457.13 8.61363C490.84 20.9136 516.64 44.7837 529.77 75.8437C542.77 106.594 543.431 141.424 531.74 179.384Z" />
+                                      </svg>
+                                      <span style={{ fontSize: "11px", position: "absolute", bottom: "-5px", right: "-2px" }}>{episode.likes_count}</span>
+                                    </div>
+                                    <span className="tooltiptext1">Like</span></button>
+                                )}
+                                {(episode.status !== "deleted") && (
+                                  <button className="tooltip1" onClick={() => {
+                                    confirmReport(episode.id)
+                                  }}><FaRegFlag /><span className="tooltiptext1">Report</span></button>)}
+                                {episode.previous_version !== null && (<button className="tooltip1" onClick={() => {
+                                  prevVariation(episode);
+                                }}><FiArrowLeftCircle /><span className="tooltiptext1">Prev Version</span></button>)}
+                                {episode.next_version !== null && (<button className="tooltip1" onClick={() => {
+                                  nextVariation(episode);
+                                }}><FiArrowRightCircle /><span className="tooltiptext1">Next Version</span></button>)}
+                                {/* <button className="tooltip1"><MdOutlineReportProblem /><span className="tooltiptext1">Quarantine</span></button> */}
+                                {((episode.status !== "deleted") && episode.creator === user.id) && (
+                                  <button className="tooltip1" onClick={() => {
+                                    confirmDelete(episode.id)
+                                  }}><TiDeleteOutline /><span className="tooltiptext1">Delete</span></button>)}
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>)}
+                    </EpisodeWrapper>
+                  )}
                 </>)
             ))}
           </div>
@@ -806,17 +866,17 @@ const StoryPreview = () => {
       </ModalDialog>
 
       <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick={false}
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };
