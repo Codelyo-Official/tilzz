@@ -14,10 +14,10 @@ function MainContent() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const value = queryParams.get('activeTab'); // Retrieve the value of a specific query parameter
-    React.useEffect(()=>{
+    React.useEffect(() => {
         // console.log(value)
         dispatch(setActiveTab(value));
-    },[value])
+    }, [value])
 
     return (
         <>
@@ -42,6 +42,10 @@ function MainContent() {
 
             {value === "reports" && (
                 <Reports />
+            )}
+
+            {value === "categories" && (
+                <Stories slugStories={"stories-feed"} />
             )}
         </>
     );

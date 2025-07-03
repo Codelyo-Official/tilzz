@@ -15,6 +15,11 @@ const CreateStory: React.FC = () => {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<string | null>(null);  // Typed state
+  const [categories, setCategories] = useState<any>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+
   const notify = () => toast("Story Created Successfully!");
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +46,9 @@ const CreateStory: React.FC = () => {
     formData.append('title', payload.title);      // your other fields
     formData.append('description', payload.description);
     formData.append('visibility', payload.visibility);
+    if(selectedCategory!==""){
+      formData.append('category', selectedCategory);
+    }
     // Append the actual file
     if (bannerFile !== null)
       formData.append('cover_image', bannerFile); // payload.file should be a File object
@@ -72,6 +80,60 @@ const CreateStory: React.FC = () => {
       }
     }
   };
+
+  const getAllCategories = async () => {
+    // /api/stories/categories/
+    const token = sessionStorage.getItem("token");
+
+    try {
+      const getCategoryResponse = await axios.get(`${API_BASE_URL}/api/stories/categories/`,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      console.log(getCategoryResponse);
+      setCategories(getCategoryResponse.data);
+    } catch (err: any) {
+      console.log(err)
+      const apiError = err as ApiError;
+      setErrors(apiError.message);
+      if (apiError.response) {
+        const status = apiError.response.status;
+        const errorMessage = apiError.response.data?.detail || 'Something went wrong on the server!';
+      }
+    }
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === "new") {
+      setShowNewCategoryInput(true);
+      setSelectedCategory("");
+    } else {
+      setSelectedCategory(value);
+      setShowNewCategoryInput(false);
+    }
+  };
+
+  const handleAddNewCategory = () => {
+    if (!newCategoryName.trim()) return;
+
+    const newCategory = {
+      id: categories.length + 1,
+      name: newCategoryName.trim(),
+    };
+
+    setCategories([...categories, newCategory]);
+    setSelectedCategory(newCategory.name);
+    setNewCategoryName("");
+    setShowNewCategoryInput(false);
+  };
+
+  React.useEffect(() => {
+    getAllCategories();
+  }, [])
 
   return (
     <div className="create-story-container">
@@ -111,6 +173,41 @@ const CreateStory: React.FC = () => {
             <option value="private">Private</option>
             <option value="public">Public</option>
           </select>
+        </div>
+
+        <div className="input-group">
+          <label>Category</label>
+          <select
+            value={selectedCategory}
+            onChange={handleChange}
+            className="category-select"
+            disabled={categories.length === 0 && !showNewCategoryInput}
+          >
+            <option value="" disabled>
+              {categories.length === 0 ? "No categories available" : "Select a category"}
+            </option>
+            {categories.map((cat: any) => (
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
+            <option value="new">+ Create New Category</option>
+          </select>
+
+          {showNewCategoryInput && (
+            <div className="new-category-form" style={{ marginTop: "8px" }}>
+              <input
+                type="text"
+                placeholder="New category name"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="new-category-input"
+              />
+              <button onClick={handleAddNewCategory} className="add-category-btn">
+                Add
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="input-group">
