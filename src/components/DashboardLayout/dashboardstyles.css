@@ -607,6 +607,12 @@ svg.heart.clicked path{
   right:12px;
 }
 
+.invite-btn{
+  position: absolute;
+  top:12px;
+  right:42px;
+}
+
 #story-title-id{
   display: block;
   width: 100%;

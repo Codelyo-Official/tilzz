@@ -308,7 +308,8 @@ function Stories({ slugStories }: { slugStories: string | null }) {
                     <div className="story-container">
                         <ul className="story-box101">
                             {filteredStories.map((st, index) => {
-                                if (st.visibility !== "private" || (st.visibility === "private" && st.creator === user.id)) {
+                                {/* st.visibility !== "private" || (st.visibility === "private" && st.creator === user.id) */}
+                                if (true) {
                                     return (
                                         <li className="story-box" key={index}>
                                             <NavLink

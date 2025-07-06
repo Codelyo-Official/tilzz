@@ -17,6 +17,7 @@ import Dots from '../../common/components/dots';
 import ModalDialog from "../../common/components/ModalDialog";
 import { ToastContainer, toast } from 'react-toastify';
 import { useSwipeable } from 'react-swipeable';
+import { LuMailPlus } from "react-icons/lu";
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -90,14 +91,14 @@ const EpisodeWrapper: React.FC<EpisodeWrapperProps> = ({
 }) => {
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      console.log("swipe left from",episode)
-      if (episode.next_version!==null) {
+      console.log("swipe left from", episode)
+      if (episode.next_version !== null) {
         onNext?.(episode);
       }
     },
     onSwipedRight: () => {
-      console.log("swipe right from",episode)
-      if (episode.previous_version!==null) {
+      console.log("swipe right from", episode)
+      if (episode.previous_version !== null) {
         onPrev?.(episode);
       }
     },
@@ -129,7 +130,9 @@ const StoryPreview = () => {
   const paramvalue = queryParams.get('storyId');
   const [varChangeAt, setVarChangeAt] = React.useState<any>(null);
   const [open, setOpen] = React.useState<boolean>(false);
+  const [open1, setOpen1] = React.useState<boolean>(false);
   const [isRequestInProgress, setIsRequestInProgress] = React.useState(false);
+  const [inviteEmail,setInviteEmail] = React.useState("");
 
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
@@ -641,6 +644,38 @@ const StoryPreview = () => {
     trackMouse: true
   });
 
+  const InviteEmail = async ()=>{
+    if (dataStory !== null) {
+
+      try {
+        setLoading1(true);
+        const token = sessionStorage.getItem('token');
+        const invite_response = await axios.post(`${API_BASE_URL}/api/stories/story-invites/`,{
+          "story": dataStory.id,
+          "invited_email": "hl733274@gmail.com"        
+        }, {
+          headers: {
+            Authorization: `Token ${token}`,
+          }
+        });
+        console.log(invite_response);
+        notify("invite send")
+      
+        setLoading1(false);
+      } catch (err: any) {
+        setLoading1(false);
+        console.log(err)
+        const apiError = err as ApiError;
+        if (apiError.response) {
+          const status = apiError.response.status;
+          const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
+          alert(errorMessage);
+        }
+      } finally {
+      }
+    }
+  }
+
   return (
     <>
       {dataStory === null ? (
@@ -652,10 +687,14 @@ const StoryPreview = () => {
           <div className="story-header">
             <img src={dataStory.cover_image} alt="Story Preview" className="story-image" />
             {user.id === dataStory.creator && (
-              <button className='story-edit-btn' onClick={() => {
-                setOpen(prev => !prev);
-                setUpdateStoryObject({ ...updateStoryObject, title: dataStory.title })
-              }}><FiEdit style={{ color: "white", height: "16px", width: "16px" }} /></button>)}
+              <>
+                <button className='story-edit-btn' onClick={() => {
+                  setOpen(prev => !prev);
+                  setUpdateStoryObject({ ...updateStoryObject, title: dataStory.title })
+                }}><FiEdit style={{ color: "white", height: "16px", width: "16px" }} /></button> <button className='invite-btn' onClick={()=>{
+                  setOpen1(prev => !prev);
+                  setInviteEmail("");
+                }}><LuMailPlus/></button></>)}
             <div className="story-info">
               <h2 className="story-title">{dataStory.title}</h2>
             </div>
@@ -852,6 +891,60 @@ const StoryPreview = () => {
                   marginLeft: "5px",
                   borderColor: "#e54646", color: "#e54646"
                 }} onClick={() => setOpen(false)}>
+                  Cancel
+                </button>
+              </div>) : (
+              <div style={{ width: "100%", height: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Spinner animation="grow" role="status" style={{ color: "blue", fontSize: "20px", background: "#ACA6FF" }}>
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            )}
+          </div>
+        </form>
+      </ModalDialog>
+
+      <ModalDialog isOpen={open1} onClose={() => setOpen1(false)}>
+        <form className="create-story-form" onSubmit={(e)=>{
+          e.preventDefault();
+          InviteEmail();
+        }}>
+
+          <div>
+            <div>
+              <h2>Invite People</h2>
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="email-invite" style={{ fontSize: "14px", marginTop: "10px" }}>Enter Email Address</label>
+              <input
+                type="email"
+                id="email-invite-id"
+                value={inviteEmail}
+                onChange={(e)=>{setInviteEmail(e.target.value)}}
+              />
+            </div>
+
+            {!loading1 ? (
+              <div style={{ width: "fit-content", marginLeft: "auto", marginRight: "auto" }}>
+                <button 
+                 type="submit"
+                  style={{
+                    fontSize: "14px",
+                    width: "120px",
+                    padding: "8px",
+                    margin: "0"
+                  }}>Save</button>
+                <button type="button" style={{
+                  fontSize: "14px",
+                  width: "120px",
+                  padding: "8px",
+                  margin: "0",
+                  border: "1px solid",
+                  borderRadius: "22px",
+                  marginLeft: "5px",
+                  borderColor: "#e54646", color: "#e54646"
+                }} onClick={() => setOpen1(false)}>
                   Cancel
                 </button>
               </div>) : (

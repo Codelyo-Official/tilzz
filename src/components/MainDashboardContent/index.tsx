@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setActiveTab } from "../../redux/features/tabSlice";
 import Account from "../Account";
 import Reports from "../Reports";
+import Invites from "../Invites";
 
 function MainContent() {
 
@@ -46,6 +47,10 @@ function MainContent() {
 
             {value === "categories" && (
                 <Stories slugStories={"stories-feed"} />
+            )}
+
+            {value === "invites" && (
+                <Invites />
             )}
         </>
     );
