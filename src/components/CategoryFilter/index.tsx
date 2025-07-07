@@ -55,7 +55,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ onCategoryChange }) => 
 
     React.useEffect(() => {
         if (selectedCategory !== "" || searchQuery!=="") {
-            onCategoryChange(selectedCategory,searchQuery)
+            onCategoryChange(selectedCategory,searchQuery.toLowerCase())
         }
     }, [selectedCategory,searchQuery])
 

@@ -102,7 +102,7 @@ function Invites() {
         <div className='story-preview' style={{ minHeight: "80vh", height: "auto" }}>
             <div className="invitation-container" style={{ padding: '1rem' }}>
                 {invitations.length === 0 ? (
-                    <div style={{ height: "100%", width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <div style={{ height: "80vh", width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <p style={{ textAlign: "center" }}>No pending invitations.</p>
                     </div>
                 ) : (

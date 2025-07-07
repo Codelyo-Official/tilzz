@@ -39,7 +39,7 @@ function PublicStoriesFeed() {
 
     // Filter stories by title based on searchQuery
     const filteredStories = dataStories.filter((story: any) =>
-        (selectedCategory === "All" || (story.category !== null && story.category.includes(selectedCategory))) && (searchQuery === "" || story.title.includes(searchQuery))
+        (selectedCategory === "All" || (story.category !== null && story.category.includes(selectedCategory))) && (searchQuery === "" || story.title.toLowerCase().includes(searchQuery))
     );
 
     const handleCategoryChange = (category: string, searchQuery: string) => {
