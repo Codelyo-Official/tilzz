@@ -20,14 +20,15 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ onCategoryChange }) => 
         // /api/stories/categories/
         const token = sessionStorage.getItem("token");
 
+        // {
+        //     headers: {
+        //         Authorization: `Token ${token}`,
+        //         'Content-Type': 'multipart/form-data'
+        //     }
+        // }
+
         try {
-            const getCategoryResponse = await axios.get(`${API_BASE_URL}/api/stories/categories/`,
-                {
-                    headers: {
-                        Authorization: `Token ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
+            const getCategoryResponse = await axios.get(`${API_BASE_URL}/api/stories/categories/`);
             console.log(getCategoryResponse);
             setCategories(getCategoryResponse.data);
         } catch (err: any) {

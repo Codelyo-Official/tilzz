@@ -7,16 +7,24 @@ import { ApiError } from "../../../types/apiError";
 import axios from "axios";
 import Spinner from 'react-bootstrap/Spinner';
 import "../login.css";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const LoginSignup = () => {
   const navigate = useNavigate();
 
+    const notify = (msg:string) => toast(msg);
+  
+
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
   const inputUserRef = useRef<HTMLInputElement | null>(null);  // Typed ref
   const inputEmailRef = useRef<HTMLInputElement | null>(null);  // Typed ref
+  const [email, setEmail] = React.useState<string | undefined>(undefined);
   const inputPasswordRef = useRef<HTMLInputElement | null>(null);  // Typed ref
+  const inputPasswordRef1 = useRef<HTMLInputElement | null>(null);  // Typed ref
+  const codeRef = useRef<HTMLInputElement | null>(null);  // Typed ref
 
   const { login } = useAuth();
   const [errors, setErrors] = useState<string | null>(null);  // Typed state
@@ -96,6 +104,45 @@ const LoginSignup = () => {
         setLoading(true);
         const sendCodeEmail_api_response = await axios.post(`${API_BASE_URL}/api/accounts/password-reset/`, payload);
         console.log(sendCodeEmail_api_response);
+        setEmail(inputEmailRef.current?.value)
+        setLoading(false);
+        setLoginState(2)
+        notify(`reset code sent to ${inputEmailRef.current?.value}`)
+
+      } catch (err: any) {
+        setLoading(false);
+        console.log(err)
+        const apiError = err as ApiError;
+        setErrors(apiError.message);
+        if (apiError.response) {
+          const status = apiError.response.status;
+          const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
+          setErrors(errorMessage);
+        }
+      } finally {
+        //setIsRequestInProgress(false); 
+      }
+    } else if (loginState === 2) {
+
+      ///api/accounts/verify-reset-code/
+
+      console.log(email)
+      console.log(codeRef.current?.value)
+      console.log(inputPasswordRef1.current?.value)
+
+      const payload = {
+        "email": email,
+        "code": codeRef.current?.value,
+        "new_password": inputPasswordRef1.current?.value
+      }
+
+      try {
+        setLoading(true);
+        const verify_reset_code_api_response = await axios.post(`${API_BASE_URL}/api/accounts/reset-password/`, payload);
+        console.log(verify_reset_code_api_response);
+
+        notify("password reset successsfully")
+
         setLoading(false);
 
       } catch (err: any) {
@@ -111,6 +158,7 @@ const LoginSignup = () => {
       } finally {
         //setIsRequestInProgress(false); 
       }
+
     }
 
   };
@@ -192,6 +240,33 @@ const LoginSignup = () => {
             </>
           )}
 
+          {loginState === 2 && (
+            <>
+              <input
+                type="text"
+                placeholder="enter code"
+                ref={codeRef}
+                required
+                onChange={(e) => {
+                  if (codeRef.current) {
+                    codeRef.current.value = e.target.value;
+                  }
+                }}
+              />
+              <input
+                type="password"
+                placeholder="Enter New Password"
+                ref={inputPasswordRef1}
+                required
+                onChange={(e) => {
+                  if (inputPasswordRef1.current) {
+                    inputPasswordRef1.current.value = e.target.value;
+                  }
+                }}
+              />
+            </>
+          )}
+
           {errors && <p className="errors">{errors}</p>}
 
           {!loading ? (
@@ -226,6 +301,7 @@ const LoginSignup = () => {
           {loginState === 0 ? "forgot your password?" : "back to login"}
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

@@ -652,7 +652,7 @@ const StoryPreview = () => {
         const token = sessionStorage.getItem('token');
         const invite_response = await axios.post(`${API_BASE_URL}/api/stories/story-invites/`,{
           "story": dataStory.id,
-          "invited_email": "hl733274@gmail.com"        
+          "invited_email": inviteEmail        
         }, {
           headers: {
             Authorization: `Token ${token}`,
@@ -669,7 +669,8 @@ const StoryPreview = () => {
         if (apiError.response) {
           const status = apiError.response.status;
           const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
-          alert(errorMessage);
+          // alert(errorMessage);
+          notify("please enter valid email")
         }
       } finally {
       }
@@ -688,10 +689,10 @@ const StoryPreview = () => {
             <img src={dataStory.cover_image} alt="Story Preview" className="story-image" />
             {user.id === dataStory.creator && (
               <>
-                <button className='story-edit-btn' onClick={() => {
+                <button className='story-edit-btn' style={{backgroundColor:"white",padding:"8px",borderRadius:"50%"}} onClick={() => {
                   setOpen(prev => !prev);
                   setUpdateStoryObject({ ...updateStoryObject, title: dataStory.title })
-                }}><FiEdit style={{ color: "white", height: "16px", width: "16px" }} /></button> <button className='invite-btn' onClick={()=>{
+                }}><FiEdit style={{ color: "black", height: "16px", width: "16px" }} /></button> <button className='invite-btn' style={{backgroundColor:"white",padding:"8px",borderRadius:"50%", marginRight:"12px"}} onClick={()=>{
                   setOpen1(prev => !prev);
                   setInviteEmail("");
                 }}><LuMailPlus/></button></>)}
@@ -912,7 +913,7 @@ const StoryPreview = () => {
 
           <div>
             <div>
-              <h2>Invite People</h2>
+            <h2 id='story-title-edit-id'>Invite People</h2>
             </div>
 
             <div className="input-group">

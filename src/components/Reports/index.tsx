@@ -19,7 +19,7 @@ const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Reports = () => {
 
-  const notify = (msg:string) => toast(msg);
+  const notify = (msg: string) => toast(msg);
 
   const { user } = useAuth();
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -127,19 +127,20 @@ const Reports = () => {
         }
       });
       console.log(QEpisodesApi_response);
-      setLoading1(false);
-
-      notify("report submitted successfully! Please wait for approval");
-
-      let result = reports.map((r: any) => {
+      let result: any = [];
+      reports.map((r: any) => {
         if (r.id === st.id) {
           let temp_eps = r.quarantined_episodes.filter((e: any) => e.id !== ep.id)
-          return { ...r, quarantined_episodes: temp_eps }
+          if (temp_eps.length > 0)
+            result.push({ ...r, quarantined_episodes: temp_eps })
         } else
-          return r;
+          result.push(r);
       })
+      console.log(result)
+      setLoading1(false);
       setReports(result);
       setActiveEpisode(null);
+      notify("report submitted successfully! Please wait for approval");
     } catch (err: any) {
       console.log(err)
       const apiError = err as ApiError;
@@ -154,6 +155,9 @@ const Reports = () => {
     if (reports.length === 0)
       getAllQuarantinedStories();
   }, [])
+
+  console.log("reports.length", reports.length);
+
 
   return (
     <>
