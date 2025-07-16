@@ -87,7 +87,7 @@
   position: relative;
   padding-left: 15px;
   padding-right: 15px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: lighter;
   height: auto;
   /* background: #f1f1f1; */
@@ -191,12 +191,12 @@
 }
 
 .episode-options button {
-  margin-left: 10px;
+  margin-left: 18px;
 }
 
 .episode-options svg {
-  height: 16px;
-  width: 16px;
+  height: 18px;
+  width: 18px;
 }
 
 

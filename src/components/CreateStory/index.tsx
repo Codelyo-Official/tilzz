@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ApiError } from '../../types/apiError';
 import Spinner from 'react-bootstrap/Spinner';
@@ -8,6 +9,7 @@ import './story.css';
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const CreateStory: React.FC = () => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('story description');
   const [visibility, setVisibility] = useState<'private' | 'public'>('public');
@@ -68,6 +70,9 @@ const CreateStory: React.FC = () => {
       if (createStory_api_response.request.status === 201) {
         setLoading(false);
         notify();
+        setTimeout(()=>{
+          navigate(`?activeTab=story-preview&storyId=${createStory_api_response?.data?.id}`)
+        },1000)
       }
     } catch (err: any) {
       console.log(err)
