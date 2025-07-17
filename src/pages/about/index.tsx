@@ -1,14 +1,18 @@
 import React from "react";
 import HomeNavbar from "../../components/HomeNavbar";
 import Footer from "../../components/Footer";
+import { useNavigate } from "react-router-dom";
 import "./about.css";
 
 const AboutPage = () => {
+
+    const navigate = useNavigate();
+
     return (
         <>
             <HomeNavbar />
             <div className="about-container">
-                <video src={"/videos/try.webm"} autoPlay loop></video>
+                <video src={"/videos/try.webm"}  playsInline webkit-playsinline muted autoPlay loop></video>
                 <h1 className="page-title-about">ABOUT</h1>
                 <section className="section-101-about">
                     <p>
@@ -35,7 +39,9 @@ const AboutPage = () => {
                             telling your stories.
                         </p>
                         <div style={{ display: "flex", alignItems: "left" }}>
-                            <button>Create Stories Now</button>
+                            <button onClick={()=>{
+                                navigate('/register')
+                            }}>Create Stories Now</button>
                         </div>
                     </section>
                 </div>
