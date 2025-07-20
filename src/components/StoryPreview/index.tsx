@@ -132,7 +132,7 @@ const StoryPreview = () => {
   const [open, setOpen] = React.useState<boolean>(false);
   const [open1, setOpen1] = React.useState<boolean>(false);
   const [isRequestInProgress, setIsRequestInProgress] = React.useState(false);
-  const [inviteEmail,setInviteEmail] = React.useState("");
+  const [inviteEmail, setInviteEmail] = React.useState("");
 
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
@@ -644,15 +644,15 @@ const StoryPreview = () => {
     trackMouse: true
   });
 
-  const InviteEmail = async ()=>{
+  const InviteEmail = async () => {
     if (dataStory !== null) {
 
       try {
         setLoading1(true);
         const token = sessionStorage.getItem('token');
-        const invite_response = await axios.post(`${API_BASE_URL}/api/stories/story-invites/`,{
+        const invite_response = await axios.post(`${API_BASE_URL}/api/stories/story-invites/`, {
           "story": dataStory.id,
-          "invited_email": inviteEmail        
+          "invited_email": inviteEmail
         }, {
           headers: {
             Authorization: `Token ${token}`,
@@ -660,7 +660,7 @@ const StoryPreview = () => {
         });
         console.log(invite_response);
         notify("invite send")
-      
+
         setLoading1(false);
       } catch (err: any) {
         setLoading1(false);
@@ -668,9 +668,9 @@ const StoryPreview = () => {
         const apiError = err as ApiError;
         if (apiError.response) {
           const status = apiError.response.status;
-          const errorMessage = apiError.response.data?.error || 'Something went wrong on the server!';
+          const errorMessage = apiError.response.data?.invited_email ? (Array.isArray(apiError.response.data.invited_email) ? apiError.response.data.invited_email[0] : apiError.response.data.invited_email) : 'Something went wrong on the server!';
           // alert(errorMessage);
-          notify("please enter valid email")
+          notify(errorMessage)
         }
       } finally {
       }
@@ -689,13 +689,13 @@ const StoryPreview = () => {
             <img src={dataStory.cover_image} alt="Story Preview" className="story-image" />
             {user.id === dataStory.creator && (
               <>
-                <button className='story-edit-btn' style={{backgroundColor:"white",padding:"8px",borderRadius:"50%"}} onClick={() => {
+                <button className='story-edit-btn' style={{ backgroundColor: "white", padding: "8px", borderRadius: "50%" }} onClick={() => {
                   setOpen(prev => !prev);
                   setUpdateStoryObject({ ...updateStoryObject, title: dataStory.title })
-                }}><FiEdit style={{ color: "black", height: "16px", width: "16px" }} /></button> <button className='invite-btn' style={{backgroundColor:"white",padding:"8px",borderRadius:"50%", marginRight:"12px"}} onClick={()=>{
+                }}><FiEdit style={{ color: "black", height: "16px", width: "16px" }} /></button> <button className='invite-btn' style={{ backgroundColor: "white", padding: "8px", borderRadius: "50%", marginRight: "12px" }} onClick={() => {
                   setOpen1(prev => !prev);
                   setInviteEmail("");
-                }}><LuMailPlus/></button></>)}
+                }}><LuMailPlus /></button></>)}
             <div className="story-info">
               <h2 className="story-title">{dataStory.title}</h2>
             </div>
@@ -906,14 +906,14 @@ const StoryPreview = () => {
       </ModalDialog>
 
       <ModalDialog isOpen={open1} onClose={() => setOpen1(false)}>
-        <form className="create-story-form" onSubmit={(e)=>{
+        <form className="create-story-form" onSubmit={(e) => {
           e.preventDefault();
           InviteEmail();
         }}>
 
           <div>
             <div>
-            <h2 id='story-title-edit-id'>Invite People</h2>
+              <h2 id='story-title-edit-id'>Invite People</h2>
             </div>
 
             <div className="input-group">
@@ -922,14 +922,14 @@ const StoryPreview = () => {
                 type="email"
                 id="email-invite-id"
                 value={inviteEmail}
-                onChange={(e)=>{setInviteEmail(e.target.value)}}
+                onChange={(e) => { setInviteEmail(e.target.value) }}
               />
             </div>
 
             {!loading1 ? (
               <div style={{ width: "fit-content", marginLeft: "auto", marginRight: "auto" }}>
-                <button 
-                 type="submit"
+                <button
+                  type="submit"
                   style={{
                     fontSize: "14px",
                     width: "120px",
