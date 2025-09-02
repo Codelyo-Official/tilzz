@@ -45,7 +45,8 @@ const Footer = () => {
 
                         <div className='copyr'>
                             {/* <div className='links-social-footer'><TiSocialFacebook /> <TiSocialInstagram /> <TiSocialTwitter /> <TiSocialYoutube /></div> */}
-                            <p className='copyright'>{`© 2025 Copyright Narrato | Developed By <a href="https://codelyo.com/"><strong>Codelyo</strong></a>`}</p>
+                           <p className='copyright'>{`© 2025 Copyright Narrato | Developed By <a href="https://codelyo.com/"><strong>Codelyo</strong></a>`}</p>
+
                         </div>
 
                         {/* <div className='sub'>
